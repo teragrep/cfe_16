@@ -1,0 +1,93 @@
+:opening-bracket: &#91;
+:closing-bracket: &#93;
+
+= HTTP Event Capture, HEC, to Syslog
+[![Build Status](https://scan.coverity.com/projects/24515/badge.svg)](https://scan.coverity.com/projects/cfe_16)
+
+== License
+AGPLv3 with link:https://github.com/teragrep/cfe_16/blob/master/LICENSE#L665-L670[additional permissions] granted in the license.
+
+== Compiling
+
+[source, shell script]
+----
+mvn clean verify package
+----
+
+== Running
+
+=== Configuration
+
+Default properties location is at config/application.properties
+
+Supported protocols are RELP, TCP, UDP.
+
+[source, properties]
+----
+syslog.server.host=127.0.0.1
+syslog.server.port=601
+syslog.server.protocol=RELP
+max.channels=1000000
+max.ack.value=1000000
+max.ack.age=20000
+max.session.age=30000
+poll.time=300000
+config.poll.time=5000
+spring.devtools.add-properties=false
+server.print.times=true
+----
+
+NOTE: It is advised to use RELP and rsyslog for reception for data durability.
+
+=== Execution
+
+[source, shell script]
+----
+java -jar target/cfe_16.jar
+----
+
+== Testing
+
+=== Performance
+Performance test client execution
+
+Test client is located in class com.teragrep.cfe_16.TestClient
+
+TestClient parameters:
+
+. cfe_16 server hostname
+. cfe_16 server port
+. number of threads
+. number of loops per thread
+
+Connect to Spring embedded Tomcat at localhost:8080, and instantiate one thread
+doing the HTTP requests.
+
+[source, shell script]
+----
+java -classpath target/classes com.teragrep.cfe_16.TestClient localhost 8080 1 4
+----
+
+NOTE: It is advised to warm up the JVM before reporting the results by running
+a warm-up loop with intended amount of threads and 50 loops per thread.
+
+== Contributing
+ 
+// Change the repository name in the issues link to match with your project's name
+ 
+You can involve yourself with our project by https://github.com/teragrep/cfe_16/issues/new/choose[opening an issue] or submitting a pull request.
+ 
+Contribution requirements:
+ 
+. *All changes must be accompanied by a new or changed test.* If you think testing is not required in your pull request, include a sufficient explanation as why you think so.
+. Security checks must pass
+. Pull requests must align with the principles and http://www.extremeprogramming.org/values.html[values] of extreme programming.
+. Pull requests must follow the principles of Object Thinking and Elegant Objects (EO).
+ 
+Read more in our https://github.com/teragrep/teragrep/blob/main/contributing.adoc[Contributing Guideline].
+ 
+=== Contributor License Agreement
+ 
+Contributors must sign https://github.com/teragrep/teragrep/blob/main/cla.adoc[Teragrep Contributor License Agreement] before a pull request is accepted to organization's repositories.
+ 
+You need to submit the CLA only once. After submitting the CLA you can contribute to all Teragrep's repositories. 
