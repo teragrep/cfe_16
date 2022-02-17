@@ -55,9 +55,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.Map;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -91,7 +89,7 @@ import com.teragrep.cfe_16.exceptionhandling.ServerIsBusyException;
         "server.print.times=true" 
         })
 public class AckManagerIT {
-    
+
     private String authToken1;
     private String authToken2;
 

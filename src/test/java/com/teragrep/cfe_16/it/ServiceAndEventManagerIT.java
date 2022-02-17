@@ -58,10 +58,9 @@ import com.teragrep.cfe_16.EventManager;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.Session;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import com.teragrep.rlp_03.Server;
+import com.teragrep.rlp_03.SyslogFrameProcessor;
+import org.junit.jupiter.api.*;
 import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -87,7 +86,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @TestPropertySource(properties = { 
 		"syslog.server.host=127.0.0.1", 
-		"syslog.server.port=1235", 
+		"syslog.server.port=1601",
 		"syslog.server.protocol=RELP", 
 		"max.channels=1000000", 
 		"max.ack.value=1000000", 
@@ -98,7 +97,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 		"server.print.times=true" 
 		})
 public class ServiceAndEventManagerIT {
+    private static Server server;
+    private static final String hostname = "localhost";
+    private static Integer port = 1601;
+    @BeforeAll
+    public static void init_x() throws IOException {
+        server = new Server(port, new SyslogFrameProcessor((message) -> { System.out.println(new String(message)); }));
+        server.start();
+    }
 
+    @AfterAll
+    public static void cleanup() throws InterruptedException {
+        server.stop();
+        Thread.sleep(5000L);
+    }
     @Autowired
     private HECService service;
     @Autowired

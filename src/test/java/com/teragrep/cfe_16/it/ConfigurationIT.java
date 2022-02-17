@@ -50,16 +50,34 @@ package com.teragrep.cfe_16.it;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.teragrep.cfe_16.config.Configuration;
-import org.junit.jupiter.api.Test;
+import com.teragrep.rlp_03.Server;
+import com.teragrep.rlp_03.SyslogFrameProcessor;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.io.IOException;
 
 @SpringBootTest
 public class ConfigurationIT {
 
     @Autowired
     private Configuration configuration;
-    
+
+    private static Server server;
+    private static final String hostname = "localhost";
+    private static Integer port = 1235;
+    @BeforeAll
+    public static void init() throws IOException {
+        server = new Server(port, new SyslogFrameProcessor((message) -> { System.out.println(new String(message)); }));
+        server.start();
+    }
+
+    @AfterAll
+    public static void cleanup() throws InterruptedException {
+        server.stop();
+    }
+
     @Test
     public void instantiateConfigurationTest() {
     	String expected =

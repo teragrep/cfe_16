@@ -68,9 +68,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -80,7 +78,7 @@ import com.teragrep.cfe_16.service.HECService;
 
 @TestPropertySource(properties = { 
         "syslog.server.host=127.0.0.1", 
-        "syslog.server.port=1236", 
+        "syslog.server.port=1236",
         "syslog.server.protocol=TCP", 
         "max.channels=1000000", 
         "max.ack.value=1000000", 
@@ -92,7 +90,6 @@ import com.teragrep.cfe_16.service.HECService;
         })
 @SpringBootTest
 public class SendEventsIT implements Runnable {
-    
     @Autowired
     private HECService service;    
 
