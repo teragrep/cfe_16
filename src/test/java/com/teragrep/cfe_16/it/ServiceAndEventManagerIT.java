@@ -109,7 +109,6 @@ public class ServiceAndEventManagerIT {
     @AfterAll
     public static void cleanup() throws InterruptedException {
         server.stop();
-        Thread.sleep(5000L);
     }
     @Autowired
     private HECService service;
