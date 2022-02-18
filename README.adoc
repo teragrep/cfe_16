@@ -8,7 +8,7 @@
 
 [source, shell script]
 ----
-mvn clean compile
+mvn clean verify package
 ----
 
 == Running
