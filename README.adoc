@@ -4,6 +4,9 @@
 = HTTP Event Capture, HEC, to Syslog
 [![Build Status](https://scan.coverity.com/projects/24515/badge.svg)](https://scan.coverity.com/projects/cfe_16)
 
+== License
+AGPLv3 with link:https://github.com/teragrep/cfe_16/blob/master/LICENSE#L665-L670[additional permissions] granted in the license.
+
 == Compiling
 
 [source, shell script]
