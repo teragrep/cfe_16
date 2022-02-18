@@ -107,14 +107,13 @@ public class SessionManager implements Runnable, LifeCycle {
                 break;
             }
             synchronized (this) {
-                Iterator<String> iterator = this.sessions.keySet().iterator();
+                Iterator<Map.Entry<String, Session>> iterator = this.sessions.entrySet().iterator();
                 while (iterator.hasNext()) {
-                    String key = iterator.next();
-                    Session session = this.sessions.get(key);
+                    Map.Entry<String, Session> entry = iterator.next();
                     long now = System.currentTimeMillis();
-                    long thresholdInLong = session.getLastTouchedTimestamp() + this.configuration.getMaxSessionAge();
+                    long thresholdInLong = entry.getValue().getLastTouchedTimestamp() + this.configuration.getMaxSessionAge();
                     if (now >= thresholdInLong) {
-                        this.sessions.remove(key);
+                        iterator.remove();
                     }                    
                 }
             }
