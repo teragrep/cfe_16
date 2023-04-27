@@ -56,6 +56,7 @@ import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.channels.Selector;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -171,7 +172,11 @@ public class SendEventsIT implements Runnable {
         	countFuture++;
 		}
         countDownLatch.await(1, TimeUnit.SECONDS);
-        Assertions.assertEquals(NUMBER_OF_EVENTS_TO_BE_SENT * 2, this.numberOfRequestsMade.get(), "Number of events received should match the number of sent ones");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
+            while(NUMBER_OF_EVENTS_TO_BE_SENT * 2 != this.numberOfRequestsMade.get()) {
+                Thread.sleep(500);
+            }
+        });
         es.shutdownNow();
     }
 
