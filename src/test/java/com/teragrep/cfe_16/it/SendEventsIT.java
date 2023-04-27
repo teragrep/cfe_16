@@ -56,6 +56,7 @@ import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.channels.Selector;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -170,9 +171,12 @@ public class SendEventsIT implements Runnable {
             Assertions.assertTrue(supposedResponses.contains(actualResponse), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be " + countFuture + ")");
         	countFuture++;
 		}
-        Thread.sleep(2000); // FIXME: This is a hack to circumvent github CI from failing due to a race condition
         countDownLatch.await(1, TimeUnit.SECONDS);
-        Assertions.assertEquals(NUMBER_OF_EVENTS_TO_BE_SENT * 2, this.numberOfRequestsMade.get(), "Number of events received should match the number of sent ones");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
+            while(NUMBER_OF_EVENTS_TO_BE_SENT * 2 != this.numberOfRequestsMade.get()) {
+                Thread.sleep(500);
+            }
+        });
         es.shutdownNow();
     }
 
