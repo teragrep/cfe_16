@@ -158,7 +158,6 @@ public class SendEventsIT implements Runnable {
         for (int i = 0; i < NUMBER_OF_EVENTS_TO_BE_SENT; i++) {
             CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> service.sendEvents(request1, channel1, eventInJson).toString());
             futures.add(f);
-            
         }
         List<String> supposedResponses = new ArrayList<String>();
         for (int i = 0; i < NUMBER_OF_EVENTS_TO_BE_SENT; i++) {
@@ -171,7 +170,6 @@ public class SendEventsIT implements Runnable {
             Assertions.assertTrue(supposedResponses.contains(actualResponse), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be " + countFuture + ")");
         	countFuture++;
 		}
-        
         countDownLatch.await(1, TimeUnit.SECONDS);
         Assertions.assertEquals(NUMBER_OF_EVENTS_TO_BE_SENT * 2, this.numberOfRequestsMade.get(), "Number of events received should match the number of sent ones");
         es.shutdownNow();
