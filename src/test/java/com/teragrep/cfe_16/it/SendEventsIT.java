@@ -95,11 +95,7 @@ public class SendEventsIT implements Runnable {
 
     private ServerSocket serverSocket;
     private Thread thread;
-    
-    private static int NUMBER_OF_EVENTS_TO_BE_SENT = 1;
-    
-    private volatile int numberOfRequestsMade;
-    private AtomicInteger numberOfRequestsMadeAI ;
+    private AtomicInteger numberOfRequestsMade;
     
     private MockHttpServletRequest request1;
     private String eventInJson;
@@ -111,8 +107,7 @@ public class SendEventsIT implements Runnable {
     @BeforeEach
     public void init() throws IOException {
         this.thread = new Thread(this);
-        this.numberOfRequestsMade = 0;
-        this.numberOfRequestsMadeAI = new AtomicInteger(0);
+        this.numberOfRequestsMade = new AtomicInteger(0);
         this.serverSocket = new ServerSocket(SERVER_PORT);
         this.selector = Selector.open();
         
@@ -136,13 +131,12 @@ public class SendEventsIT implements Runnable {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
-                    System.out.println(line);
-                    this.numberOfRequestsMade++;
+                    this.numberOfRequestsMade.getAndIncrement();
                     countDownLatch.countDown();
                 }
                 bufferedReader.close();
                 socket.close();
-                if (this.numberOfRequestsMade % 5 == 0) {
+                if (this.numberOfRequestsMade.get() % 5 == 0) {
                     this.serverSocket.close();
                     this.serverSocket = new ServerSocket(SERVER_PORT);
                 }
@@ -156,18 +150,13 @@ public class SendEventsIT implements Runnable {
     
     @Test
     public void sendEventsTest() throws IOException, InterruptedException, ExecutionException {
-    	NUMBER_OF_EVENTS_TO_BE_SENT = 100;
+        int NUMBER_OF_EVENTS_TO_BE_SENT = 100;
     	countDownLatch = new CountDownLatch(NUMBER_OF_EVENTS_TO_BE_SENT);
     	ExecutorService es = Executors.newFixedThreadPool(8);
     	List<CompletableFuture<String> > futures = new ArrayList<>();
     	
         for (int i = 0; i < NUMBER_OF_EVENTS_TO_BE_SENT; i++) {
-            CompletableFuture<String> f = CompletableFuture.supplyAsync(new Supplier<String>() {
-            	public String get() {
-            		return service.sendEvents(request1, channel1, eventInJson).toString();
-            	}
-            	
-			});
+            CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> service.sendEvents(request1, channel1, eventInJson).toString());
             futures.add(f);
             
         }
@@ -177,33 +166,25 @@ public class SendEventsIT implements Runnable {
         	supposedResponses.add(supposedResponse);
         }
         int countFuture = 0;
-        for (Future<String> f : futures) {        	
+        for (Future<String> f : futures) {
 			final String actualResponse = f.get();
-        	System.out.println(" actualResponse " + actualResponse);
-        	assertTrue("Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be " + countFuture + ")",
-        			supposedResponses.contains(actualResponse));
+            Assertions.assertTrue(supposedResponses.contains(actualResponse), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be " + countFuture + ")");
         	countFuture++;
 		}
         
         countDownLatch.await(1, TimeUnit.SECONDS);
-        assertEquals("Number of events received should match the number of sent ones",
-                NUMBER_OF_EVENTS_TO_BE_SENT * 2, 
-                this.numberOfRequestsMade);
+        Assertions.assertEquals(NUMBER_OF_EVENTS_TO_BE_SENT * 2, this.numberOfRequestsMade.get(), "Number of events received should match the number of sent ones");
         es.shutdownNow();
     }
-    
-    // @Test
+
+    @Disabled
+    @Test
     public void send1EventTest() throws IOException, InterruptedException {
-    	NUMBER_OF_EVENTS_TO_BE_SENT = 1;
     	countDownLatch = new CountDownLatch(1);
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":" + 0 + "}";
-            assertEquals("Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be " + 0 + ")",
-                    service.sendEvents(request1, channel1, eventInJson).toString(),
-                    supposedResponse);
+            Assertions.assertEquals(service.sendEvents(request1, channel1, eventInJson).toString(), supposedResponse, "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be " + 0 + ")");
 
         countDownLatch.await(5, TimeUnit.SECONDS);
-        assertEquals("Number of events received should match the number of sent ones",
-                 2, 
-                this.numberOfRequestsMade);
+        Assertions.assertEquals(2, this.numberOfRequestsMade, "Number of events received should match the number of sent ones");
     }
 }
