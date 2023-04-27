@@ -29,7 +29,7 @@ jobs:
 
       - name: Create jar and rpm
         run: |
-          mvn -B -Drevision=${{ github.event.release.tag_name }} -Dsha1= -Dchangelist= clean verify package;
+          mvn -B -Drevision=${{ github.event.release.tag_name }} -Dsha1= -Dchangelist= clean verify deploy;
           mvn -B -Drevision=${{ github.event.release.tag_name }} -Dsha1= -Dchangelist= -f rpm.pom.xml package;
         env:
           GITHUB_TOKEN: ${{ github.token }}
