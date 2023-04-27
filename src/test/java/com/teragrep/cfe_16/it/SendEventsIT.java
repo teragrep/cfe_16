@@ -156,17 +156,19 @@ public class SendEventsIT implements Runnable {
     	List<CompletableFuture<String> > futures = new ArrayList<>();
     	
         for (int i = 0; i < NUMBER_OF_EVENTS_TO_BE_SENT; i++) {
+            System.out.println("DEBUG: Adding events to be sent: #" + i);
             CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> service.sendEvents(request1, channel1, eventInJson).toString());
             futures.add(f);
-            
         }
         List<String> supposedResponses = new ArrayList<String>();
         for (int i = 0; i < NUMBER_OF_EVENTS_TO_BE_SENT; i++) {
+            System.out.println("DEBUG: Adding events to be supposedResponses list: #" + i);
         	final String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":" + i + "}";
         	supposedResponses.add(supposedResponse);
         }
         int countFuture = 0;
         for (Future<String> f : futures) {
+            System.out.println("DEBUG: Getting actual future at #" + countFuture);
 			final String actualResponse = f.get();
             Assertions.assertTrue(supposedResponses.contains(actualResponse), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be " + countFuture + ")");
         	countFuture++;
