@@ -29,8 +29,8 @@ jobs:
 
       - name: Create jar and rpm
         run: |
-          mvn -s ${{ github.workspace}}/settings.xml -B -Drevision=${{ env.RELEASE_VERSION }} -Dsha1= -Dchangelist= clean verify package;
-          mvn -s ${{ github.workspace}}/settings.xml -B -Drevision=${{ env.RELEASE_VERSION }} -Dsha1= -Dchangelist= -f rpm.pom.xml package
+          mvn -B -Drevision=${{ env.RELEASE_VERSION }} -Dsha1= -Dchangelist= clean verify package;
+          mvn -B -Drevision=${{ env.RELEASE_VERSION }} -Dsha1= -Dchangelist= -f rpm.pom.xml package;
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
