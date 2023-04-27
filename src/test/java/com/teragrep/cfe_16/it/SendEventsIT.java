@@ -95,8 +95,6 @@ public class SendEventsIT implements Runnable {
 
     private ServerSocket serverSocket;
     private Thread thread;
-    
-    private static int NUMBER_OF_EVENTS_TO_BE_SENT = 1;
     private AtomicInteger numberOfRequestsMade;
     
     private MockHttpServletRequest request1;
@@ -133,7 +131,6 @@ public class SendEventsIT implements Runnable {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
-                    System.out.println(line);
                     this.numberOfRequestsMade.getAndIncrement();
                     countDownLatch.countDown();
                 }
@@ -153,7 +150,7 @@ public class SendEventsIT implements Runnable {
     
     @Test
     public void sendEventsTest() throws IOException, InterruptedException, ExecutionException {
-    	NUMBER_OF_EVENTS_TO_BE_SENT = 100;
+        int NUMBER_OF_EVENTS_TO_BE_SENT = 100;
     	countDownLatch = new CountDownLatch(NUMBER_OF_EVENTS_TO_BE_SENT);
     	ExecutorService es = Executors.newFixedThreadPool(8);
     	List<CompletableFuture<String> > futures = new ArrayList<>();
@@ -183,7 +180,6 @@ public class SendEventsIT implements Runnable {
     @Disabled
     @Test
     public void send1EventTest() throws IOException, InterruptedException {
-    	NUMBER_OF_EVENTS_TO_BE_SENT = 1;
     	countDownLatch = new CountDownLatch(1);
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":" + 0 + "}";
             Assertions.assertEquals(service.sendEvents(request1, channel1, eventInJson).toString(), supposedResponse, "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be " + 0 + ")");
