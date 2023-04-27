@@ -28,10 +28,13 @@ jobs:
           java-version: 8.0.292+10
           distribution: 'adopt'
 
+      - name: Get version
+        run: git describe --tags && echo "RELEASE_VERSION=$(git describe --tags)" >> $GITHUB_ENV
+
       - name: Create jar and rpm
         run: |
-          mvn -B -Drevision=${{ github.event.release.tag_name }} -Dsha1= -Dchangelist= clean verify deploy;
-          mvn -B -Drevision=${{ github.event.release.tag_name }} -Dsha1= -Dchangelist= -f rpm.pom.xml package;
+          mvn -B -Drevision=${{ env.RELEASE_VERSION }} -Dsha1= -Dchangelist= clean verify deploy;
+          mvn -B -Drevision=${{ env.RELEASE_VERSION }} -Dsha1= -Dchangelist= -f rpm.pom.xml package;
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
