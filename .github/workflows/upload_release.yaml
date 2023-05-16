@@ -58,12 +58,17 @@ jobs:
       - name: Lowercase repository name
         run: echo "REPO_LC=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
-      - name: Build container image
-        uses: docker/build-push-action@v4.0.0
-        with:
-          context: .
-          push: true
-          outputs: type=docker
-          tags: |
-            ghcr.io/${{ env.REPO_LC }}/app:${{ github.event.release.tag_name }}
-            ghcr.io/${{ env.REPO_LC }}/app:latest
+#      - name: Build container image
+ #       uses: docker/build-push-action@v4.0.0
+  #      with:
+   #       context: .
+    #      push: true
+     #     outputs: type=docker
+      #    tags: |
+       #     ghcr.io/${{ env.REPO_LC }}/app:${{ github.event.release.tag_name }}
+        #    ghcr.io/${{ env.REPO_LC }}/app:latest
+
+      - name: 'Build Image'
+        run: |
+          docker build . --output type=docker --tag ghcr.io/${{ env.REPO_LC }}/app:${{ github.event.release.tag_name }}
+          docker push ghcr.io/${{ env.REPO_LC }}/app:${{ github.event.release.tag_name }}
