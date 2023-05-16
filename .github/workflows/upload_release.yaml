@@ -60,6 +60,6 @@ jobs:
 
       - name: 'Build Image'
         run: |
-          docker buildx build . --output type=docker --tag ghcr.io/${{ env.REPO_LC }}/app:${{ github.event.release.tag_name }}
+          docker buildx build --output type=docker --tag ghcr.io/${{ env.REPO_LC }}/app:${{ github.event.release.tag_name }} .
           docker push ghcr.io/${{ env.REPO_LC }}/app:${{ github.event.release.tag_name }}
 
