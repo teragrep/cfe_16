@@ -191,6 +191,86 @@
     <finalName>cfe_16</finalName>
     <plugins>
       <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.2.5</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>1.8</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <version>0.15</version>
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <addDefaultLicenseMatchers>false</addDefaultLicenseMatchers>
+          <licenses>
+            <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
+              <notes>Also allow the license url to be https.</notes>
+              <patterns>
+                <pattern>Copyright (C) 2021  Suomen Kanuuna Oy</pattern>
+              </patterns>
+            </license>
+          </licenses>
+          <consoleOutput>true</consoleOutput>
+          <excludeSubProjects>false</excludeSubProjects>
+          <excludes>
+            <!-- git -->
+            <exclude>.git/**</exclude>
+            <exclude>.gitattributes</exclude>
+            <exclude>.gitignore</exclude>
+            <exclude>.gitmodules</exclude>
+            <!-- ci -->
+            <exclude>.github/workflows/*.yml</exclude>
+            <exclude>.github/workflows/*.yaml</exclude>
+            <exclude>.github/ISSUE_TEMPLATE/*</exclude>
+            <exclude>toolchains.xml</exclude>
+            <exclude>settings.xml</exclude>
+            <exclude>rpm/rpm.pom.xml</exclude>
+            <!-- readme -->
+            <exclude>README.adoc</exclude>
+            <exclude>README.md</exclude>
+            <!-- third party -->
+            <exclude>src/main/java/com/teragrep/cfe_16/ThirdParty/SyslogMessageSender/SyslogMessageSender.java</exclude>
+            <!-- resources -->
+            <exclude>src/main/resources/*</exclude>
+            <exclude>src/test/resources/cfe-16-test-plan.jmx</exclude>
+            <!-- misc -->
+            <exclude>rpm/rpm.pom.xml</exclude>
+            <exclude>Dockerfile</exclude>
+            <exclude>config/*</exclude>
+            <exclude>*.sh</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
