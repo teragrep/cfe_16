@@ -8,4 +8,4 @@ if [ -z ${XMX} ]; then
 fi
 echo "Xms=${XMS}"
 echo "Xmx=${XMX}"
-java -jar /opt/Fail-Safe/cfe-16/share/cfe-16.jar -Xms${XMS} -Xmx${XMX} -Dspring.config.location="file://${CONFIG_PATH}"
+java -jar /opt/teragrep/cfe_16/lib/cfe_16.jar -Xms${XMS} -Xmx${XMX} -Dspring.config.location="file://${CONFIG_PATH}"
