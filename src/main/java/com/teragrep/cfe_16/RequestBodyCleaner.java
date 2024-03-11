@@ -48,6 +48,8 @@ package com.teragrep.cfe_16;
 
 import org.springframework.stereotype.Component;
 
+import java.util.regex.Pattern;
+
 /*
  * Cleans the request body so, that only the body of the request is left in the string.
  * This is needed when calling the endpoint that consumes MediaType.APPLICATION_FORM_URLENCODED_VALUE
@@ -60,7 +62,7 @@ import org.springframework.stereotype.Component;
 public class RequestBodyCleaner {
 
     public String cleanAckRequestBody(String body, String channel) {
-        String bodyWithoutChannel = body.replaceAll("channel=\\[" + channel + "\\]\\, ", "");
+        String bodyWithoutChannel = body.replaceAll("channel=\\[" + Pattern.quote(channel) + "\\]\\, ", "");
         String bodywithoutChannelLastCharRemoved = removeLastChar(bodyWithoutChannel);
 
         String cleanedBody = bodywithoutChannelLastCharRemoved.substring(1);
