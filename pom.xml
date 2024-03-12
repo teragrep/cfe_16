@@ -17,6 +17,7 @@
     <revision>0.0.1</revision>
     <changelist>-SNAPSHOT</changelist>
     <sha1/>
+    <aspectj.version>1.9.21.1</aspectj.version>
   </properties>
   <dependencies>
     <dependency>
@@ -101,13 +102,13 @@
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjrt</artifactId>
-      <version>1.9.21.1</version>
+      <version>${aspectj.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
-      <version>1.9.21.1</version>
+      <version>${aspectj.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -267,7 +268,7 @@
         <version>3.2.3</version>
         <configuration>
           <mainClass>com.teragrep.cfe_16.Cfe16Application</mainClass>
-          <agent>${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</agent>
+          <agents>${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</agents>
         </configuration>
         <executions>
           <execution>
