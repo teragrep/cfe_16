@@ -46,15 +46,12 @@
 
 package com.teragrep.cfe_16;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Base64;
 
-import org.junit.jupiter.api.Test;
-
-import org.springframework.mock.web.MockHttpServletRequest;
+import static org.junit.Assert.*;
 
 /*
  * Tests the functionality of TokenManager

@@ -46,30 +46,26 @@
 
 package com.teragrep.cfe_16.it;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.util.Map;
-
-import org.junit.jupiter.api.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teragrep.cfe_16.AckManager;
+import com.teragrep.cfe_16.bo.Ack;
+import com.teragrep.cfe_16.bo.Session;
+import com.teragrep.cfe_16.config.Configuration;
+import com.teragrep.cfe_16.exceptionhandling.ServerIsBusyException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.Map;
 
-import com.teragrep.cfe_16.AckManager;
-import com.teragrep.cfe_16.bo.Ack;
-import com.teragrep.cfe_16.bo.Session;
-import com.teragrep.cfe_16.config.Configuration;
-import com.teragrep.cfe_16.exceptionhandling.ServerIsBusyException;
+import static org.junit.Assert.*;
 
 /*
  * Tests the functionality of ackManager
