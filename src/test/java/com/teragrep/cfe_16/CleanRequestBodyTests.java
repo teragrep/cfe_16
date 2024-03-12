@@ -46,37 +46,16 @@
 
 package com.teragrep.cfe_16;
 
-import org.springframework.stereotype.Component;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.regex.Pattern;
-
-/*
- * Cleans the request body so, that only the body of the request is left in the string.
- * This is needed when calling the endpoint that consumes MediaType.APPLICATION_FORM_URLENCODED_VALUE
- * Example of body sent as a parameter: {channel=[CHANNEL_11111], {"sourcetype": "mysourcetype", "event": "Hello, world!"}=[]}
- * Example of cleaned body returned by the cleanAckRequestBody(): {"sourcetype": "mysourcetype", "event": "Hello, world!"}
- * TODO: Try to implement a better way to get the body of the request.
- *
- */
-@Component
-public class RequestBodyCleaner {
-
-    public String cleanAckRequestBody(String body, String channel) {
-        String bodyWithoutChannel = body.replaceAll("channel=\\[" + Pattern.quote(channel) + "\\]\\, ", "");
-        String bodywithoutChannelLastCharRemoved = removeLastChar(bodyWithoutChannel);
-
-        String cleanedBody = bodywithoutChannelLastCharRemoved.substring(1);
-
-        cleanedBody = removeEqualsArrayFromEnd(cleanedBody);
-
-        return cleanedBody;
-    }
-
-    private String removeLastChar(String str) {
-        return str.substring(0, str.length() - 1);
-    }
-
-    private String removeEqualsArrayFromEnd(String str) {
-        return str.replace("=[]", "");
+public class CleanRequestBodyTests {
+    @Test
+    public void testCleanRequestBodyNormal() {
+        String input = "{channel=[CHANNEL_11111], {\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}=[]}";
+        String channel = "CHANNEL_11111";
+        RequestBodyCleaner requestBodyCleaner = new RequestBodyCleaner();
+        String cleaned = requestBodyCleaner.cleanAckRequestBody(input, channel);
+        Assertions.assertEquals("{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}", cleaned, "Did not clean channel properly");
     }
 }
