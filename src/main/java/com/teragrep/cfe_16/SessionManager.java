@@ -46,17 +46,15 @@
 
 package com.teragrep.cfe_16;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
+import com.teragrep.cfe_16.bo.Session;
+import com.teragrep.cfe_16.config.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.teragrep.cfe_16.bo.Session;
-import com.teragrep.cfe_16.config.Configuration;
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /*
  * Manager that handles creating sessions and getting already existing sessions.

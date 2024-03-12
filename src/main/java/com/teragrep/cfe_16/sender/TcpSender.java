@@ -46,10 +46,10 @@
 
 package com.teragrep.cfe_16.sender;
 
-import java.io.IOException;
-
 import com.cloudbees.syslog.SyslogMessage;
 import com.cloudbees.syslog.sender.TcpSyslogMessageSender;
+
+import java.io.IOException;
 
 public class TcpSender extends AbstractSender {
 

@@ -46,14 +46,13 @@
 
 package com.teragrep.cfe_16;
 
-import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.HttpEventData;
-import org.springframework.stereotype.Component;
-
 import com.cloudbees.syslog.Facility;
 import com.cloudbees.syslog.SDElement;
 import com.cloudbees.syslog.Severity;
 import com.cloudbees.syslog.SyslogMessage;
+import com.teragrep.cfe_16.bo.HeaderInfo;
+import com.teragrep.cfe_16.bo.HttpEventData;
+import org.springframework.stereotype.Component;
 
 /*
  * Converts HTTP Event Data into a Syslog message.

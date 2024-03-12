@@ -46,12 +46,11 @@
 
 package com.teragrep.cfe_16;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-
-import jakarta.servlet.http.HttpServletRequest;
-
-import org.springframework.stereotype.Component;
 
 /*
  * Manager that handles the authentication token 

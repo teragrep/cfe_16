@@ -46,11 +46,9 @@
 
 package com.teragrep.cfe_16;
 
-import jakarta.servlet.http.HttpServletRequest;
-
-import org.springframework.stereotype.Component;
-
 import com.teragrep.cfe_16.bo.HeaderInfo;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
 
 /**
  *

@@ -46,28 +46,21 @@
 
 package com.teragrep.cfe_16.service;
 
-import jakarta.servlet.http.HttpServletRequest;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.teragrep.cfe_16.*;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.exceptionhandling.AuthenticationTokenMissingException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotFoundException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotProvidedException;
 import com.teragrep.cfe_16.exceptionhandling.SessionNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import com.teragrep.cfe_16.AckManager;
-import com.teragrep.cfe_16.EventManager;
-import com.teragrep.cfe_16.RequestHandler;
-import com.teragrep.cfe_16.SessionManager;
-import com.teragrep.cfe_16.TokenManager;
 
 /**
  * Implementation of the REST Service back end.
