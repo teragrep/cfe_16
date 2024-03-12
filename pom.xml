@@ -8,25 +8,17 @@
   <version>${revision}${sha1}${changelist}</version>
   <name>cfe_16</name>
   <description>cfe_16</description>
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.1.6.RELEASE</version>
-    <relativePath /> <!-- lookup parent from repository -->
-  </parent>
   <groupId>com.teragrep</groupId>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
-    <start-class>com.teragrep.cfe_16.Cfe16Application</start-class>
-    <aspectj.version>1.9.2</aspectj.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
     <revision>0.0.1</revision>
     <changelist>-SNAPSHOT</changelist>
     <sha1/>
   </properties>
-
   <dependencies>
-    <!-- //patching for CVE-2021-44228\\ -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
@@ -42,8 +34,12 @@
       <artifactId>log4j-slf4j-impl</artifactId>
       <version>2.23.1</version>
     </dependency>
-    <!-- \\patching for CVE-2021-44228// -->
-
+    <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>4.0.1</version>
+    </dependency>
     <dependency>
       <groupId>com.teragrep</groupId>
       <artifactId>rlp_01</artifactId>
@@ -66,64 +62,54 @@
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
       <version>3.2.3</version>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <version>3.2.3</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-log4j2</artifactId>
       <version>3.2.3</version>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
       <version>3.2.3</version>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
       <version>3.2.3</version>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.session</groupId>
       <artifactId>spring-session-core</artifactId>
       <version>3.2.1</version>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.session</groupId>
       <artifactId>spring-session-jdbc</artifactId>
       <version>3.2.1</version>
     </dependency>
-
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjrt</artifactId>
       <version>1.9.21.1</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
       <version>1.9.21.1</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
@@ -135,44 +121,37 @@
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
       <version>2.16.2</version>
     </dependency>
-
     <dependency>
       <groupId>com.cloudbees</groupId>
       <artifactId>syslog-java-client</artifactId>
       <version>1.1.7</version>
     </dependency>
-
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.10.1</version>
     </dependency>
-
     <dependency>
       <groupId>systems.manifold</groupId>
       <artifactId>manifold-all</artifactId>
-      <version>2024.1.5</version>
+      <version>2024.1.6</version>
     </dependency>
-
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito2</artifactId>
       <version>2.0.9</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>maven-bundle-plugin</artifactId>
       <version>5.1.9</version>
     </dependency>
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -185,7 +164,6 @@
       <version>5.10.2</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
@@ -198,10 +176,7 @@
       <version>1.10.2</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
-
-
   <build>
     <directory>${project.basedir}/target</directory>
     <finalName>cfe_16</finalName>
@@ -305,7 +280,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.5</version>
         <configuration>
           <threadCount>1</threadCount>
         </configuration>
@@ -315,11 +290,10 @@
         <artifactId>maven-deploy-plugin</artifactId>
         <version>3.1.1</version>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.5</version>
         <executions>
           <execution>
             <id>integration-tests</id>
