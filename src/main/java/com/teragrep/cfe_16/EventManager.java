@@ -46,32 +46,29 @@
 
 package com.teragrep.cfe_16;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
-import com.teragrep.cfe_16.bo.HttpEventData;
-import com.teragrep.cfe_16.bo.Session;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.cloudbees.syslog.SyslogMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonStreamParser;
-
 import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.HeaderInfo;
+import com.teragrep.cfe_16.bo.HttpEventData;
+import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldBlankException;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
 import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
 import com.teragrep.cfe_16.sender.AbstractSender;
 import com.teragrep.cfe_16.sender.SenderFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Manager that handles the event sent in a request.

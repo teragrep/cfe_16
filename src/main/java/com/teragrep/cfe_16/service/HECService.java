@@ -46,12 +46,11 @@
 
 package com.teragrep.cfe_16.service;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 
 /**
  * An interface that specified the REST back end API.

@@ -46,27 +46,18 @@
 
 package com.teragrep.cfe_16;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import com.cloudbees.syslog.*;
+import com.teragrep.cfe_16.bo.HeaderInfo;
+import com.teragrep.cfe_16.bo.HttpEventData;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.teragrep.cfe_16.bo.HttpEventData;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-
-import com.cloudbees.syslog.Facility;
-import com.cloudbees.syslog.SDElement;
-import com.cloudbees.syslog.SDParam;
-import com.cloudbees.syslog.Severity;
-import com.cloudbees.syslog.SyslogMessage;
-
-import com.teragrep.cfe_16.bo.HeaderInfo;
+import static org.junit.Assert.*;
 
 /*
  * Tests the functionality of Converter

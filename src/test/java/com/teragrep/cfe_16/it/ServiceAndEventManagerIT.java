@@ -46,38 +46,32 @@
 
 package com.teragrep.cfe_16.it;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.net.ServerSocket;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.AckManager;
 import com.teragrep.cfe_16.EventManager;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.Session;
+import com.teragrep.cfe_16.exceptionhandling.*;
+import com.teragrep.cfe_16.service.HECService;
 import com.teragrep.rlp_03.Server;
-import com.teragrep.rlp_03.SyslogFrameProcessor;
+import com.teragrep.rlp_03.ServerFactory;
+import com.teragrep.rlp_03.config.Config;
+import com.teragrep.rlp_03.delegate.DefaultFrameDelegate;
+import com.teragrep.rlp_03.delegate.FrameDelegate;
 import org.junit.jupiter.api.*;
 import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.function.Supplier;
 
-import com.teragrep.cfe_16.exceptionhandling.AuthenticationTokenMissingException;
-import com.teragrep.cfe_16.exceptionhandling.ChannelNotFoundException;
-import com.teragrep.cfe_16.exceptionhandling.ChannelNotProvidedException;
-import com.teragrep.cfe_16.exceptionhandling.EventFieldBlankException;
-import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
-import com.teragrep.cfe_16.exceptionhandling.SessionNotFoundException;
-import com.teragrep.cfe_16.service.HECService;
-
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.junit.Assert.*;
 
 /*
  * Tests the functionality of HECServiceImpl
@@ -101,9 +95,15 @@ public class ServiceAndEventManagerIT {
     private static final String hostname = "localhost";
     private static Integer port = 1601;
     @BeforeAll
-    public static void init_x() throws IOException {
-        server = new Server(port, new SyslogFrameProcessor((message) -> { System.out.println(new String(message)); }));
-        server.start();
+    public static void init_x() throws IOException, InterruptedException {
+        Supplier<FrameDelegate> frameDelegateSupplier = () -> new DefaultFrameDelegate((frame) -> System.out.println(frame.relpFrame().payload().toString()));
+        Config config = new Config(port, 1);
+        ServerFactory serverFactory = new ServerFactory(config, frameDelegateSupplier);
+
+        server = serverFactory.create();
+        Thread serverThread = new Thread(server);
+        serverThread.start();
+        server.startup.waitForCompletion();
     }
 
     @AfterAll

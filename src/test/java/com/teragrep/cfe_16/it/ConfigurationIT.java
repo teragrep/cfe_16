@@ -47,16 +47,22 @@
 package com.teragrep.cfe_16.it;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.rlp_03.Server;
-import com.teragrep.rlp_03.SyslogFrameProcessor;
-import org.junit.jupiter.api.*;
+import com.teragrep.rlp_03.ServerFactory;
+import com.teragrep.rlp_03.config.Config;
+import com.teragrep.rlp_03.delegate.DefaultFrameDelegate;
+import com.teragrep.rlp_03.delegate.FrameDelegate;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.util.function.Supplier;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class ConfigurationIT {
@@ -68,9 +74,15 @@ public class ConfigurationIT {
     private static final String hostname = "localhost";
     private static Integer port = 1235;
     @BeforeAll
-    public static void init() throws IOException {
-        server = new Server(port, new SyslogFrameProcessor((message) -> { System.out.println(new String(message)); }));
-        server.start();
+    public static void init() throws IOException, InterruptedException {
+        Supplier<FrameDelegate> frameDelegateSupplier = () -> new DefaultFrameDelegate((frame) -> System.out.println(frame.relpFrame().payload().toString()));
+        Config config = new Config(port, 1);
+        ServerFactory serverFactory = new ServerFactory(config, frameDelegateSupplier);
+
+        server = serverFactory.create();
+        Thread serverThread = new Thread(server);
+        serverThread.start();
+        server.startup.waitForCompletion();
     }
 
     @AfterAll

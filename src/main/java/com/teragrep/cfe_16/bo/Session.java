@@ -46,10 +46,10 @@
 
 package com.teragrep.cfe_16.bo;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * A Session keeps track of channels that are contained

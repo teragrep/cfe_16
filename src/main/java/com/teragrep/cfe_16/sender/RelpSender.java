@@ -46,13 +46,12 @@
 
 package com.teragrep.cfe_16.sender;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-
 import com.cloudbees.syslog.SyslogMessage;
-
 import com.teragrep.rlp_01.RelpBatch;
 import com.teragrep.rlp_01.RelpConnection;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 public class RelpSender extends AbstractSender {
 
