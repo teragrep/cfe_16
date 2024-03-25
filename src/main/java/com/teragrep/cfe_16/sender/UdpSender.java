@@ -66,7 +66,7 @@ public class UdpSender extends AbstractSender {
     
     @Override
     public void sendMessages(SyslogMessage[] syslogMessages) throws IOException {
-        LOGGER.trace("Sending messages");
+        LOGGER.debug("Sending messages");
         for (SyslogMessage syslogMessage : syslogMessages) {
             this.sender.sendMessage(syslogMessage);
         }
@@ -74,7 +74,7 @@ public class UdpSender extends AbstractSender {
 
     @Override
     public void sendMessage(SyslogMessage syslogMessage) throws IOException {
-        LOGGER.trace("Sending message");
+        LOGGER.debug("Sending message");
         this.sender.sendMessage(syslogMessage);
     }
 

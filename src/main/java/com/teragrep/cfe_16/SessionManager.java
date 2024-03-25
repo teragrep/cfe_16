@@ -143,6 +143,7 @@ public class SessionManager implements Runnable, LifeCycle {
      */
     public Session getOrCreateSession(String authenticationToken) {
         LOGGER.debug("Getting or creating session");
+        LOGGER.trace("Getting or creating session for authenticationToken: {}", authenticationToken);
         synchronized (this) {
             Session session =  this.sessions.get(authenticationToken);
             if (session == null) {
@@ -155,6 +156,7 @@ public class SessionManager implements Runnable, LifeCycle {
 
     public void removeSession(String authenticationToken) {
         LOGGER.debug("Removing session");
+        LOGGER.trace("Removing session for authenticationToken: {}", authenticationToken);
         synchronized (this) {
             this.sessions.remove(authenticationToken);
         }
@@ -164,7 +166,8 @@ public class SessionManager implements Runnable, LifeCycle {
      * Creates a new session object
      */
     public Session createSession(String authenticationToken) {
-        LOGGER.debug("Creationg new session");
+        LOGGER.debug("Creating new session");
+        LOGGER.trace("Creating new session for authenticationToken: {}", authenticationToken);
         synchronized (this) {
             Session session = new Session(authenticationToken);
             this.sessions.put(authenticationToken, session);

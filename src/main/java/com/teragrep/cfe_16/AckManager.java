@@ -172,7 +172,7 @@ public class AckManager implements Runnable, LifeCycle {
             state = new State();
             this.ackStates.put(key, state);
         }
-        LOGGER.trace("Created state <{}> for channel <{}>", state, channel);
+        LOGGER.debug("Created state <{}> for channel <{}>", state, channel);
         return state;
     }
 
@@ -184,10 +184,10 @@ public class AckManager implements Runnable, LifeCycle {
      * @param channel
      */
     public void initializeContext(String authToken, String channel) {
-        LOGGER.trace("Initializing context for channel <{}>", channel);
+        LOGGER.debug("Initializing context for channel <{}>", channel);
         String key = authToken + channel;
         if (!this.ackStates.containsKey(key)) {
-            LOGGER.trace("Adding new state to channel <{}>", channel);
+            LOGGER.debug("Adding new state to channel <{}>", channel);
             State state = new State();
             this.ackStates.put(key, state);
         }
@@ -244,7 +244,7 @@ public class AckManager implements Runnable, LifeCycle {
     public boolean acknowledge(String authToken, String channel, int ackId) {
         String key = authToken + channel;
         State state = this.ackStates.get(key);
-        LOGGER.trace("Acknowledging ackId <{}> on channel <{}>", ackId, channel);
+        LOGGER.debug("Acknowledging ackId <{}> on channel <{}>", ackId, channel);
         if (state == null) {
             throw new IllegalStateException("An Ack cannot be acknowledge before it is added to the Ack list.");
         }
@@ -387,7 +387,7 @@ public class AckManager implements Runnable, LifeCycle {
 
         while (true) {
             try {
-                LOGGER.trace("Sleeping for <{}> while waiting for polls", this.configuration.getPollTime());
+                LOGGER.debug("Sleeping for <{}> while waiting for polls", this.configuration.getPollTime());
                 Thread.sleep(this.configuration.getPollTime());
             } catch (InterruptedException e) {
                 break;

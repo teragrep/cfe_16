@@ -77,10 +77,10 @@ public class Session {
 
     @SuppressWarnings("unchecked")
     public Session(String channel, String authenticationToken) {
-        LOGGER.trace("Creating new session with channel <{}>", channel);
+        LOGGER.info("Creating new session with channel <{}>", channel);
         this.channels = Collections.synchronizedSet(new HashSet<String>());
         if (channel != null) {
-            LOGGER.debug("Adding channel <[{}]>", channel);
+            LOGGER.info("Adding channel <[{}]>", channel);
             this.channels.add(channel);
         }
         this.authenticationToken = authenticationToken;

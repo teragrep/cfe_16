@@ -143,7 +143,7 @@ public class RelpSender extends AbstractSender {
 
         while (notSent) {
             try {
-                LOGGER.trace("Committing a RELP batch");
+                LOGGER.debug("Committing a RELP batch");
                 this.sender.commit(relpBatch);
             } catch (IllegalStateException | IOException | TimeoutException e) {
                 LOGGER.warn("Failed to commit batch: ", e);

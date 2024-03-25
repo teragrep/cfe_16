@@ -397,7 +397,7 @@ public class TestClient implements Runnable {
     private static void startThreads(int numberOfThreads, Thread[] threads) {
         LOGGER.debug("Starting <[{}]> threads", numberOfThreads);
         for (int i = 0; i < numberOfThreads; i++) {
-            LOGGER.trace("Starting thread <{}> of <{}>", i, numberOfThreads);
+            LOGGER.debug("Starting thread <{}> of <{}>", i, numberOfThreads);
             threads[i].start();
         }
     }
@@ -406,7 +406,7 @@ public class TestClient implements Runnable {
         LOGGER.debug("Creating <[{}]> threads", numberOfThreads);
         Thread[] threads = new Thread[numberOfThreads];
         for (int i = 0; i < numberOfThreads; i++) {
-            LOGGER.trace("Creating thread <{}> of <[{}]>", i, numberOfThreads);
+            LOGGER.debug("Creating thread <{}> of <[{}]>", i, numberOfThreads);
             threads[i] = new Thread(testClients[i]);
         }
         return threads;
@@ -417,7 +417,7 @@ public class TestClient implements Runnable {
         LOGGER.debug("Creating <[{}]> test clients", numberOfThreads);
         TestClient[] testClients = new TestClient[numberOfThreads];
         for (int i = 0; i < numberOfThreads; i++) {
-            LOGGER.trace("Creating testClient <{}> of <[{}]>", i, numberOfThreads);
+            LOGGER.debug("Creating testClient <{}> of <[{}]>", i, numberOfThreads);
             testClients[i] = new TestClient(numberOfLoops, host, port);
         }
         return testClients;

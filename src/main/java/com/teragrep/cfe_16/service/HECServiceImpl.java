@@ -96,7 +96,7 @@ public class HECServiceImpl implements HECService {
     public ObjectNode sendEvents(HttpServletRequest request, 
                                  String channel, 
                                  String eventInJson) {
-        LOGGER.trace("Sending events to channel <{}>", channel);
+        LOGGER.debug("Sending events to channel <{}>", channel);
         if (this.tokenManager.tokenIsMissing(request)) {
             throw new AuthenticationTokenMissingException("Authentication token must be provided");
         }
@@ -108,10 +108,10 @@ public class HECServiceImpl implements HECService {
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {
-            LOGGER.trace("Token was provided via Basic");
+            LOGGER.debug("Token was provided via Basic");
             authToken = this.tokenManager.getTokenFromBasic(authHeader);
         } else {
-            LOGGER.trace("Token was provided via header");
+            LOGGER.debug("Token was provided via header");
             authToken = authHeader;
         }
         
@@ -125,7 +125,7 @@ public class HECServiceImpl implements HECService {
         
         // if the channel is not in the session, let's add the channel into it
         if (!session.doesChannelExist(channel)) {
-            LOGGER.trace("Adding channel <{}>", channel);
+            LOGGER.debug("Adding channel <{}>", channel);
             session.addChannel(channel);
         }
         
@@ -156,10 +156,10 @@ public class HECServiceImpl implements HECService {
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {
-            LOGGER.trace("Token was provided via Basic");
+            LOGGER.debug("Token was provided via Basic");
             authToken = this.tokenManager.getTokenFromBasic(authHeader);
         } else {
-            LOGGER.trace("Token was provided via header");
+            LOGGER.debug("Token was provided via header");
             authToken = authHeader;
         }
         
