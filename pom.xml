@@ -255,7 +255,7 @@
             <!-- third party -->
             <exclude>src/main/java/com/teragrep/cfe_16/ThirdParty/SyslogMessageSender/SyslogMessageSender.java</exclude>
             <!-- resources -->
-            <exclude>src/main/resources/*</exclude>
+            <exclude>src/main/resources/**</exclude>
             <exclude>src/test/resources/cfe-16-test-plan.jmx</exclude>
             <!-- misc -->
             <exclude>rpm/rpm.pom.xml</exclude>
