@@ -56,6 +56,8 @@ import com.teragrep.cfe_16.exceptionhandling.ServerIsBusyException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -85,7 +87,7 @@ import static org.junit.Assert.*;
         "server.print.times=true" 
         })
 public class AckManagerIT {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AckManagerIT.class);
     private String authToken1;
     private String authToken2;
 
@@ -199,7 +201,7 @@ public class AckManagerIT {
                     supposedResponseAsStringOneTrue, ackManager.getRequestedAckStatuses(this.authToken1, this.channel1, queryNode).toString());
         } catch (Throwable e1) {
             // TODO Auto-generated catch block
-            e1.printStackTrace();
+            LOGGER.warn("Failed to handle ack request: ", e1);
         }
         
         assertEquals(

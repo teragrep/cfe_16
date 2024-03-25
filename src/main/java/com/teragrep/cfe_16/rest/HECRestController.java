@@ -52,6 +52,8 @@ import com.teragrep.cfe_16.RequestBodyCleaner;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.service.HECService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +63,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/")
 public class HECRestController {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(HECRestController.class);
     @Autowired
     private HECService service;
 
@@ -86,8 +88,9 @@ public class HECRestController {
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double)dt / 1000.0;
-        if (this.configuration.getPrintTimes())
-            System.out.println("sendEvents took " + dt + " nanoseconds, that is " + us + " microseconds");
+        if (this.configuration.getPrintTimes()) {
+            LOGGER.info("sendEvents took <{}> nanoseconds, that is <{}> microseconds", dt, us);
+        }
         return response;
     }
 
@@ -99,8 +102,9 @@ public class HECRestController {
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double)dt / 1000.0;
-        if (this.configuration.getPrintTimes())
-            System.out.println("sendEvents took " + dt + " nanoseconds, that is " + us + " microseconds");
+        if (this.configuration.getPrintTimes()) {
+            LOGGER.info("sendEvents took <{}> nanoseconds, that is <{}> microseconds", dt, us);
+        }
         return response;
     }
 
@@ -115,8 +119,9 @@ public class HECRestController {
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double)dt / 1000.0;
-        if (this.configuration.getPrintTimes())
-            System.out.println("getAcks took " + dt + " nanoseconds, that is " + us + " microseconds");
+        if (this.configuration.getPrintTimes()) {
+            LOGGER.info("getAcks took <{}> nanoseconds, that is <{}> microseconds", dt, us);
+        }
         return response;
     }
 
@@ -135,7 +140,7 @@ public class HECRestController {
             requestedAcksInJson = objectMapper.readValue(bodyString, JsonNode.class);
         } catch (Exception e) {
             // TODO: handle the error in a proper way
-            e.printStackTrace();
+            LOGGER.warn("Failed to handle response: ", e);
         }
 
         long t1 = System.nanoTime();
@@ -143,8 +148,9 @@ public class HECRestController {
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double)dt / 1000.0;
-        if (this.configuration.getPrintTimes())
-            System.out.println("getAcks took " + dt + " nanoseconds, that is " + us + " microseconds");
+        if (this.configuration.getPrintTimes()) {
+            LOGGER.info("getAcks took <{}> nanoseconds, that is <{}> microseconds", dt, us);
+        }
         return response;
     }
 
@@ -163,8 +169,9 @@ public class HECRestController {
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double)dt / 1000.0;
-        if (this.configuration.getPrintTimes())
-            System.out.println("sendEvents took " + dt + " nanoseconds, that is " + us + " microseconds");
+        if (this.configuration.getPrintTimes()) {
+            LOGGER.info("sendEvents took <{}> nanoseconds, that is <{}> microseconds", dt, us);
+        }
         return response;
     }
 
@@ -179,8 +186,9 @@ public class HECRestController {
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double)dt / 1000.0;
-        if (this.configuration.getPrintTimes())
-            System.out.println("sendEvents took " + dt + " nanoseconds, that is " + us + " microseconds");
+        if (this.configuration.getPrintTimes()) {
+            LOGGER.info("sendEvents took <{}> nanoseconds, that is <{}> microseconds", dt, us);
+        }
         return response;
     }
 
@@ -196,8 +204,9 @@ public class HECRestController {
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double)dt / 1000.0;
-        if (this.configuration.getPrintTimes())
-            System.out.println("sendEvents took " + dt + " nanoseconds, that is " + us + " microseconds");
+        if (this.configuration.getPrintTimes()) {
+            LOGGER.info("sendEvents took <{}¦ nanoseconds, that is <{}> microseconds", dt, us);
+        }
         return response;
     }
 

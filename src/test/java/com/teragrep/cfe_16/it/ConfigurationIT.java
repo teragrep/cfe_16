@@ -56,6 +56,8 @@ import com.teragrep.rlp_03.delegate.FrameDelegate;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -66,7 +68,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class ConfigurationIT {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationIT.class);
     @Autowired
     private Configuration configuration;
 
@@ -75,7 +77,7 @@ public class ConfigurationIT {
     private static Integer port = 1235;
     @BeforeAll
     public static void init() throws IOException, InterruptedException {
-        Supplier<FrameDelegate> frameDelegateSupplier = () -> new DefaultFrameDelegate((frame) -> System.out.println(frame.relpFrame().payload().toString()));
+        Supplier<FrameDelegate> frameDelegateSupplier = () -> new DefaultFrameDelegate((frame) -> LOGGER.debug(frame.relpFrame().payload().toString()));
         Config config = new Config(port, 1);
         ServerFactory serverFactory = new ServerFactory(config, frameDelegateSupplier);
 
@@ -95,8 +97,8 @@ public class ConfigurationIT {
     	String expected =
     	"Configuration [sysLogHost=127.0.0.1, sysLogProtocol=relp, sysLogPort=1235, maxAckValue=1000000, maxAckAge=20000, maxSessionAge=30000, "
     	+ "maxChannels=1000000, pollTime=1000000, printTimes=true]";
-        System.out.println(configuration.toString());
-        
+        LOGGER.debug(configuration.toString());
+
     	assertEquals(expected, configuration.toString());
     }
 }

@@ -46,6 +46,9 @@
 
 package com.teragrep.cfe_16;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.Socket;
@@ -56,7 +59,7 @@ import java.net.SocketException;
  *
  */
 public class TestClient implements Runnable {
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestClient.class);
     /**
      * How many loops a single thread does.
      */
@@ -76,6 +79,7 @@ public class TestClient implements Runnable {
         this.n = n;
         this.host = host;
         this.port = port;
+        LOGGER.info("Initialized TestClient, sending <[{}]> messages to <[{}]>:<[{}]>", n, host, port);
     }
 
     public void run() {
@@ -357,7 +361,7 @@ public class TestClient implements Runnable {
         if (args.length >= 4) {
             String host = args[0];
             int port = Integer.valueOf(args[1]);
-            System.out.println("Connecting to " + host + ":" + port);
+            LOGGER.info("Connecting to <[{}]>:<[{}]>", host, port);
             int numberOfThreads = Integer.valueOf(args[2]);
             int numberOfLoops = Integer.valueOf(args[3]);
             TestClient[] testClients = createTestClients(host, port, numberOfThreads, numberOfLoops);
@@ -370,7 +374,7 @@ public class TestClient implements Runnable {
             int numberOfRequests = numberOfThreads * numberOfLoops;
             double millisecsPerRequest = (double)dt / (double)numberOfRequests;
             double throughput = 1000.0 / millisecsPerRequest;
-            System.out.println("\nDid " + numberOfRequests + " requests in " + dt + " milliseconds, that is " + millisecsPerRequest + " ms/req., which is " + throughput + " transactions/sec.");
+            LOGGER.info("Did <[{}]> requests in <{}> milliseconds, that is <{}> ms/req., which is <{}> transactions/sec.", numberOfRequests, dt, millisecsPerRequest, throughput);
             FileOutputStream fileOutputStream = new FileOutputStream("stats.csv", true);
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream));
             String line = numberOfThreads + "," + millisecsPerRequest + "," + throughput + "\n";
@@ -378,25 +382,31 @@ public class TestClient implements Runnable {
             bufferedWriter.close();
             fileOutputStream.close();
         } else {
-            System.err.println("Usage: <host> <port> <n threads> <n loops>");
+            LOGGER.error("Usage: Usage: <host> <port> <n threads> <n loops>");
         }
     }
 
     private static void waitThreadsToFinish(int numberOfThreads, Thread[] threads) throws InterruptedException {
         for (int i = 0; i < numberOfThreads; i++) {
+            LOGGER.debug("Waiting for thread <{}> out of <{}> threads to finish", i, numberOfThreads);
             threads[i].join();
+            LOGGER.debug("Thread <[{}]> of <[{}]> threads finished", i, numberOfThreads);
         }
     }
 
     private static void startThreads(int numberOfThreads, Thread[] threads) {
+        LOGGER.debug("Starting <[{}]> threads", numberOfThreads);
         for (int i = 0; i < numberOfThreads; i++) {
+            LOGGER.debug("Starting thread <{}> of <{}>", i, numberOfThreads);
             threads[i].start();
         }
     }
 
     private static Thread[] createThreads(int numberOfThreads, TestClient[] testClients) {
+        LOGGER.debug("Creating <[{}]> threads", numberOfThreads);
         Thread[] threads = new Thread[numberOfThreads];
         for (int i = 0; i < numberOfThreads; i++) {
+            LOGGER.debug("Creating thread <{}> of <[{}]>", i, numberOfThreads);
             threads[i] = new Thread(testClients[i]);
         }
         return threads;
@@ -404,8 +414,10 @@ public class TestClient implements Runnable {
 
     private static TestClient[] createTestClients(String host, int port, int numberOfThreads, int numberOfLoops)
             throws IOException {
+        LOGGER.debug("Creating <[{}]> test clients", numberOfThreads);
         TestClient[] testClients = new TestClient[numberOfThreads];
         for (int i = 0; i < numberOfThreads; i++) {
+            LOGGER.debug("Creating testClient <{}> of <[{}]>", i, numberOfThreads);
             testClients[i] = new TestClient(numberOfLoops, host, port);
         }
         return testClients;

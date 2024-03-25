@@ -46,6 +46,8 @@
 
 package com.teragrep.cfe_16.exceptionhandling;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -53,7 +55,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class HECExceptionHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(HECExceptionHandler.class);
     @ExceptionHandler
     public ResponseEntity<HECErrorResponse> handleException(AuthenticationTokenMissingException exc) {
 
@@ -118,7 +120,7 @@ public class HECExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<HECErrorResponse> handleException(InternalServerErrorException e) {
 
-        e.printStackTrace();
+        LOGGER.warn("Internal server error: ", e);
         HECErrorResponse error = new HECErrorResponse("Internal server error ", 8, 0);
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);

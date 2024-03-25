@@ -52,6 +52,8 @@ import com.cloudbees.syslog.Severity;
 import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /*
@@ -62,7 +64,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class Converter {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
     private Severity severity;
     private Facility facility;
 
@@ -83,16 +85,17 @@ public class Converter {
             /*
              * Creates a Syslogmessage with a time stamp
              */
+            LOGGER.debug("Creating new syslog message with timestamp");
             syslogMessage = new SyslogMessage().withTimestamp(httpEventData.getTimeAsLong()).withSeverity(severity)
                     .withAppName("capsulated").withHostname("cfe_16").withFacility(facility).withSDElement(metadataSDE)
                     .withSDElement(headerSDE).withMsg(httpEventData.getEvent());
 
         } else {
-
             /*
              * Creates a Syslogmessage without timestamp, because the time is already given
              * in the request.
              */
+            LOGGER.debug("Creating new syslog message without timestamp");
             syslogMessage = new SyslogMessage().withSeverity(severity).withAppName("capsulated").withHostname("cfe_16")
                     .withFacility(facility).withSDElement(metadataSDE).withSDElement(headerSDE)
                     .withMsg(httpEventData.getEvent());
@@ -120,25 +123,31 @@ public class Converter {
      * Parameters.
      */
     private void setStructuredDataParams(HttpEventData eventData) {
+        LOGGER.debug("Setting Structured Data params");
         metadataSDE = new SDElement("cfe_16-metadata@48577");
 
         if (eventData.getAuthenticationToken() != null) {
+            LOGGER.debug("Setting authentication token");
             metadataSDE.addSDParam("authentication_token", eventData.getAuthenticationToken());
         }
 
         if (eventData.getChannel() != null) {
+            LOGGER.debug("Setting channel");
             metadataSDE.addSDParam("channel", eventData.getChannel());
         }
 
         if (eventData.getAckID() != null) {
+            LOGGER.debug("Setting ack id");
             metadataSDE.addSDParam("ack_id", String.valueOf(eventData.getAckID()));
         }
 
         if (eventData.getTimeSource() != null) {
+            LOGGER.debug("Setting time source");
             metadataSDE.addSDParam("time_source", eventData.getTimeSource());
         }
 
         if (eventData.isTimeParsed()) {
+            LOGGER.debug("Setting time_parsed and time");
             metadataSDE.addSDParam("time_parsed", "true");
             metadataSDE.addSDParam("time", eventData.getTime());
         }
@@ -155,15 +164,19 @@ public class Converter {
     }
 
     private void setHeaderSDE(HeaderInfo headerInfo) {
+        LOGGER.debug("Setting Structured Data headers");
         headerSDE = new SDElement("cfe_16-origin@48577");
 
         if (headerInfo.getxForwardedFor() != null) {
+            LOGGER.debug("Adding X-Forwarded-For header to headerSDE");
             headerSDE.addSDParam("X-Forwarded-For", headerInfo.getxForwardedFor());
         }
         if (headerInfo.getxForwardedHost() != null) {
+            LOGGER.debug("Adding X-Forwarder-Host to headerSDE");
             headerSDE.addSDParam("X-Forwarded-Host", headerInfo.getxForwardedHost());
         }
         if (headerInfo.getxForwardedProto() != null) {
+            LOGGER.debug("Adding X-Forwarded-Proto to headerSDE");
             headerSDE.addSDParam("X-Forwarded-Proto", headerInfo.getxForwardedProto());
         }
     }

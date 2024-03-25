@@ -48,11 +48,13 @@ package com.teragrep.cfe_16.sender;
 
 import com.cloudbees.syslog.SyslogMessage;
 import com.cloudbees.syslog.sender.UdpSyslogMessageSender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class UdpSender extends AbstractSender {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(UdpSender.class);
     private UdpSyslogMessageSender sender;
     
     public UdpSender(String hostname, int port) {
@@ -64,6 +66,7 @@ public class UdpSender extends AbstractSender {
     
     @Override
     public void sendMessages(SyslogMessage[] syslogMessages) throws IOException {
+        LOGGER.debug("Sending messages");
         for (SyslogMessage syslogMessage : syslogMessages) {
             this.sender.sendMessage(syslogMessage);
         }
@@ -71,11 +74,13 @@ public class UdpSender extends AbstractSender {
 
     @Override
     public void sendMessage(SyslogMessage syslogMessage) throws IOException {
+        LOGGER.debug("Sending message");
         this.sender.sendMessage(syslogMessage);
     }
 
     @Override
     public void close() throws IOException {
+        LOGGER.debug("Closing sender");
         this.sender.close();
     }
 }

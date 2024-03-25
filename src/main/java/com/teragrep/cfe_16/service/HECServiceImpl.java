@@ -57,6 +57,8 @@ import com.teragrep.cfe_16.exceptionhandling.ChannelNotFoundException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotProvidedException;
 import com.teragrep.cfe_16.exceptionhandling.SessionNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +70,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class HECServiceImpl implements HECService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(HECServiceImpl.class);
     @Autowired
     private AckManager ackManager;
     
@@ -94,7 +96,7 @@ public class HECServiceImpl implements HECService {
     public ObjectNode sendEvents(HttpServletRequest request, 
                                  String channel, 
                                  String eventInJson) {
-        
+        LOGGER.debug("Sending events to channel <{}>", channel);
         if (this.tokenManager.tokenIsMissing(request)) {
             throw new AuthenticationTokenMissingException("Authentication token must be provided");
         }
@@ -106,20 +108,24 @@ public class HECServiceImpl implements HECService {
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {
+            LOGGER.debug("Token was provided via Basic");
             authToken = this.tokenManager.getTokenFromBasic(authHeader);
         } else {
+            LOGGER.debug("Token was provided via header");
             authToken = authHeader;
         }
         
         // if there is no channel, we'll use the default channel
         if (channel == null) {
             channel = Session.DEFAULT_CHANNEL;
+            LOGGER.debug("Channel was not provided, using <{}>", channel);
         }
         
         Session session = this.sessionManager.getOrCreateSession(authToken);
         
         // if the channel is not in the session, let's add the channel into it
         if (!session.doesChannelExist(channel)) {
+            LOGGER.debug("Adding channel <{}>", channel);
             session.addChannel(channel);
         }
         
@@ -150,8 +156,10 @@ public class HECServiceImpl implements HECService {
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {
+            LOGGER.debug("Token was provided via Basic");
             authToken = this.tokenManager.getTokenFromBasic(authHeader);
         } else {
+            LOGGER.debug("Token was provided via header");
             authToken = authHeader;
         }
         

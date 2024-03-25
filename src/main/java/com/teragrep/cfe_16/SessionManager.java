@@ -48,6 +48,8 @@ package com.teragrep.cfe_16;
 
 import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.config.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -63,7 +65,7 @@ import java.util.Map;
  */
 @Component
 public class SessionManager implements Runnable, LifeCycle {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SessionManager.class);
     /**
      * Maps auth token string => session object.
      */
@@ -100,6 +102,7 @@ public class SessionManager implements Runnable, LifeCycle {
     public void run() {
         while (true) {
             try {
+                LOGGER.debug("Sleeping for <{}>  while waiting for poll", this.configuration.getPollTime());
                 Thread.sleep(this.configuration.getPollTime());
             } catch (InterruptedException e) {
                 break;
@@ -139,6 +142,8 @@ public class SessionManager implements Runnable, LifeCycle {
      * @return
      */
     public Session getOrCreateSession(String authenticationToken) {
+        LOGGER.debug("Getting or creating session");
+        LOGGER.trace("Getting or creating session for authenticationToken: {}", authenticationToken);
         synchronized (this) {
             Session session =  this.sessions.get(authenticationToken);
             if (session == null) {
@@ -150,6 +155,8 @@ public class SessionManager implements Runnable, LifeCycle {
     }
 
     public void removeSession(String authenticationToken) {
+        LOGGER.debug("Removing session");
+        LOGGER.trace("Removing session for authenticationToken: {}", authenticationToken);
         synchronized (this) {
             this.sessions.remove(authenticationToken);
         }
@@ -159,6 +166,8 @@ public class SessionManager implements Runnable, LifeCycle {
      * Creates a new session object
      */
     public Session createSession(String authenticationToken) {
+        LOGGER.debug("Creating new session");
+        LOGGER.trace("Creating new session for authenticationToken: {}", authenticationToken);
         synchronized (this) {
             Session session = new Session(authenticationToken);
             this.sessions.put(authenticationToken, session);
