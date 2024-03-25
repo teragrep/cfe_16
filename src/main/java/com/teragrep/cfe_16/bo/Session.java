@@ -46,6 +46,9 @@
 
 package com.teragrep.cfe_16.bo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -59,7 +62,7 @@ import java.util.Set;
 public class Session {
 
     public static final String DEFAULT_CHANNEL = "defaultchannel";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Session.class);
     /**
      * Channels of this Session object.
      */
@@ -74,8 +77,10 @@ public class Session {
 
     @SuppressWarnings("unchecked")
     public Session(String channel, String authenticationToken) {
+        LOGGER.trace("Creating new session with channel <{}>", channel);
         this.channels = Collections.synchronizedSet(new HashSet<String>());
         if (channel != null) {
+            LOGGER.debug("Adding channel <[{}]>", channel);
             this.channels.add(channel);
         }
         this.authenticationToken = authenticationToken;

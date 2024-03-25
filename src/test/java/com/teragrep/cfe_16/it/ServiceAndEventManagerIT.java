@@ -62,6 +62,8 @@ import com.teragrep.rlp_03.delegate.DefaultFrameDelegate;
 import com.teragrep.rlp_03.delegate.FrameDelegate;
 import org.junit.jupiter.api.*;
 import org.powermock.reflect.Whitebox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -91,12 +93,13 @@ import static org.junit.Assert.*;
 		"server.print.times=true" 
 		})
 public class ServiceAndEventManagerIT {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceAndEventManagerIT.class);
     private static Server server;
     private static final String hostname = "localhost";
     private static Integer port = 1601;
     @BeforeAll
     public static void init_x() throws IOException, InterruptedException {
-        Supplier<FrameDelegate> frameDelegateSupplier = () -> new DefaultFrameDelegate((frame) -> System.out.println(frame.relpFrame().payload().toString()));
+        Supplier<FrameDelegate> frameDelegateSupplier = () -> new DefaultFrameDelegate((frame) -> LOGGER.debug(frame.relpFrame().payload().toString()));
         Config config = new Config(port, 1);
         ServerFactory serverFactory = new ServerFactory(config, frameDelegateSupplier);
 
@@ -146,7 +149,7 @@ public class ServiceAndEventManagerIT {
         try {
             socket = new ServerSocket(1234);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.warn("Could not get a server socket: ", e);
             throw new RuntimeException(e);
         }
         return socket;
@@ -157,7 +160,7 @@ public class ServiceAndEventManagerIT {
         try {
             serverSocket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.warn("Could not close server socket: ", e);
         }
     }
 
@@ -438,7 +441,7 @@ public class ServiceAndEventManagerIT {
             testData7 = Whitebox.invokeMethod(eventManager, "handleTime", testData7, node7, null);
             testData8 = Whitebox.invokeMethod(eventManager, "handleTime", testData8, node8, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warn("Could not invokeMethods properly: ", e);
         }
 
         /*

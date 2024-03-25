@@ -52,6 +52,8 @@ import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
 import com.teragrep.cfe_16.exceptionhandling.ServerIsBusyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -70,7 +72,7 @@ import java.util.Map;
  */
 @Component
 public class AckManager implements Runnable, LifeCycle {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AckManager.class);
     /**
      * A class that encapsulates state of individual channels regarding to ACKs.
      *
@@ -163,12 +165,14 @@ public class AckManager implements Runnable, LifeCycle {
      * @return
      */
     private State getOrCreateState(String authToken, String channel) {
+        LOGGER.debug("Getting or creating state for channel <{}>", channel);
         String key = authToken + channel;
         State state = this.ackStates.get(key);
         if (state == null) {
             state = new State();
             this.ackStates.put(key, state);
         }
+        LOGGER.trace("Created state <{}> for channel <{}>", state, channel);
         return state;
     }
 
@@ -180,8 +184,10 @@ public class AckManager implements Runnable, LifeCycle {
      * @param channel
      */
     public void initializeContext(String authToken, String channel) {
+        LOGGER.trace("Initializing context for channel <{}>", channel);
         String key = authToken + channel;
         if (!this.ackStates.containsKey(key)) {
+            LOGGER.trace("Adding new state to channel <{}>", channel);
             State state = new State();
             this.ackStates.put(key, state);
         }
@@ -238,6 +244,7 @@ public class AckManager implements Runnable, LifeCycle {
     public boolean acknowledge(String authToken, String channel, int ackId) {
         String key = authToken + channel;
         State state = this.ackStates.get(key);
+        LOGGER.trace("Acknowledging ackId <{}> on channel <{}>", ackId, channel);
         if (state == null) {
             throw new IllegalStateException("An Ack cannot be acknowledge before it is added to the Ack list.");
         }
@@ -380,6 +387,7 @@ public class AckManager implements Runnable, LifeCycle {
 
         while (true) {
             try {
+                LOGGER.trace("Sleeping for <{}> while waiting for polls", this.configuration.getPollTime());
                 Thread.sleep(this.configuration.getPollTime());
             } catch (InterruptedException e) {
                 break;

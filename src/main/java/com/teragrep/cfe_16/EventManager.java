@@ -61,6 +61,8 @@ import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
 import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
 import com.teragrep.cfe_16.sender.AbstractSender;
 import com.teragrep.cfe_16.sender.SenderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -76,7 +78,7 @@ import java.util.List;
  */
 @Component
 public class EventManager {
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventManager.class);
     private final ObjectMapper objectMapper;
 
     @Autowired
@@ -90,12 +92,13 @@ public class EventManager {
 
     @PostConstruct
     public void setupSender() {
+        LOGGER.debug("Setting up sender");
         try {
             this.sender = SenderFactory.createSender(this.configuration.getSysLogProtocol(),
                                                      this.configuration.getSyslogHost(),
                                                      this.configuration.getSyslogPort());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Error creating sender", e);
             throw new InternalServerErrorException();
         }        
     }

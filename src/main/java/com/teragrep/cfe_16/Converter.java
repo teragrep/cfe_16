@@ -52,6 +52,8 @@ import com.cloudbees.syslog.Severity;
 import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /*
@@ -62,7 +64,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class Converter {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
     private Severity severity;
     private Facility facility;
 
@@ -158,12 +160,15 @@ public class Converter {
         headerSDE = new SDElement("cfe_16-origin@48577");
 
         if (headerInfo.getxForwardedFor() != null) {
+            LOGGER.trace("Adding X-Forwarded-For header to headerSDE");
             headerSDE.addSDParam("X-Forwarded-For", headerInfo.getxForwardedFor());
         }
         if (headerInfo.getxForwardedHost() != null) {
+            LOGGER.trace("Adding X-Forwarder-Host to headerSDE");
             headerSDE.addSDParam("X-Forwarded-Host", headerInfo.getxForwardedHost());
         }
         if (headerInfo.getxForwardedProto() != null) {
+            LOGGER.trace("Adding X-Forwarded-Proto to headerSDE");
             headerSDE.addSDParam("X-Forwarded-Proto", headerInfo.getxForwardedProto());
         }
     }

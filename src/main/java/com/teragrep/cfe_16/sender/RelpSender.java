@@ -47,16 +47,20 @@
 package com.teragrep.cfe_16.sender;
 
 import com.cloudbees.syslog.SyslogMessage;
+import com.teragrep.cfe_16.rest.HECRestController;
 import com.teragrep.rlp_01.RelpBatch;
 import com.teragrep.rlp_01.RelpConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
 public class RelpSender extends AbstractSender {
 
     private final RelpConnection sender;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RelpSender.class);
     //settings for timeouts, if they are 0 that we skip them
     //default are 0
     private int connectionTimeout = 10000;
@@ -78,31 +82,35 @@ public class RelpSender extends AbstractSender {
         while (notConnected) {
             boolean connected = false;
             try {
+                LOGGER.debug("Connecting to RELP server");
                 connected = this.sender.connect(this.hostname, this.port);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.warn("Failed to connect to RELP Server: ", e);
             }
             if (connected) {
                 notConnected = false;
             } else {
                 try {
+                    LOGGER.debug("Sleeping for <[{}]> before reconnecting", this.reconnectInterval);
                     Thread.sleep(this.reconnectInterval);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    LOGGER.warn("Sleep interrupted: ", e);
                 }
             }
         }
     }
 
     synchronized private void tearDown() {
+        LOGGER.debug("Tearing down connection");
         this.sender.tearDown();
     }
 
     synchronized private void disconnect() {
         try {
+            LOGGER.debug("Disconnecting from RELP server");
             this.sender.disconnect();
         } catch (IllegalStateException | IOException | TimeoutException e) {
-            e.printStackTrace();
+            LOGGER.warn("Failed to disconnect from RELP Server: ", e);
         }
         finally {
             this.tearDown();
@@ -135,12 +143,14 @@ public class RelpSender extends AbstractSender {
 
         while (notSent) {
             try {
+                LOGGER.trace("Committing a RELP batch");
                 this.sender.commit(relpBatch);
             } catch (IllegalStateException | IOException | TimeoutException e) {
-                e.printStackTrace();
+                LOGGER.warn("Failed to commit batch: ", e);
             }
 
             if (!relpBatch.verifyTransactionAll()) {
+                LOGGER.debug("Failed to verify all transactions, retrying them");
                 relpBatch.retryAllFailed();
                 this.tearDown();
                 this.connect();

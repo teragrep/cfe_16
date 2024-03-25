@@ -46,6 +46,8 @@
 
 package com.teragrep.cfe_16;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -53,8 +55,9 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan({ "com.teragrep.cfe_16" })
 public class Cfe16Application {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Cfe16Application.class);
     public static void main(String[] args) {
+        LOGGER.info("Starting Cfe16Application...");
         SpringApplication.run(Cfe16Application.class, args);
         //Runtime.getRuntime().addShutdownHook(new ShutdownHook());
     }
