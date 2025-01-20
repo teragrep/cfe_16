@@ -103,7 +103,7 @@
             </mapping>
           </mappings>
           <requires>
-            <require>java-1.8.0-openjdk</require>
+            <require>java-1.8.0-openjdk-headless</require>
           </requires>
           <preinstallScriptlet>
             <script>
