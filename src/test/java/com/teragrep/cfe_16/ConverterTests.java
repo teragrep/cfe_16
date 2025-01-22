@@ -152,15 +152,15 @@ public class ConverterTests {
         metadataSDE3.addSDParam("time_source", eventData3.getTimeSource());
 
         supposedSyslogMessage1 = new SyslogMessage().withTimestamp(eventData1.getTimeAsLong())
-                .withSeverity(supposedSeverity).withAppName("capsulated").withHostname("cfe_16")
+                .withSeverity(supposedSeverity).withAppName("capsulated").withHostname("cfe-16")
                 .withFacility(supposedFacility).withSDElement(metadataSDE1).withMsg(eventData1.getEvent());
 
         supposedSyslogMessage2 = new SyslogMessage().withSeverity(supposedSeverity).withAppName("capsulated")
-                .withHostname("cfe_16").withFacility(supposedFacility).withSDElement(metadataSDE2)
+                .withHostname("cfe-16").withFacility(supposedFacility).withSDElement(metadataSDE2)
                 .withMsg(eventData2.getEvent());
 
         supposedSyslogMessage3 = new SyslogMessage().withSeverity(supposedSeverity).withAppName("capsulated")
-                .withHostname("cfe_16").withFacility(supposedFacility).withSDElement(metadataSDE3)
+                .withHostname("cfe-16").withFacility(supposedFacility).withSDElement(metadataSDE3)
                 .withMsg(eventData3.getEvent());
         HeaderInfo headerInfo = new HeaderInfo();
 
