@@ -205,7 +205,7 @@ public class ConverterTests {
     /*
      * Compares the AppName and HostName from the supposed SyslogMessage and the
      * SyslogMessage returned from Converter. AppName should be hardcoded to
-     * "capsulated" and HostName should be hardcoded to "cfe_16".
+     * "capsulated" and HostName should be hardcoded to "cfe-16".
      */
     @Test
     public void appNameAndHostNameTest() {
