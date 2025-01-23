@@ -71,6 +71,8 @@ public class Converter {
     private SDElement metadataSDE;
     private SDElement headerSDE;
 
+    private final String hostName = "cfe-16";
+
     public SyslogMessage httpToSyslog(HttpEventData httpEventData, HeaderInfo headerInfo) {
 
         setEventSeverity();
@@ -87,7 +89,7 @@ public class Converter {
              */
             LOGGER.debug("Creating new syslog message with timestamp");
             syslogMessage = new SyslogMessage().withTimestamp(httpEventData.getTimeAsLong()).withSeverity(severity)
-                    .withAppName("capsulated").withHostname("cfe_16").withFacility(facility).withSDElement(metadataSDE)
+                    .withAppName("capsulated").withHostname(hostName).withFacility(facility).withSDElement(metadataSDE)
                     .withSDElement(headerSDE).withMsg(httpEventData.getEvent());
 
         } else {
@@ -96,7 +98,7 @@ public class Converter {
              * in the request.
              */
             LOGGER.debug("Creating new syslog message without timestamp");
-            syslogMessage = new SyslogMessage().withSeverity(severity).withAppName("capsulated").withHostname("cfe_16")
+            syslogMessage = new SyslogMessage().withSeverity(severity).withAppName("capsulated").withHostname(hostName)
                     .withFacility(facility).withSDElement(metadataSDE).withSDElement(headerSDE)
                     .withMsg(httpEventData.getEvent());
         }
@@ -157,7 +159,7 @@ public class Converter {
 
         SyslogMessage syslogMessage = null;
         setHeaderSDE(headerInfo);
-        syslogMessage = new SyslogMessage().withSeverity(severity).withAppName("capsulated").withHostname("cfe_16")
+        syslogMessage = new SyslogMessage().withSeverity(severity).withAppName("capsulated").withHostname(hostName)
                 .withFacility(facility).withSDElement(headerSDE);
 
         return syslogMessage;
