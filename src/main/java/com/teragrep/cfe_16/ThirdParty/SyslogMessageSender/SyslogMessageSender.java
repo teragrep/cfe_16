@@ -20,9 +20,9 @@ import com.cloudbees.syslog.sender.AbstractSyslogMessageSender;
 import com.cloudbees.syslog.util.CachingReference;
 import com.cloudbees.syslog.util.IoUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
+import org.apache.maven.api.annotations.Nonnull;
+import org.apache.maven.api.annotations.Nullable;
+import org.apache.maven.api.annotations.ThreadSafe;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
