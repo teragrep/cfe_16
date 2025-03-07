@@ -20,7 +20,7 @@
     <aspectj.version>1.9.21.1</aspectj.version>
     <log4j.version>2.23.1</log4j.version>
     <spring.boot.version>3.4.3</spring.boot.version>
-    <spring.session.version>2.7.4</spring.session.version>
+    <spring.session.version>3.4.2</spring.session.version>
     <junit.version>5.10.2</junit.version>
     <junit.platform.version>1.10.2</junit.platform.version>
     <rlp_01.version>4.0.1</rlp_01.version>
