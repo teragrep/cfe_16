@@ -157,6 +157,39 @@
       <artifactId>maven-bundle-plugin</artifactId>
       <version>6.0.0</version>
     </dependency>
+    <!-- Override maven-archiver dependency due to vulnerable deps in maven-bundle-plugin -->
+    <!-- https://mvnrepository.com/artifact/org.apache.maven/maven-archiver -->
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-archiver</artifactId>
+      <version>4.0.0-beta-1</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.iq80.snappy/snappy -->
+    <!-- Fix vulnerability in plexus-archiver:4.9.2, which is a dep in maven-archiver 4.0.0-beta-1 -->
+    <dependency>
+      <groupId>org.iq80.snappy</groupId>
+      <artifactId>snappy</artifactId>
+      <version>0.5</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.apache.maven.doxia/doxia-site-renderer -->
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-site-renderer</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>1.10.1</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils -->
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>4.0.2</version>
+    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
