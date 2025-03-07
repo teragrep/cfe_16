@@ -51,7 +51,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.RequestBodyCleaner;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.service.HECService;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
