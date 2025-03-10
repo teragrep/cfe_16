@@ -20,9 +20,6 @@ import com.cloudbees.syslog.sender.AbstractSyslogMessageSender;
 import com.cloudbees.syslog.util.CachingReference;
 import com.cloudbees.syslog.util.IoUtils;
 
-import org.apache.maven.api.annotations.Nonnull;
-import org.apache.maven.api.annotations.Nullable;
-import org.apache.maven.api.annotations.ThreadSafe;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -36,13 +33,14 @@ import java.security.cert.X509Certificate;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * See <a href="http://tools.ietf.org/html/rfc6587">RFC 6587 - Transmission of Syslog Messages over TCP</a>
  *
  * @author <a href="mailto:cleclerc@cloudbees.com">Cyrille Le Clerc</a>
  */
-@ThreadSafe
 public class SyslogMessageSender extends AbstractSyslogMessageSender implements Closeable  {
     public final static int SETTING_SOCKET_CONNECT_TIMEOUT_IN_MILLIS_DEFAULT_VALUE = 500;
     public final static int SETTING_MAX_RETRY = 2;
@@ -80,7 +78,7 @@ public class SyslogMessageSender extends AbstractSyslogMessageSender implements 
     private String postfix = "\n";
 
     @Override
-    public synchronized void sendMessage(@Nonnull SyslogMessage message) throws IOException {
+    public synchronized void sendMessage(@NotNull SyslogMessage message) throws IOException {
         sendCounter.incrementAndGet();
         long nanosBefore = System.nanoTime();
 
