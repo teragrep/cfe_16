@@ -21,8 +21,8 @@
     <log4j.version>2.23.1</log4j.version>
     <spring.boot.version>3.4.3</spring.boot.version>
     <spring.session.version>3.4.2</spring.session.version>
-    <junit.version>5.10.2</junit.version>
-    <junit.platform.version>1.10.2</junit.platform.version>
+    <junit.version>5.12.0</junit.version>
+    <junit.platform.version>1.12.0</junit.platform.version>
     <rlp_01.version>4.0.1</rlp_01.version>
     <rlp_03.version>3.0.0</rlp_03.version>
     <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
