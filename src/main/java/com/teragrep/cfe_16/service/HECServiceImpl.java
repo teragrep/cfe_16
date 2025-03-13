@@ -56,7 +56,7 @@ import com.teragrep.cfe_16.exceptionhandling.AuthenticationTokenMissingException
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotFoundException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotProvidedException;
 import com.teragrep.cfe_16.exceptionhandling.SessionNotFoundException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

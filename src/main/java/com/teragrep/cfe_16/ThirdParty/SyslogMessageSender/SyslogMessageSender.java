@@ -20,9 +20,6 @@ import com.cloudbees.syslog.sender.AbstractSyslogMessageSender;
 import com.cloudbees.syslog.util.CachingReference;
 import com.cloudbees.syslog.util.IoUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -42,7 +39,6 @@ import java.util.logging.Level;
  *
  * @author <a href="mailto:cleclerc@cloudbees.com">Cyrille Le Clerc</a>
  */
-@ThreadSafe
 public class SyslogMessageSender extends AbstractSyslogMessageSender implements Closeable  {
     public final static int SETTING_SOCKET_CONNECT_TIMEOUT_IN_MILLIS_DEFAULT_VALUE = 500;
     public final static int SETTING_MAX_RETRY = 2;
@@ -80,7 +76,7 @@ public class SyslogMessageSender extends AbstractSyslogMessageSender implements 
     private String postfix = "\n";
 
     @Override
-    public synchronized void sendMessage(@Nonnull SyslogMessage message) throws IOException {
+    public synchronized void sendMessage(SyslogMessage message) throws IOException {
         sendCounter.incrementAndGet();
         long nanosBefore = System.nanoTime();
 
@@ -193,7 +189,7 @@ public class SyslogMessageSender extends AbstractSyslogMessageSender implements 
     @Override
     public void setSyslogServerHostname(final String syslogServerHostname) {
         this.syslogServerHostnameReference = new CachingReference<InetAddress>(DEFAULT_INET_ADDRESS_TTL_IN_NANOS) {
-            @Nullable
+
             @Override
             protected InetAddress newObject() {
                 try {
@@ -210,7 +206,6 @@ public class SyslogMessageSender extends AbstractSyslogMessageSender implements 
         this.syslogServerPort = syslogServerPort;
     }
 
-    @Nullable
     public String getSyslogServerHostname() {
         if (syslogServerHostnameReference == null)
             return null;
