@@ -33,8 +33,6 @@ import java.security.cert.X509Certificate;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * See <a href="http://tools.ietf.org/html/rfc6587">RFC 6587 - Transmission of Syslog Messages over TCP</a>
@@ -78,7 +76,7 @@ public class SyslogMessageSender extends AbstractSyslogMessageSender implements 
     private String postfix = "\n";
 
     @Override
-    public synchronized void sendMessage(@NotNull SyslogMessage message) throws IOException {
+    public synchronized void sendMessage(SyslogMessage message) throws IOException {
         sendCounter.incrementAndGet();
         long nanosBefore = System.nanoTime();
 
@@ -191,7 +189,7 @@ public class SyslogMessageSender extends AbstractSyslogMessageSender implements 
     @Override
     public void setSyslogServerHostname(final String syslogServerHostname) {
         this.syslogServerHostnameReference = new CachingReference<InetAddress>(DEFAULT_INET_ADDRESS_TTL_IN_NANOS) {
-            @Nullable
+
             @Override
             protected InetAddress newObject() {
                 try {
@@ -208,7 +206,6 @@ public class SyslogMessageSender extends AbstractSyslogMessageSender implements 
         this.syslogServerPort = syslogServerPort;
     }
 
-    @Nullable
     public String getSyslogServerHostname() {
         if (syslogServerHostnameReference == null)
             return null;
