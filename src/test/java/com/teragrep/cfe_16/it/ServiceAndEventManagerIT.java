@@ -50,7 +50,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.AckManager;
 import com.teragrep.cfe_16.EventManager;
 import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.DefaultHttpEventData;
 import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.exceptionhandling.*;
 import com.teragrep.cfe_16.service.HECService;
@@ -60,7 +59,6 @@ import com.teragrep.rlp_03.config.Config;
 import com.teragrep.rlp_03.delegate.DefaultFrameDelegate;
 import com.teragrep.rlp_03.delegate.FrameDelegate;
 import org.junit.jupiter.api.*;
-import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,15 +91,39 @@ import static org.junit.Assert.*;
 public class ServiceAndEventManagerIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceAndEventManagerIT.class);
-    private static Server server;
     private static final String hostname = "localhost";
-    private static Integer port = 1601;
+    private static final ServerSocket serverSocket = getSocket();
+    private static final Integer port = 1601;
+    private static Server server;
+    private final HeaderInfo headerInfo = new HeaderInfo();
+    @Autowired
+    private HECService service;
+    @Autowired
+    private AckManager ackManager;
+    private MockHttpServletRequest request1;
+    private MockHttpServletRequest request2;
+    private MockHttpServletRequest request3;
+    private MockHttpServletRequest request4;
+    private MockHttpServletRequest request5;
+    private String eventInJson;
+    private String channel1;
+    private String channel2;
+    private String channel3;
+    private String defaultChannel;
+    private String authToken1;
+    private String authToken2;
+    private String authToken3;
+    private String authToken4;
+    private String ackRequest;
+    private ObjectMapper objectMapper;
+    private JsonNode ackRequestNode;
+    @Autowired
+    private EventManager eventManager;
 
     @BeforeAll
     public static void init_x() throws IOException, InterruptedException {
         Supplier<FrameDelegate> frameDelegateSupplier = () -> new DefaultFrameDelegate(
-                (frame) -> LOGGER.debug(frame.relpFrame().payload().toString())
-        );
+            (frame) -> LOGGER.debug(frame.relpFrame().payload().toString()));
         Config config = new Config(port, 1);
         ServerFactory serverFactory = new ServerFactory(config, frameDelegateSupplier);
 
@@ -115,37 +137,6 @@ public class ServiceAndEventManagerIT {
     public static void cleanup() throws InterruptedException {
         server.stop();
     }
-
-    @Autowired
-    private HECService service;
-    @Autowired
-    private AckManager ackManager;
-    private static final ServerSocket serverSocket = getSocket();
-
-    private MockHttpServletRequest request1;
-    private MockHttpServletRequest request2;
-    private MockHttpServletRequest request3;
-    private MockHttpServletRequest request4;
-    private MockHttpServletRequest request5;
-
-    private String eventInJson;
-    private String channel1;
-    private String channel2;
-    private String channel3;
-    private String defaultChannel;
-    private String authToken1;
-    private String authToken2;
-    private String authToken3;
-    private String authToken4;
-
-    private String ackRequest;
-    private ObjectMapper objectMapper;
-    private JsonNode ackRequestNode;
-
-    @Autowired
-    private EventManager eventManager;
-
-    private HeaderInfo headerInfo = new HeaderInfo();
 
     private static ServerSocket getSocket() {
         ServerSocket socket = null;
@@ -372,7 +363,7 @@ public class ServiceAndEventManagerIT {
     public void noEventFieldInRequestTest() {
         Assertions.assertThrows(EventFieldMissingException.class, () -> {
             /*AckManager ackManager = new AckManager();*/
-            String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+	        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
         });
     }
@@ -385,7 +376,7 @@ public class ServiceAndEventManagerIT {
     public void eventFieldBlankInRequestTest() {
         Assertions.assertThrows(EventFieldBlankException.class, () -> {
             /*AckManager ackManager = new AckManager();*/
-            String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+	        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
         });
     }
