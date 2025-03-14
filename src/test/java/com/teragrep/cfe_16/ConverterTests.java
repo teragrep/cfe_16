@@ -48,6 +48,8 @@ package com.teragrep.cfe_16;
 import com.cloudbees.syslog.*;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.DefaultHttpEventData;
+import com.teragrep.cfe_16.bo.HttpEventData;
+import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import com.teragrep.cfe_16.bo.XForwardedForStub;
 import com.teragrep.cfe_16.bo.XForwardedHostStub;
 import com.teragrep.cfe_16.bo.XForwardedProtoStub;
@@ -58,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 
 import static org.junit.Assert.*;
 
@@ -67,9 +70,9 @@ import static org.junit.Assert.*;
 public class ConverterTests {
 
     private Converter converter;
-    private DefaultHttpEventData eventData1;
-    private DefaultHttpEventData eventData2;
-    private DefaultHttpEventData eventData3;
+    private TimestampedHttpEventData eventData1;
+    private TimestampedHttpEventData eventData2;
+    private TimestampedHttpEventData eventData3;
     private Severity supposedSeverity;
     private Facility supposedFacility;
     private SyslogMessage supposedSyslogMessage1;
@@ -98,14 +101,9 @@ public class ConverterTests {
      */
     @BeforeEach
     public void initialize() {
-
         converter = new Converter(
                 new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
         );
-
-        eventData1 = new DefaultHttpEventData();
-        eventData2 = new DefaultHttpEventData();
-        eventData3 = new DefaultHttpEventData();
 
         supposedSyslogMessage1 = null;
         supposedSyslogMessage2 = null;
@@ -117,27 +115,46 @@ public class ConverterTests {
         supposedSeverity = Severity.INFORMATIONAL;
         supposedFacility = Facility.USER;
 
-        eventData1.setAuthenticationToken("AUTH_TOKEN_11111");
-        eventData1.setChannel("CHANNEL_11111");
-        eventData1.setAckID(0);
-        eventData1.setTimeSource("reported");
-        eventData1.setTime("1433188255253");
-        eventData1.setTimeParsed(true);
-        eventData1.setTimeAsLong(1433188255253L);
-        eventData1.setEvent("Event 1");
+        final DefaultHttpEventData defaultEventData1 = new DefaultHttpEventData(
+            "CHANNEL_11111",
+            "Event 1",
+            "AUTH_TOKEN_11111",
+            0
+        );
+        final DefaultHttpEventData defaultEventData2 = new DefaultHttpEventData(
+            "CHANNEL_22222",
+            "Event 2",
+            "AUTH_TOKEN_22222",
+            1
+        );
+        final DefaultHttpEventData defaultEventData3 = new DefaultHttpEventData(
+            "defaultchannel",
+            "Event 3",
+            "AUTH_TOKEN_33333",
+            null
+        );
 
-        eventData2.setAuthenticationToken("AUTH_TOKEN_22222");
-        eventData2.setChannel("CHANNEL_22222");
-        eventData2.setAckID(1);
-        eventData2.setTimeSource("generated");
-        eventData2.setTimeParsed(false);
-        eventData2.setEvent("Event 2");
-
-        eventData3.setAuthenticationToken("AUTH_TOKEN_33333");
-        eventData3.setChannel("defaultchannel");
-        eventData3.setTimeSource("generated");
-        eventData3.setTimeParsed(false);
-        eventData3.setEvent("Event 3");
+        eventData1 = new TimestampedHttpEventData(
+            defaultEventData1,
+            "reported",
+            "1433188255253",
+            1433188255253L,
+            true
+        );
+        eventData2 = new TimestampedHttpEventData(
+            defaultEventData2,
+            "generated",
+            null,
+            0L,
+            false
+        );
+        eventData3 = new TimestampedHttpEventData(
+            defaultEventData3,
+            "generated",
+            null,
+            0L,
+            false
+        );
 
         metadataSDE1.addSDParam("authentication_token", eventData1.getAuthenticationToken());
         metadataSDE1.addSDParam("channel", eventData1.getChannel());
