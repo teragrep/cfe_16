@@ -56,11 +56,6 @@ import com.teragrep.cfe_16.bo.XForwardedHostStub;
 import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import com.teragrep.cfe_16.exceptionhandling.*;
 import com.teragrep.cfe_16.service.HECService;
-import com.teragrep.rlp_03.Server;
-import com.teragrep.rlp_03.ServerFactory;
-import com.teragrep.rlp_03.config.Config;
-import com.teragrep.rlp_03.delegate.DefaultFrameDelegate;
-import com.teragrep.rlp_03.delegate.FrameDelegate;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +92,6 @@ public class ServiceAndEventManagerIT {
     private static final String hostname = "localhost";
     private static final ServerSocket serverSocket = getSocket();
     private static final Integer port = 1601;
-    private static Server server;
     private final HeaderInfo headerInfo = new HeaderInfo();
     @Autowired
     private HECService service;
@@ -122,29 +116,6 @@ public class ServiceAndEventManagerIT {
     private JsonNode ackRequestNode;
     @Autowired
     private EventManager eventManager;
-
-    private final HeaderInfo headerInfo = new HeaderInfo(
-            new XForwardedForStub(),
-            new XForwardedHostStub(),
-            new XForwardedProtoStub()
-    );
-    @BeforeAll
-    public static void init_x() throws IOException, InterruptedException {
-        Supplier<FrameDelegate> frameDelegateSupplier = () -> new DefaultFrameDelegate(
-            (frame) -> LOGGER.debug(frame.relpFrame().payload().toString()));
-        Config config = new Config(port, 1);
-        ServerFactory serverFactory = new ServerFactory(config, frameDelegateSupplier);
-
-        server = serverFactory.create();
-        Thread serverThread = new Thread(server);
-        serverThread.start();
-        server.startup.waitForCompletion();
-    }
-
-    @AfterAll
-    public static void cleanup() throws InterruptedException {
-        server.stop();
-    }
 
     private static ServerSocket getSocket() {
         ServerSocket socket = null;
