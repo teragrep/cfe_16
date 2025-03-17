@@ -61,10 +61,10 @@ public class RelpConnection extends AbstractConnection {
     private static final Logger LOGGER = LoggerFactory.getLogger(RelpConnection.class);
     //settings for timeouts, if they are 0 that we skip them
     //default are 0
-    private int connectionTimeout = 10000;
-    private int readTimeout = 15000;
-    private int writeTimeout = 5000;
-    private int reconnectInterval = 500;
+    private final int connectionTimeout = 10000;
+    private final int readTimeout = 15000;
+    private final int writeTimeout = 5000;
+    private final int reconnectInterval = 500;
 
     public RelpConnection(String hostname, int port) {
         super(hostname, port);
@@ -128,7 +128,8 @@ public class RelpConnection extends AbstractConnection {
     synchronized public void sendMessages(List<SyslogMessage> syslogMessages) throws IOException {
         final RelpBatch relpBatch = new RelpBatch();
         for (SyslogMessage syslogMessage : syslogMessages) {
-            relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
+            relpBatch.insert(
+                syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
         }
         doSend(relpBatch);
     }

@@ -85,7 +85,7 @@ public class SendEventsIT implements Runnable {
     private ServerSocket serverSocket;
     private Thread thread;
     private AtomicInteger numberOfRequestsMade;
-
+    
     private MockHttpServletRequest request1;
     private String eventInJson;
     private String channel1;

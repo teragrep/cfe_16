@@ -56,7 +56,7 @@ import java.io.IOException;
 public class TcpConnection extends AbstractConnection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TcpConnection.class);
-    private TcpSyslogMessageSender sender;
+    private final TcpSyslogMessageSender sender;
 
     public TcpConnection(String hostname, int port) {
         super(hostname, port);

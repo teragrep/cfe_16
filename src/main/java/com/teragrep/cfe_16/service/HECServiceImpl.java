@@ -79,6 +79,7 @@ import org.springframework.stereotype.Service;
 public class HECServiceImpl implements HECService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HECServiceImpl.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private Acknowledgements acknowledgements;
 
@@ -96,6 +97,9 @@ public class HECServiceImpl implements HECService {
     private final XForwardedForStub xForwardedForStub;
     private final XForwardedHostStub xForwardedHostStub;
     private final XForwardedProtoStub xForwardedProtoStub;
+
+    @Autowired
+    private RequestHandler requestHandler;
 
     public HECServiceImpl() {
         this.xForwardedForStub = new XForwardedForStub();

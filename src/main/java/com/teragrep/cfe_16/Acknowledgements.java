@@ -130,7 +130,7 @@ public final class Acknowledgements implements Runnable, LifeCycle {
      * The background thread for cleaning up ACKs.
      */
     private Thread cleanerThread;
-
+    
     @Autowired
     private Configuration configuration;
 
@@ -252,7 +252,7 @@ public final class Acknowledgements implements Runnable, LifeCycle {
             Map<Integer, Ack> ackMap = state.getAckMap();
             Ack ack = ackMap.get(ackId);
             if (ack == null) {
-                throw new InternalServerErrorException("Couldn't set the acknowledge status for Ack ID " + ackId);
+                throw new InternalServerErrorException("Couldn't set the acknowledge status for Ack ID " + ackId);              
             }
             ack.acknowledge();
             return true;

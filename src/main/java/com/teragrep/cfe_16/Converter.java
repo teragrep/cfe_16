@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 
 /*
  * Converts HTTP Event Data into a Syslog message.
- * 
+ *
  * This class is NOT thread safe!
  *
  */

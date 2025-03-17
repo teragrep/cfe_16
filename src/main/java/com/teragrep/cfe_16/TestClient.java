@@ -62,17 +62,17 @@ public class TestClient implements Runnable {
     /**
      * How many loops a single thread does.
      */
-    private int n;
+    private final int n;
 
     /**
      * Hostname or IP address of the cfe_16 server.
      */
-    private String host;
+    private final String host;
 
     /**
      * TCP port of the cfe_16 server.
      */
-    private int port;
+    private final int port;
 
     public TestClient(int n, String host, int port) throws IOException {
         this.n = n;
