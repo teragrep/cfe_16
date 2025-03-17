@@ -91,7 +91,7 @@ public class HECServiceImpl implements HECService {
 
     @Override
     // @LogAnnotation(type = LogType.METRIC_COUNTER)
-    public ObjectNode sendEvents(HttpServletRequest request, String channel, String eventInJson) {
+    public synchronized ObjectNode sendEvents(HttpServletRequest request, String channel, String eventInJson) {
         LOGGER.debug("Sending events to channel <{}>", channel);
         if (this.tokenManager.tokenIsMissing(request)) {
             throw new AuthenticationTokenMissingException("Authentication token must be provided");

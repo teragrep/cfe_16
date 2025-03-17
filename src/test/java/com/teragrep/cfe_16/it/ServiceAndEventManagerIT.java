@@ -52,13 +52,18 @@ import com.teragrep.cfe_16.EventManager;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.exceptionhandling.*;
+import com.teragrep.cfe_16.server.TestServer;
+import com.teragrep.cfe_16.server.TestServerFactory;
 import com.teragrep.cfe_16.service.HECService;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
@@ -83,12 +88,14 @@ import static org.junit.Assert.*;
         "poll.time=30000",
         "server.print.times=true"
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ServiceAndEventManagerIT {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceAndEventManagerIT.class);
-    private static final String hostname = "localhost";
-    private static final ServerSocket serverSocket = getSocket();
     private static final Integer port = 1601;
+    private static final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
+    private static final AtomicLong openCount = new AtomicLong();
+    private static final AtomicLong closeCount = new AtomicLong();
+    private static TestServer server;
     private final HeaderInfo headerInfo = new HeaderInfo();
     @Autowired
     private HECService service;
@@ -114,26 +121,31 @@ public class ServiceAndEventManagerIT {
     @Autowired
     private EventManager eventManager;
 
-    private static ServerSocket getSocket() {
-        ServerSocket socket = null;
+    @BeforeAll
+    public static void init() {
+        TestServerFactory serverFactory = new TestServerFactory();
         try {
-            socket = new ServerSocket(1234);
-        }
-        catch (IOException e) {
-            LOGGER.warn("Could not get a server socket: ", e);
+            server = serverFactory.create(port, messageList, openCount, closeCount);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return socket;
+        server.run();
     }
 
     @AfterAll
-    public static void closeServerSocket() {
+    public static void close() {
         try {
-            serverSocket.close();
+            server.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        catch (IOException e) {
-            LOGGER.warn("Could not close server socket: ", e);
-        }
+    }
+
+    @AfterEach
+    public void clear() {
+        openCount.set(0);
+        closeCount.set(0);
+        messageList.clear();
     }
 
     /*
@@ -303,7 +315,7 @@ public class ServiceAndEventManagerIT {
     public void convertDataTest() {
         /*AckManager ackManager = new AckManager();*/
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-        String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":2}";
+        String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
         String response = eventManager
                 .convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
                 .toString();
@@ -361,8 +373,9 @@ public class ServiceAndEventManagerIT {
      * Testing using EventManager's convertData() method by sending multiple events
      * at once.
      */
+    @Test
     public void sendingMultipleEventsTest() {
-        AckManager ackManager = new AckManager();
+//        AckManager ackManager = new AckManager();
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
         assertEquals(
@@ -376,8 +389,9 @@ public class ServiceAndEventManagerIT {
      * Testing using EventManager's convertDataWithDefaultChannel() method by
      * sending multiple events at once.
      */
+    @Test
     public void sendingMultipleEventsWithDefaultChannelTest() {
-        AckManager ackManager = new AckManager();
+//        AckManager ackManager = new AckManager();
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
         assertEquals(
