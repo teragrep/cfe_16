@@ -50,7 +50,6 @@ public final class DefaultHttpEventData implements HttpEventData {
     private String channel;
     private String event;
     private String authenticationToken;
-    private Integer ackID;
 
     public DefaultHttpEventData() {
     }
@@ -58,13 +57,11 @@ public final class DefaultHttpEventData implements HttpEventData {
     public DefaultHttpEventData(
         String channel,
         String event,
-        String authenticationToken,
-        Integer ackID
+        String authenticationToken
     ) {
         this.channel = channel;
         this.event = event;
         this.authenticationToken = authenticationToken;
-        this.ackID = ackID;
     }
 
     public String getEvent() {
@@ -91,21 +88,12 @@ public final class DefaultHttpEventData implements HttpEventData {
         this.authenticationToken = authenticationToken;
     }
 
-    public Integer getAckID() {
-        return ackID;
-    }
-
-    public void setAckID(Integer ackID) {
-        this.ackID = ackID;
-    }
-
     @Override
     public String toString() {
         return "DefaultHttpEventData{" +
             "channel='" + channel + '\'' +
             ", event='" + event + '\'' +
             ", authenticationToken='" + authenticationToken + '\'' +
-            ", ackID=" + ackID +
             '}';
     }
 }

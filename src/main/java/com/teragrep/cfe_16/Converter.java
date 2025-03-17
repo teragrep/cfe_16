@@ -64,13 +64,12 @@ import org.slf4j.LoggerFactory;
 public final class Converter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
+    private final String hostName = "cfe-16";
     private Severity severity;
     private Facility facility;
 
     private SDElement metadataSDE;
     private final HeaderInfo headerInfo;
-
-    private final String hostName = "cfe-16";
 
     public Converter(HeaderInfo headerInfo) {
         this.headerInfo = headerInfo;
@@ -150,11 +149,6 @@ public final class Converter {
         if (eventData.getChannel() != null) {
             LOGGER.debug("Setting channel");
             metadataSDE.addSDParam("channel", eventData.getChannel());
-        }
-
-        if (eventData.getAckID() != null) {
-            LOGGER.debug("Setting ack id");
-            metadataSDE.addSDParam("ack_id", String.valueOf(eventData.getAckID()));
         }
 
         if (eventData.getTimeSource() != null) {
