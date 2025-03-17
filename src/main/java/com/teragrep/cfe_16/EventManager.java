@@ -232,14 +232,13 @@ public class EventManager {
                 defaultHttpEventData.setEvent(eventString);
 
                 eventData = new TimestampedHttpEventData(defaultHttpEventData);
-
             } else {
                 throw new EventFieldMissingException();
             }
             if (eventData.getEvent().matches("\"\"")) {
                 throw new EventFieldBlankException();
             }
-            eventData.handleTime(jsonObject, previousEvent);
+            eventData = eventData.handleTime(jsonObject, previousEvent);
         }
         return eventData;
     }

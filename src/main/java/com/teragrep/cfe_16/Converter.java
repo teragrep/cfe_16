@@ -65,13 +65,12 @@ import org.springframework.stereotype.Component;
 public class Converter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
+    private final String hostName = "cfe-16";
     private Severity severity;
     private Facility facility;
 
     private SDElement metadataSDE;
     private SDElement headerSDE;
-
-    private final String hostName = "cfe-16";
 
     public SyslogMessage httpToSyslog(TimestampedHttpEventData httpEventData, HeaderInfo headerInfo) {
 
@@ -148,11 +147,6 @@ public class Converter {
         if (eventData.getChannel() != null) {
             LOGGER.debug("Setting channel");
             metadataSDE.addSDParam("channel", eventData.getChannel());
-        }
-
-        if (eventData.getAckID() != null) {
-            LOGGER.debug("Setting ack id");
-            metadataSDE.addSDParam("ack_id", String.valueOf(eventData.getAckID()));
         }
 
         if (eventData.getTimeSource() != null) {
