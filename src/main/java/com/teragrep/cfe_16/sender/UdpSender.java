@@ -55,7 +55,7 @@ import java.io.IOException;
 public class UdpSender extends AbstractSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UdpSender.class);
-    private UdpSyslogMessageSender sender;
+    private final UdpSyslogMessageSender sender;
 
     public UdpSender(String hostname, int port) {
         super(hostname, port);

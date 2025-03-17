@@ -57,7 +57,7 @@ import org.springframework.stereotype.Component;
 
 /*
  * Converts HTTP Event Data into a Syslog message.
- * 
+ *
  * This class is NOT thread safe!
  *
  */

@@ -68,12 +68,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ConfigurationIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationIT.class);
+    private static final String hostname = "localhost";
+    private static final Integer port = 1235;
+    private static Server server;
     @Autowired
     private Configuration configuration;
-
-    private static Server server;
-    private static final String hostname = "localhost";
-    private static Integer port = 1235;
 
     @BeforeAll
     public static void init() throws IOException, InterruptedException {

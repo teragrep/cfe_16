@@ -70,22 +70,21 @@ import org.springframework.stereotype.Service;
 public class HECServiceImpl implements HECService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HECServiceImpl.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private AckManager ackManager;
-
+    
     @Autowired
     private SessionManager sessionManager;
-
+    
     @Autowired
     private TokenManager tokenManager;
-
+    
     @Autowired
     private EventManager eventManager;
 
     @Autowired
     private RequestHandler requestHandler;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     public HECServiceImpl() {
     }

@@ -52,18 +52,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
 public class RelpSender extends AbstractSender {
 
-    private final RelpConnection sender;
     private static final Logger LOGGER = LoggerFactory.getLogger(RelpSender.class);
+    private final RelpConnection sender;
     //settings for timeouts, if they are 0 that we skip them
     //default are 0
-    private int connectionTimeout = 10000;
-    private int readTimeout = 15000;
-    private int writeTimeout = 5000;
-    private int reconnectInterval = 500;
+    private final int connectionTimeout = 10000;
+    private final int readTimeout = 15000;
+    private final int writeTimeout = 5000;
+    private final int reconnectInterval = 500;
 
     public RelpSender(String hostname, int port) {
         super(hostname, port);
@@ -127,7 +128,8 @@ public class RelpSender extends AbstractSender {
     synchronized public void sendMessages(SyslogMessage[] syslogMessages) throws IOException {
         final RelpBatch relpBatch = new RelpBatch();
         for (SyslogMessage syslogMessage : syslogMessages) {
-            relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes("UTF-8"));
+            relpBatch.insert(
+                syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
         }
         doSend(relpBatch);
     }
@@ -135,7 +137,7 @@ public class RelpSender extends AbstractSender {
     @Override
     synchronized public void sendMessage(SyslogMessage syslogMessage) throws IOException {
         final RelpBatch relpBatch = new RelpBatch();
-        relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes("UTF-8"));
+        relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
         doSend(relpBatch);
     }
 
