@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <packaging>jar</packaging>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cfe_16</artifactId>
@@ -159,12 +159,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
@@ -226,7 +220,7 @@
             <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
               <notes>Also allow the license url to be https.</notes>
               <patterns>
-                <pattern>Copyright (C) 2021  Suomen Kanuuna Oy</pattern>
+                <pattern>Copyright (C) 2021 Suomen Kanuuna Oy</pattern>
               </patterns>
             </license>
           </licenses>
@@ -249,7 +243,9 @@
             <exclude>README.adoc</exclude>
             <exclude>README.md</exclude>
             <!-- third party -->
-            <exclude>src/main/java/com/teragrep/cfe_16/ThirdParty/SyslogMessageSender/SyslogMessageSender.java</exclude>
+            <exclude>
+              src/main/java/com/teragrep/cfe_16/ThirdParty/SyslogMessageSender/SyslogMessageSender.java
+            </exclude>
             <!-- resources -->
             <exclude>src/main/resources/*</exclude>
             <exclude>src/test/resources/cfe-16-test-plan.jmx</exclude>
@@ -267,7 +263,9 @@
         <version>${spring.boot.version}</version>
         <configuration>
           <mainClass>com.teragrep.cfe_16.Cfe16Application</mainClass>
-          <agents>${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</agents>
+          <agents>
+            ${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar
+          </agents>
         </configuration>
         <executions>
           <execution>
