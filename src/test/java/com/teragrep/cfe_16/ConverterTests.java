@@ -45,18 +45,20 @@
  */
 package com.teragrep.cfe_16;
 
-import com.cloudbees.syslog.*;
+import com.cloudbees.syslog.Facility;
+import com.cloudbees.syslog.SDElement;
+import com.cloudbees.syslog.SDParam;
+import com.cloudbees.syslog.Severity;
+import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /*
  * Tests the functionality of Converter
@@ -150,30 +152,20 @@ public class ConverterTests {
         metadataSDE3.addSDParam("channel", eventData3.getChannel());
         metadataSDE3.addSDParam("time_source", eventData3.getTimeSource());
 
-        supposedSyslogMessage1 = new SyslogMessage()
-                .withTimestamp(eventData1.getTimeAsLong())
-                .withSeverity(supposedSeverity)
-                .withAppName("capsulated")
-                .withHostname("cfe-16")
-                .withFacility(supposedFacility)
-                .withSDElement(metadataSDE1)
-                .withMsg(eventData1.getEvent());
+        supposedSyslogMessage1 = new SyslogMessage().withTimestamp(eventData1.getTimeAsLong())
+            .withSeverity(supposedSeverity).withAppName("capsulated").withHostname("cfe-16")
+            .withFacility(supposedFacility).withSDElement(metadataSDE1)
+            .withMsg(eventData1.getEvent());
 
-        supposedSyslogMessage2 = new SyslogMessage()
-                .withSeverity(supposedSeverity)
-                .withAppName("capsulated")
-                .withHostname("cfe-16")
-                .withFacility(supposedFacility)
-                .withSDElement(metadataSDE2)
-                .withMsg(eventData2.getEvent());
+        supposedSyslogMessage2 = new SyslogMessage().withSeverity(supposedSeverity)
+            .withAppName("capsulated")
+            .withHostname("cfe-16").withFacility(supposedFacility).withSDElement(metadataSDE2)
+            .withMsg(eventData2.getEvent());
 
-        supposedSyslogMessage3 = new SyslogMessage()
-                .withSeverity(supposedSeverity)
-                .withAppName("capsulated")
-                .withHostname("cfe-16")
-                .withFacility(supposedFacility)
-                .withSDElement(metadataSDE3)
-                .withMsg(eventData3.getEvent());
+        supposedSyslogMessage3 = new SyslogMessage().withSeverity(supposedSeverity)
+            .withAppName("capsulated")
+            .withHostname("cfe-16").withFacility(supposedFacility).withSDElement(metadataSDE3)
+            .withMsg(eventData3.getEvent());
         HeaderInfo headerInfo = new HeaderInfo();
 
         returnedMessage1 = converter.httpToSyslog(eventData1, headerInfo);
@@ -195,15 +187,12 @@ public class ConverterTests {
      */
     @Test
     public void severityTest() {
-        assertEquals(
-                "Severity should be INFORMATIONAL", supposedSyslogMessage1.getSeverity(), returnedMessage1.getSeverity()
-        );
-        assertEquals(
-                "Severity should be INFORMATIONAL", supposedSyslogMessage2.getSeverity(), returnedMessage2.getSeverity()
-        );
-        assertEquals(
-                "Severity should be INFORMATIONAL", supposedSyslogMessage3.getSeverity(), returnedMessage3.getSeverity()
-        );
+        Assertions.assertEquals(supposedSyslogMessage1.getSeverity(),
+            returnedMessage1.getSeverity(), "Severity should be INFORMATIONAL");
+        Assertions.assertEquals(supposedSyslogMessage2.getSeverity(),
+            returnedMessage2.getSeverity(), "Severity should be INFORMATIONAL");
+        Assertions.assertEquals(supposedSyslogMessage3.getSeverity(),
+            returnedMessage3.getSeverity(), "Severity should be INFORMATIONAL");
     }
 
     /*
@@ -212,9 +201,12 @@ public class ConverterTests {
      */
     @Test
     public void facilityTest() {
-        assertEquals("Facility should be USER", supposedSyslogMessage1.getFacility(), returnedMessage1.getFacility());
-        assertEquals("Facility should be USER", supposedSyslogMessage2.getFacility(), returnedMessage2.getFacility());
-        assertEquals("Facility should be USER", supposedSyslogMessage3.getFacility(), returnedMessage3.getFacility());
+        Assertions.assertEquals(supposedSyslogMessage1.getFacility(),
+            returnedMessage1.getFacility(), "Facility should be USER");
+        Assertions.assertEquals(supposedSyslogMessage2.getFacility(),
+            returnedMessage2.getFacility(), "Facility should be USER");
+        Assertions.assertEquals(supposedSyslogMessage3.getFacility(),
+            returnedMessage3.getFacility(), "Facility should be USER");
     }
 
     /*
@@ -224,31 +216,22 @@ public class ConverterTests {
      */
     @Test
     public void appNameAndHostNameTest() {
-        assertEquals(
-                "App name should be '" + supposedSyslogMessage1.getAppName() + "'", supposedSyslogMessage1.getAppName(),
-                returnedMessage1.getAppName()
-        );
-        assertEquals(
-                "App name should be '" + supposedSyslogMessage2.getAppName() + "'", supposedSyslogMessage2.getAppName(),
-                returnedMessage2.getAppName()
-        );
-        assertEquals(
-                "App name should be '" + supposedSyslogMessage3.getAppName() + "'", supposedSyslogMessage3.getAppName(),
-                returnedMessage3.getAppName()
-        );
+        Assertions.assertEquals(supposedSyslogMessage1.getAppName(), returnedMessage1.getAppName(),
+            "App name should be '" + supposedSyslogMessage1.getAppName() + "'");
+        Assertions.assertEquals(supposedSyslogMessage2.getAppName(), returnedMessage2.getAppName(),
+            "App name should be '" + supposedSyslogMessage2.getAppName() + "'");
+        Assertions.assertEquals(supposedSyslogMessage3.getAppName(), returnedMessage3.getAppName(),
+            "App name should be '" + supposedSyslogMessage3.getAppName() + "'");
 
-        assertEquals(
-                "Host name should be '" + supposedSyslogMessage1.getHostname() + "'",
-                supposedSyslogMessage1.getHostname(), returnedMessage1.getHostname()
-        );
-        assertEquals(
-                "Host name should be '" + supposedSyslogMessage1.getHostname() + "'",
-                supposedSyslogMessage2.getHostname(), returnedMessage2.getHostname()
-        );
-        assertEquals(
-                "Host name should be '" + supposedSyslogMessage1.getHostname() + "'",
-                supposedSyslogMessage3.getHostname(), returnedMessage3.getHostname()
-        );
+        Assertions.assertEquals(supposedSyslogMessage1.getHostname(),
+            returnedMessage1.getHostname(),
+            "Host name should be '" + supposedSyslogMessage1.getHostname() + "'");
+        Assertions.assertEquals(supposedSyslogMessage2.getHostname(),
+            returnedMessage2.getHostname(),
+            "Host name should be '" + supposedSyslogMessage1.getHostname() + "'");
+        Assertions.assertEquals(supposedSyslogMessage3.getHostname(),
+            returnedMessage3.getHostname(),
+            "Host name should be '" + supposedSyslogMessage1.getHostname() + "'");
     }
 
     /*
@@ -257,34 +240,30 @@ public class ConverterTests {
      */
     @Test
     public void msgTest() {
-        assertEquals(
-                "Msg should be '" + supposedSyslogMessage1.getMsg().toString() + "'",
-                supposedSyslogMessage1.getMsg().toString(), returnedMessage1.getMsg().toString()
-        );
-        assertEquals(
-                "Msg should be '" + supposedSyslogMessage2.getMsg().toString() + "'",
-                supposedSyslogMessage2.getMsg().toString(), returnedMessage2.getMsg().toString()
-        );
-        assertEquals(
-                "Msg should be '" + supposedSyslogMessage3.getMsg().toString() + "'",
-                supposedSyslogMessage3.getMsg().toString(), returnedMessage3.getMsg().toString()
-        );
+        Assertions.assertEquals(supposedSyslogMessage1.getMsg().toString(),
+            returnedMessage1.getMsg().toString(),
+            "Msg should be '" + supposedSyslogMessage1.getMsg().toString() + "'");
+        Assertions.assertEquals(supposedSyslogMessage2.getMsg().toString(),
+            returnedMessage2.getMsg().toString(),
+            "Msg should be '" + supposedSyslogMessage2.getMsg().toString() + "'");
+        Assertions.assertEquals(supposedSyslogMessage3.getMsg().toString(),
+            returnedMessage3.getMsg().toString(),
+            "Msg should be '" + supposedSyslogMessage3.getMsg().toString() + "'");
     }
 
     /*
      * Compares the time stamp from the supposed SyslogMessage and the SyslogMessage
      * returned from Converter if the time stamp is assigned to the SyslogMessage.
-     * Otherwise time stamp should be null.
+     * Otherwise, time stamp should be null.
      */
     @Test
     public void timestampTest() {
 
-        assertEquals(
-                "Timestamp should be: " + supposedSyslogMessage1.getTimestamp(), supposedSyslogMessage1.getTimestamp(),
-                returnedMessage1.getTimestamp()
-        );
-        assertNull("Timestamp should be null", supposedSyslogMessage2.getTimestamp());
-        assertNull("Timestamp should be null", supposedSyslogMessage3.getTimestamp());
+        Assertions.assertEquals(supposedSyslogMessage1.getTimestamp(),
+            returnedMessage1.getTimestamp(),
+            "Timestamp should be: " + supposedSyslogMessage1.getTimestamp());
+        Assertions.assertNull(supposedSyslogMessage2.getTimestamp(), "Timestamp should be null");
+        Assertions.assertNull(supposedSyslogMessage3.getTimestamp(), "Timestamp should be null");
 
     }
 
@@ -295,118 +274,102 @@ public class ConverterTests {
     @Test
     public void SDElementsTest() {
 
-        List<SDParam> supposedSDParams = new ArrayList<SDParam>();
-        List<SDParam> returnedSDParams = new ArrayList<SDParam>();
+        List<SDParam> supposedSDParams = new ArrayList<>();
+        List<SDParam> returnedSDParams = new ArrayList<>();
         Iterator<SDElement> iterator;
-        SDElement returnedSDE = null;
-        SDElement supposedSDE = null;
+        SDElement returnedSDE;
+        SDElement supposedSDE;
 
         // Gets the SDParams from the SDEs from the first SyslogMessage returned from
         // Converter and saves them in a List
-        for (iterator = returnedSDElements1.iterator(); iterator.hasNext();) {
+        for (iterator = returnedSDElements1.iterator(); iterator.hasNext(); ) {
             returnedSDE = iterator.next();
-            for (int i = 0; i < returnedSDE.getSdParams().size(); i++) {
-                returnedSDParams.add(returnedSDE.getSdParams().get(i));
-            }
+            returnedSDParams.addAll(returnedSDE.getSdParams());
         }
 
         // Gets the SDParams from the SDEs from the first SyslogMessage created in
         // initialize() and saves them in a List
-        for (iterator = supposedSDElements1.iterator(); iterator.hasNext();) {
+        for (iterator = supposedSDElements1.iterator(); iterator.hasNext(); ) {
             supposedSDE = iterator.next();
-            for (int i = 0; i < supposedSDE.getSdParams().size(); i++) {
-                supposedSDParams.add(supposedSDE.getSdParams().get(i));
-            }
+            supposedSDParams.addAll(supposedSDE.getSdParams());
         }
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
-        for (int i = 0; i < returnedSDParams.size(); i++) {
-            assertTrue(
-                    "SDParam '" + returnedSDParams.get(i) + "' should not be in returned SDElement.", supposedSDParams.contains(returnedSDParams.get(i))
-            );
+        for (final SDParam returnedSDParam : returnedSDParams) {
+            Assertions.assertTrue(supposedSDParams.contains(returnedSDParam),
+                "SDParam '" + returnedSDParam + "' should not be in returned SDElement.");
         }
 
         // Goes through all supposed SDParams and checks that they are all found in
         // returned SDParams
-        for (int i = 0; i < supposedSDParams.size(); i++) {
-            assertTrue(
-                    "SDParam '" + supposedSDParams.get(i) + "' should be in returned SDElement.", returnedSDParams.contains(supposedSDParams.get(i))
-            );
+        for (final SDParam supposedSDParam : supposedSDParams) {
+            Assertions.assertTrue(returnedSDParams.contains(supposedSDParam),
+                "SDParam '" + supposedSDParam + "' should be in returned SDElement.");
         }
 
         // Create new empty ArrayList that we can save SDParams from the next SDElement
-        supposedSDParams = new ArrayList<SDParam>();
-        returnedSDParams = new ArrayList<SDParam>();
+        supposedSDParams = new ArrayList<>();
+        returnedSDParams = new ArrayList<>();
 
         // Gets the SDParams from the SDEs from the second SyslogMessage returned from
         // Converter and saves them in a List
-        for (iterator = returnedSDElements2.iterator(); iterator.hasNext();) {
+        for (iterator = returnedSDElements2.iterator(); iterator.hasNext(); ) {
             returnedSDE = iterator.next();
-            for (int i = 0; i < returnedSDE.getSdParams().size(); i++)
-                returnedSDParams.add(returnedSDE.getSdParams().get(i));
+            returnedSDParams.addAll(returnedSDE.getSdParams());
         }
 
         // Gets the SDParams from the SDEs from the second SyslogMessage created in
         // initialize() and saves them in a List
-        for (iterator = supposedSDElements2.iterator(); iterator.hasNext();) {
+        for (iterator = supposedSDElements2.iterator(); iterator.hasNext(); ) {
             supposedSDE = iterator.next();
-            for (int i = 0; i < supposedSDE.getSdParams().size(); i++) {
-                supposedSDParams.add(supposedSDE.getSdParams().get(i));
-            }
+            supposedSDParams.addAll(supposedSDE.getSdParams());
         }
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
-        for (int i = 0; i < returnedSDParams.size(); i++) {
-            assertTrue(
-                    "SDParam '" + returnedSDParams.get(i) + "' should not be in returned SDElement.", supposedSDParams.contains(returnedSDParams.get(i))
-            );
+        for (SDParam returnedSDParam : returnedSDParams) {
+            Assertions.assertTrue(supposedSDParams.contains(returnedSDParam),
+                "SDParam '" + returnedSDParam + "' should not be in returned SDElement.");
         }
 
         // Goes through all supposed SDParams and checks that they are all found in
         // returned SDParams
-        for (int i = 0; i < supposedSDParams.size(); i++) {
-            assertTrue(
-                    "SDParam '" + supposedSDParams.get(i) + "' should be in returned SDElement.", returnedSDParams.contains(supposedSDParams.get(i))
-            );
+        for (final SDParam supposedSDParam : supposedSDParams) {
+            Assertions.assertTrue(returnedSDParams.contains(supposedSDParam),
+                "SDParam '" + supposedSDParam + "' should be in returned SDElement.");
         }
 
         // Create new empty ArrayList that we can save SDParams from the next SDElement
-        supposedSDParams = new ArrayList<SDParam>();
-        returnedSDParams = new ArrayList<SDParam>();
+        supposedSDParams = new ArrayList<>();
+        returnedSDParams = new ArrayList<>();
 
         // Gets the SDParams from the SDEs from the third SyslogMessage returned from
         // Converter and saves them in a List
-        for (iterator = returnedSDElements3.iterator(); iterator.hasNext();) {
+        for (iterator = returnedSDElements3.iterator(); iterator.hasNext(); ) {
             returnedSDE = iterator.next();
-            for (int i = 0; i < returnedSDE.getSdParams().size(); i++)
-                returnedSDParams.add(returnedSDE.getSdParams().get(i));
+            returnedSDParams.addAll(returnedSDE.getSdParams());
         }
 
         // Gets the SDParams from the SDEs from the third SyslogMessage created in
         // initialize() and saves them in a List
-        for (iterator = supposedSDElements3.iterator(); iterator.hasNext();) {
+        for (iterator = supposedSDElements3.iterator(); iterator.hasNext(); ) {
             supposedSDE = iterator.next();
-            for (int i = 0; i < supposedSDE.getSdParams().size(); i++) {
-                supposedSDParams.add(supposedSDE.getSdParams().get(i));
-            }
+            supposedSDParams.addAll(supposedSDE.getSdParams());
         }
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
-        for (int i = 0; i < returnedSDParams.size(); i++) {
-            assertTrue(
-                    "SDParam '" + returnedSDParams.get(i) + "' should not be in returned SDElement.", supposedSDParams.contains(returnedSDParams.get(i))
-            );
+        for (final SDParam returnedSDParam : returnedSDParams) {
+            Assertions.assertTrue(supposedSDParams.contains(returnedSDParam),
+                "SDParam '" + returnedSDParam + "' should not be in returned SDElement.");
         }
 
         // Goes through all supposed SDParams and checks that they are all found in
         // returned SDParams
-        for (int i = 0; i < supposedSDParams.size(); i++) {
-            assertTrue(
-                    "SDParam '" + supposedSDParams.get(i) + "' should be in returned SDElement.", returnedSDParams.contains(supposedSDParams.get(i))
-            );
+        for (final SDParam supposedSDParam : supposedSDParams) {
+            Assertions.assertTrue(returnedSDParams.contains(supposedSDParam),
+                "SDParam '" + supposedSDParam + "' should be in returned SDElement.");
         }
     }
 }
