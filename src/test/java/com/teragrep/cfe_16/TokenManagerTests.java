@@ -45,12 +45,10 @@
  */
 package com.teragrep.cfe_16;
 
+import java.util.Base64;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import java.util.Base64;
-
-import static org.junit.Assert.*;
 
 /*
  * Tests the functionality of TokenManager
@@ -74,9 +72,12 @@ public class TokenManagerTests {
         requestWithHttpHeaderAuth.addHeader("Authorization", authToken);
         requestWithBasicAuth.addHeader("Authorization", "Basic x:" + authToken);
 
-        assertFalse("Token should be found from the request", manager.tokenIsMissing(requestWithHttpHeaderAuth));
-        assertFalse("Token should be found from the request", manager.tokenIsMissing(requestWithBasicAuth));
-        assertTrue("Token should not be found from the request", manager.tokenIsMissing(requestWithoutAuth));
+        Assertions.assertFalse(manager.tokenIsMissing(requestWithHttpHeaderAuth),
+            "Token should be found from the request");
+        Assertions.assertFalse(manager.tokenIsMissing(requestWithBasicAuth),
+            "Token should be found from the request");
+        Assertions.assertTrue(manager.tokenIsMissing(requestWithoutAuth),
+            "Token should not be found from the request");
     }
 
     /*
@@ -89,11 +90,11 @@ public class TokenManagerTests {
         String authToken = "AUTH_TOKEN_11111";
         String basicAuthHeader = "Basic x:" + authToken;
 
-        assertTrue("Authorization header should be in basic format", manager.isTokenInBasic(basicAuthHeader));
-        assertFalse(
-                "Authorization should not be in basic format when querying with only the authentication token.",
-                manager.isTokenInBasic(authToken)
-        );
+        Assertions.assertTrue(manager.isTokenInBasic(basicAuthHeader),
+            "Authorization header should be in basic format");
+        Assertions.assertFalse(manager.isTokenInBasic(authToken),
+            "Authorization should not be in basic format when querying with only the "
+                + "authentication token.");
     }
 
     /*
@@ -104,13 +105,12 @@ public class TokenManagerTests {
     public void getTokenFromBasicAuthTest() {
         String authToken = "AUTH_TOKEN_11111";
         String basicAuthCredentials = "x:" + authToken;
-        String credentialsEncoded = Base64.getEncoder().encodeToString(basicAuthCredentials.getBytes());
+        String credentialsEncoded = Base64.getEncoder()
+            .encodeToString(basicAuthCredentials.getBytes());
         String basicAuthHeader = "Basic " + credentialsEncoded;
 
-        assertEquals(
-                "Method should return the authentication token extracted from the Basic Authentication format",
-                authToken, manager.getTokenFromBasic(basicAuthHeader)
-        );
+        Assertions.assertEquals(authToken, manager.getTokenFromBasic(basicAuthHeader),
+            "Method should return the authentication token extracted from the Basic "
+                + "Authentication format");
     }
-
 }
