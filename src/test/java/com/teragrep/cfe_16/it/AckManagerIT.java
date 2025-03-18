@@ -52,6 +52,8 @@ import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.exceptionhandling.ServerIsBusyException;
+import java.io.IOException;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,11 +64,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
-
-import java.io.IOException;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /*
  * Tests the functionality of ackManager
@@ -81,6 +78,7 @@ import static org.junit.Assert.*;
         "max.ack.value=1000000",
         "max.ack.age=20000",
         "max.session.age=30000",
+        "poll.time=30000",
         "poll.time=30000",
         "server.print.times=true"
 })
@@ -134,14 +132,14 @@ public class AckManagerIT {
         currentAckValue = ackManager.getCurrentAckValue(this.authToken1, this.channel1);
         ackManager.incrementAckValue(this.authToken1, this.channel1);
 
-        assertEquals("channel1 current ack value should be 3", 3, currentAckValue);
+        Assertions.assertEquals(3, currentAckValue, "channel1 current ack value should be 3");
 
         currentAckValue = ackManager.getCurrentAckValue(this.authToken1, this.channel1);
         ackManager.incrementAckValue(this.authToken1, this.channel1);
-        assertEquals("channel1 current ack value should be 4", 4, currentAckValue);
+        Assertions.assertEquals(4, currentAckValue, "channel1 current ack value should be 4");
 
         currentAckValue = ackManager.getCurrentAckValue(this.authToken2, this.channel2);
-        assertEquals("channel2 current ack value should be 0", 0, currentAckValue);
+        Assertions.assertEquals(0, currentAckValue, "channel2 current ack value should be 0");
     }
 
     /*
@@ -154,23 +152,24 @@ public class AckManagerIT {
         ackManager.initializeContext(this.authToken1, this.channel1);
         ackManager.addAck(this.authToken1, this.channel1, new Ack(0, false));
         ackManager.acknowledge(this.authToken1, this.channel1, 0);
-        assertTrue(
-                "ackId 0 should be acknowledged for channel 1",
-                ackManager.isAckAcknowledged(this.authToken1, this.channel1, 0)
+        Assertions.assertTrue(
+            ackManager.isAckAcknowledged(this.authToken1, this.channel1, 0),
+            "ackId 0 should be acknowledged for channel 1"
         );
-        assertFalse(
-                "ackId 1 should not be acknowledged for channel 1",
-                ackManager.isAckAcknowledged(this.authToken1, this.channel1, 1)
+        Assertions.assertFalse(
+            ackManager.isAckAcknowledged(this.authToken1, this.channel1, 1),
+            "ackId 1 should not be acknowledged for channel 1"
         );
-        assertFalse(
-                "ackId 10 is not used yet for channel 1, so isAckAcknowledged should return false",
-                ackManager.isAckAcknowledged(this.authToken1, this.channel1, 10)
+        Assertions.assertFalse(
+            ackManager.isAckAcknowledged(
+                this.authToken1, this.channel1, 10),
+            "ackId 10 is not used yet for channel 1, so isAckAcknowledged should return false"
         );
         ackManager.incrementAckValue(this.authToken1, this.channel1);
         ackManager.initializeContext(this.authToken2, this.channel2);
-        assertFalse(
-                "ackId 0 is not used yet for channel 2 so isAckAcknowledged should return false",
-                ackManager.isAckAcknowledged(this.authToken2, this.channel2, 0)
+        Assertions.assertFalse(
+            ackManager.isAckAcknowledged(this.authToken2, this.channel2, 0),
+            "ackId 0 is not used yet for channel 2 so isAckAcknowledged should return false"
         );
     }
 
@@ -194,8 +193,8 @@ public class AckManagerIT {
         JsonNode faultyNode = mapper.createObjectNode();
         JsonNode notIntNode = mapper.createObjectNode();
         ackManager.initializeContext(this.authToken1, this.channel1);
-        assertTrue(ackManager.addAck(this.authToken1, this.channel1, new Ack(1, false)));
-        assertTrue(ackManager.acknowledge(this.authToken1, this.channel1, 1));
+        Assertions.assertTrue(ackManager.addAck(this.authToken1, this.channel1, new Ack(1, false)));
+        Assertions.assertTrue(ackManager.acknowledge(this.authToken1, this.channel1, 1));
         try {
             queryNode = mapper.readTree(requestAsString);
             faultyNode = mapper.readTree(faultyRequestAsString);
@@ -204,78 +203,73 @@ public class AckManagerIT {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
-        assertEquals(
-                "getRequestedAckStatuses should return null, when providing a null value as a parameter", emptyJsonNode,
-                ackManager.getRequestedAckStatuses(this.authToken1, "", null)
-        );
+        Assertions.assertEquals(emptyJsonNode,
+            ackManager.getRequestedAckStatuses(this.authToken1, "", null),
+            "getRequestedAckStatuses should return null, when providing a null value as a "
+                + "parameter");
 
         try {
-            assertEquals(
-                    "ackId 1 status should be true on channel1, others should be false.",
-                    supposedResponseAsStringOneTrue,
-                    ackManager.getRequestedAckStatuses(this.authToken1, this.channel1, queryNode).toString()
-            );
-        }
-        catch (Throwable e1) {
+            Assertions.assertEquals(supposedResponseAsStringOneTrue,
+                ackManager.getRequestedAckStatuses(this.authToken1, this.channel1, queryNode)
+                    .toString(),
+                "ackId 1 status should be true on channel1, others should be false.");
+        } catch (Throwable e1) {
             // TODO Auto-generated catch block
             LOGGER.warn("Failed to handle ack request: ", e1);
         }
 
-        assertEquals(
-                "ackId 1 status should be false on channel1 after requesting it's status once. All others should be false as well",
-                supposedResponseAsStringAllFalse,
-                ackManager.getRequestedAckStatuses(this.authToken1, this.channel1, queryNode).toString()
-        );
+        Assertions.assertEquals(supposedResponseAsStringAllFalse,
+            ackManager.getRequestedAckStatuses(this.authToken1, this.channel1, queryNode)
+                .toString(),
+            "ackId 1 status should be false on channel1 after requesting it's status once. All "
+                + "others should be false as well");
 
         ackManager.initializeContext(this.authToken2, this.channel2);
-        assertEquals(
-                "All ack statuses should be false for channel2", supposedResponseAsStringAllFalse,
-                ackManager.getRequestedAckStatuses(this.authToken2, this.channel2, queryNode).toString()
-        );
+        Assertions.assertEquals(supposedResponseAsStringAllFalse,
+            ackManager.getRequestedAckStatuses(this.authToken2, this.channel2, queryNode)
+                .toString(), "All ack statuses should be false for channel2");
 
-        assertEquals(
-                "An empty JsonNode should be returned when querying with an empty JsonNode", emptyJsonNode,
-                ackManager.getRequestedAckStatuses(this.authToken1, this.channel1, emptyJsonNode)
-        );
+        Assertions.assertEquals(emptyJsonNode,
+            ackManager.getRequestedAckStatuses(this.authToken1, this.channel1, emptyJsonNode),
+            "An empty JsonNode should be returned when querying with an empty JsonNode");
 
-        assertEquals(
-                "An empty JsonNode should be returned when querying with a JsonNode that has no \"acks\" field in it.",
-                emptyJsonNode, ackManager.getRequestedAckStatuses(this.authToken1, this.channel1, faultyNode)
-        );
-        try {
-            assertEquals(
-                    "An empty JsonNode should be returned when querying with a JsonNode that has \"acks\" field in it, but it has something else than integers as it's values",
-                    emptyJsonNode, ackManager.getRequestedAckStatuses(this.authToken1, this.channel1, notIntNode)
-            );
-            fail("Expected IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e) {
-        }
+        Assertions.assertEquals(emptyJsonNode,
+            ackManager.getRequestedAckStatuses(this.authToken1, this.channel1, faultyNode),
+            "An empty JsonNode should be returned when querying with a JsonNode that has no "
+                + "\"acks\" field in it.");
+
+        // Lambda requires parameter to be final, so noIntNode cannot be used
+        final JsonNode finalNotIntNode = notIntNode;
+        Assertions.assertThrowsExactly(IllegalArgumentException.class,
+            () -> ackManager.getRequestedAckStatuses(
+                this.authToken1,
+                this.channel1,
+                finalNotIntNode
+            ),
+            "An empty JsonNode should be returned when querying with a JsonNode that has "
+                + "\"acks\" field in it, but it has something else than integers as it's "
+                + "values");
     }
 
     public void getCurrentAckValueAndIncrementTest() {
         AckManager ackManager1 = new AckManager();
         AckManager ackManager2 = new AckManager();
 
-        assertEquals(
-                "AckManager 1 should return 0", 0,
-                ackManager1.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL)
-        );
+        Assertions.assertEquals(0,
+            ackManager1.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL),
+            "AckManager 1 should return 0");
         ackManager1.incrementAckValue(this.authToken1, Session.DEFAULT_CHANNEL);
-        assertEquals(
-                "AckManager 1 should return 1", 1,
-                ackManager1.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL)
-        );
+        Assertions.assertEquals(1,
+            ackManager1.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL),
+            "AckManager 1 should return 1");
 
-        assertEquals(
-                "AckManager 2 should return 0", 0,
-                ackManager2.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL)
-        );
+        Assertions.assertEquals(0,
+            ackManager2.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL),
+            "AckManager 2 should return 0");
         ackManager2.incrementAckValue(this.authToken1, Session.DEFAULT_CHANNEL);
-        assertEquals(
-                "AckManager 2 should return 1", 1,
-                ackManager2.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL)
-        );
+        Assertions.assertEquals(1,
+            ackManager2.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL),
+            "AckManager 2 should return 1");
 
     }
 
@@ -292,28 +286,34 @@ public class AckManagerIT {
         AckManager ackManager2 = new AckManager();
 
         ackManager1.initializeContext(this.authToken1, this.channel1);
-        assertTrue(ackManager1.addAck(this.authToken1, this.channel1, new Ack(0, false)));
-        assertTrue(ackManager1.addAck(this.authToken1, this.channel1, new Ack(1, false)));
+        Assertions.assertTrue(
+            ackManager1.addAck(this.authToken1, this.channel1, new Ack(0, false)));
+        Assertions.assertTrue(
+            ackManager1.addAck(this.authToken1, this.channel1, new Ack(1, false)));
 
         Map<Integer, Ack> list1 = ackManager1.getAckList(this.authToken1, this.channel1);
         int list1Size = ackManager1.getAckListSize(this.authToken1, this.channel1);
-        assertEquals("Ack list 1 size should be 2.", 2, list1Size);
+        Assertions.assertEquals(2, list1Size, "Ack list 1 size should be 2.");
 
         Ack deletedAck = list1.values().iterator().next();
 
         ackManager2.initializeContext(this.authToken2, this.channel2);
-        assertTrue(ackManager2.addAck(this.authToken2, this.channel2, new Ack(0, false)));
+        Assertions.assertTrue(
+            ackManager2.addAck(this.authToken2, this.channel2, new Ack(0, false)));
 
         ackManager2.initializeContext(this.authToken2, this.channel2);
-        assertTrue(ackManager2.addAck(this.authToken2, this.channel2, new Ack(1, false)));
+        Assertions.assertTrue(
+            ackManager2.addAck(this.authToken2, this.channel2, new Ack(1, false)));
 
         ackManager2.deleteAckFromList(this.authToken2, this.channel2, deletedAck);
         Map<Integer, Ack> list2 = ackManager2.getAckList(this.authToken2, this.channel2);
         int list2Size = list2.size();
 
-        assertNotSame("Ack lists should not be same", list1.toString(), list2.toString());
-        assertEquals("list2 should be shorter by one index", list1Size - 1, list2Size);
-        assertFalse("list2 should not contain the deleted ack", list2.containsKey(deletedAck.getId()));
+        Assertions.assertNotSame(list1.toString(), list2.toString(),
+            "Ack lists should not be same");
+        Assertions.assertEquals(list1Size - 1, list2Size, "list2 should be shorter by one index");
+        Assertions.assertFalse(list2.containsKey(deletedAck.getId()),
+            "list2 should not contain the deleted ack");
     }
 
     /*
