@@ -62,12 +62,12 @@ public class Session {
     /**
      * Channels of this Session object.
      */
-    private final Set<String> channels;
+    private Set<String> channels;
 
     /**
      * Authentication key of this Session.
      */
-    private final String authenticationToken;
+    private String authenticationToken;
 
     private long lastTouchedTimestamp;
 

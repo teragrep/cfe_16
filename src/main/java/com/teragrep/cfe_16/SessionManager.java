@@ -80,7 +80,7 @@ public class SessionManager implements Runnable, LifeCycle {
     private Configuration configuration;
 
     /**
-     * 
+     *
      */
     public SessionManager() {
         this.sessions = new HashMap<String, Session>();
@@ -114,7 +114,7 @@ public class SessionManager implements Runnable, LifeCycle {
                     Map.Entry<String, Session> entry = iterator.next();
                     long now = System.currentTimeMillis();
                     long thresholdInLong = entry.getValue().getLastTouchedTimestamp()
-                            + this.configuration.getMaxSessionAge();
+                        + this.configuration.getMaxSessionAge();
                     if (now >= thresholdInLong) {
                         iterator.remove();
                     }

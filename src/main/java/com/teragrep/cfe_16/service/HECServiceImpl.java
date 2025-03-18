@@ -73,13 +73,13 @@ public class HECServiceImpl implements HECService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private AckManager ackManager;
-    
+
     @Autowired
     private SessionManager sessionManager;
-    
+
     @Autowired
     private TokenManager tokenManager;
-    
+
     @Autowired
     private EventManager eventManager;
 
@@ -91,7 +91,7 @@ public class HECServiceImpl implements HECService {
 
     @Override
     // @LogAnnotation(type = LogType.METRIC_COUNTER)
-    public synchronized ObjectNode sendEvents(HttpServletRequest request, String channel, String eventInJson) {
+    public ObjectNode sendEvents(HttpServletRequest request, String channel, String eventInJson) {
         LOGGER.debug("Sending events to channel <{}>", channel);
         if (this.tokenManager.tokenIsMissing(request)) {
             throw new AuthenticationTokenMissingException("Authentication token must be provided");

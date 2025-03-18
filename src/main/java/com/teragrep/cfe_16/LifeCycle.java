@@ -46,7 +46,9 @@
 package com.teragrep.cfe_16;
 
 /**
- * An interface that own resources like threads for doing graceful shutdown.
+ * An interface that own resources like threads for doing
+ * graceful shutdown.
+ *
  */
 public interface LifeCycle {
 
