@@ -254,7 +254,7 @@ public class TestClient implements Runnable {
 
     /**
      * Validates the response body line against the given regural expression.
-     * 
+     *
      * @param expectedRegex
      * @param responseBody
      */
@@ -266,7 +266,7 @@ public class TestClient implements Runnable {
 
     /**
      * Verifies that the HTTP reply status code was what it was supposed to me.
-     * 
+     *
      * @param expectedHttpStatusCode
      * @param line
      */
@@ -281,7 +281,7 @@ public class TestClient implements Runnable {
     /**
      * Advances buffered reader through HTTP headers. If "Connection: close" header is seen, the socket is closed and a
      * new one is created.
-     * 
+     *
      * @param socket
      * @param bufferedReader
      * @return
@@ -305,7 +305,7 @@ public class TestClient implements Runnable {
 
     /**
      * Reads the reply line from the servere. Chunked transfer is assumed.
-     * 
+     *
      * @param bufferedReader
      * @return
      * @throws IOException
@@ -326,7 +326,7 @@ public class TestClient implements Runnable {
 
     /**
      * Checks that the TCP connection is open, otherwis a new connection is created and returned.
-     * 
+     *
      * @param socket
      * @return
      * @throws IOException
@@ -341,7 +341,7 @@ public class TestClient implements Runnable {
 
     /**
      * Does a HTTP request and keeps connection open.
-     * 
+     *
      * @param socket
      * @param path
      * @param request

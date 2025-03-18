@@ -61,10 +61,10 @@ public class RelpConnection extends AbstractConnection {
     private static final Logger LOGGER = LoggerFactory.getLogger(RelpConnection.class);
     //settings for timeouts, if they are 0 that we skip them
     //default are 0
-    private final int connectionTimeout = 10000;
-    private final int readTimeout = 15000;
-    private final int writeTimeout = 5000;
-    private final int reconnectInterval = 500;
+    private int connectionTimeout = 10000;
+    private int readTimeout = 15000;
+    private int writeTimeout = 5000;
+    private int reconnectInterval = 500;
 
     public RelpConnection(String hostname, int port) {
         super(hostname, port);

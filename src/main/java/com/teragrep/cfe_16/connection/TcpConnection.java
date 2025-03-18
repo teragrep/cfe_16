@@ -54,7 +54,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 public class TcpConnection extends AbstractConnection {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(TcpConnection.class);
     private final TcpSyslogMessageSender sender;
 
