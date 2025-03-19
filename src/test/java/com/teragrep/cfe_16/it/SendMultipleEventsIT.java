@@ -140,8 +140,9 @@ public class SendMultipleEventsIT {
                     .assertTrue(supposedResponses.contains(actualResponse), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be " + countFuture + ")");
             countFuture++;
         }
+
+        Assertions.assertEquals(countFuture, futures.size(), "All futures have been looped through");
+
         Assertions.assertEquals(NUMBER_OF_EVENTS_TO_BE_SENT * 2, messageList.size());
     }
-
-
 }
