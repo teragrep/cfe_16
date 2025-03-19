@@ -53,6 +53,7 @@ import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import com.teragrep.cfe_16.bo.XForwardedForStub;
 import com.teragrep.cfe_16.bo.XForwardedHostStub;
 import com.teragrep.cfe_16.bo.XForwardedProtoStub;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -337,19 +338,26 @@ public class ConverterTests {
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
+        int loopedReturnedSDParamsAssertions =0;
         for (int i = 0; i < returnedSDParams.size(); i++) {
+            loopedReturnedSDParamsAssertions++;
             assertTrue(
                     "SDParam '" + returnedSDParams.get(i) + "' should not be in returned SDElement.", supposedSDParams.contains(returnedSDParams.get(i))
             );
         }
+        Assertions.assertEquals(returnedSDParams.size(), loopedReturnedSDParamsAssertions, "All returnedSDParams were looped through");
 
         // Goes through all supposed SDParams and checks that they are all found in
         // returned SDParams
+        int loopedSupposedSDParamsAssertions =0;
         for (int i = 0; i < supposedSDParams.size(); i++) {
+            loopedSupposedSDParamsAssertions++;
             assertTrue(
                     "SDParam '" + supposedSDParams.get(i) + "' should be in returned SDElement.", returnedSDParams.contains(supposedSDParams.get(i))
             );
         }
+        Assertions.assertEquals(supposedSDParams.size(), loopedSupposedSDParamsAssertions, "All supposedSDParams were looped through");
+
 
         // Create new empty ArrayList that we can save SDParams from the next SDElement
         supposedSDParams = new ArrayList<SDParam>();
@@ -374,19 +382,25 @@ public class ConverterTests {
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
+        int loopedReturnedSDParamsAssertions1 =0;
         for (int i = 0; i < returnedSDParams.size(); i++) {
+            loopedReturnedSDParamsAssertions1++;
             assertTrue(
                     "SDParam '" + returnedSDParams.get(i) + "' should not be in returned SDElement.", supposedSDParams.contains(returnedSDParams.get(i))
             );
         }
+        Assertions.assertEquals(returnedSDParams.size(), loopedReturnedSDParamsAssertions1, "All returnedSDParams were looped through");
 
         // Goes through all supposed SDParams and checks that they are all found in
         // returned SDParams
+        int loopedSupposedSDParamsAssertions1 =0;
         for (int i = 0; i < supposedSDParams.size(); i++) {
+            loopedSupposedSDParamsAssertions1++;
             assertTrue(
                     "SDParam '" + supposedSDParams.get(i) + "' should be in returned SDElement.", returnedSDParams.contains(supposedSDParams.get(i))
             );
         }
+        Assertions.assertEquals(supposedSDParams.size(), loopedSupposedSDParamsAssertions1, "All supposedSDParams were looped through");
 
         // Create new empty ArrayList that we can save SDParams from the next SDElement
         supposedSDParams = new ArrayList<SDParam>();
@@ -411,18 +425,25 @@ public class ConverterTests {
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
+        int loopedReturnedSDParamsAssertions2 =0;
+
         for (int i = 0; i < returnedSDParams.size(); i++) {
+            loopedReturnedSDParamsAssertions2++;
             assertTrue(
                     "SDParam '" + returnedSDParams.get(i) + "' should not be in returned SDElement.", supposedSDParams.contains(returnedSDParams.get(i))
             );
         }
+        Assertions.assertEquals(returnedSDParams.size(), loopedReturnedSDParamsAssertions2, "All returnedSDParams were looped through");
 
         // Goes through all supposed SDParams and checks that they are all found in
         // returned SDParams
+        int loopedSupposedSDParamsAssertions2 =0;
         for (int i = 0; i < supposedSDParams.size(); i++) {
+            loopedSupposedSDParamsAssertions2++;
             assertTrue(
                     "SDParam '" + supposedSDParams.get(i) + "' should be in returned SDElement.", returnedSDParams.contains(supposedSDParams.get(i))
             );
         }
+        Assertions.assertEquals(supposedSDParams.size(), loopedSupposedSDParamsAssertions2, "All supposedSDParams were looped through");
     }
 }
