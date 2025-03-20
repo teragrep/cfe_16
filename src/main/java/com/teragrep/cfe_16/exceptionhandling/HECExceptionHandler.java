@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2019-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -100,10 +100,10 @@ public class HECExceptionHandler {
     public ResponseEntity<HECErrorResponse> handleException(EventFieldBlankException exc) {
 
         HECErrorResponse error = new HECErrorResponse("Event field cannot be blank", 13, 0); // TODO: when support for
-                                                                                             // multiple events with one
-                                                                                             // request is implemented,
-                                                                                             // get the real invalid
-                                                                                             // event number here.
+        // multiple events with one
+        // request is implemented,
+        // get the real invalid
+        // event number here.
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
@@ -111,9 +111,9 @@ public class HECExceptionHandler {
     public ResponseEntity<HECErrorResponse> handleException(ServerIsBusyException exc) {
 
         HECErrorResponse error = new HECErrorResponse("Server is busy", 9, 0); // TODO: when support for multiple events
-                                                                               // with one request is implemented,
-                                                                               // get the real invalid event number
-                                                                               // here.
+        // with one request is implemented,
+        // get the real invalid event number
+        // here.
         return new ResponseEntity<>(error, HttpStatus.SERVICE_UNAVAILABLE);
     }
 

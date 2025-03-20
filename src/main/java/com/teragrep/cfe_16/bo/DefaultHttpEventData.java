@@ -44,30 +44,57 @@
  * a licensee so wish it.
  */
 
-package com.teragrep.cfe_16.exceptionhandling;
+package com.teragrep.cfe_16.bo;
 
-@SuppressWarnings("serial")
-public class SessionNotFoundException extends RuntimeException {
+public final class DefaultHttpEventData implements HttpEventData {
 
-    public SessionNotFoundException() {
-        super();
+    private String channel;
+    private String event;
+    private String authenticationToken;
+
+    public DefaultHttpEventData() {
     }
 
-    public SessionNotFoundException(String message, Throwable cause, boolean enableSuppression,
-        boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public DefaultHttpEventData(
+        String channel,
+        String event,
+        String authenticationToken
+    ) {
+        this.channel = channel;
+        this.event = event;
+        this.authenticationToken = authenticationToken;
     }
 
-    public SessionNotFoundException(String message, Throwable cause) {
-        super(message, cause);
+    public String getEvent() {
+        return event;
     }
 
-    public SessionNotFoundException(String message) {
-        super(message);
+    public void setEvent(String event) {
+        this.event = event;
     }
 
-    public SessionNotFoundException(Throwable cause) {
-        super(cause);
+    public String getChannel() {
+        return channel;
     }
 
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public String getAuthenticationToken() {
+        return authenticationToken;
+    }
+
+    public void setAuthenticationToken(String authenticationToken) {
+        this.authenticationToken = authenticationToken;
+    }
+
+    @Override
+    public String toString() {
+        return "DefaultHttpEventData{" +
+            "channel='" + channel + '\'' +
+            ", event='" + event + '\'' +
+            ", authenticationToken='" + authenticationToken + '\'' +
+            '}';
+    }
 }

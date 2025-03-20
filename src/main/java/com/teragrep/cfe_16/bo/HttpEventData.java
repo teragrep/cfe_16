@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2019-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -46,87 +46,11 @@
 
 package com.teragrep.cfe_16.bo;
 
-/**
- */
-public class HttpEventData {
+public interface HttpEventData {
 
-    private String channel;
-    private String event;
-    private String authenticationToken;
-    private String timeSource;
-    private String time;
-    private long timeAsLong;
-    private boolean timeParsed;
-    private Integer ackID;
+    String getEvent();
 
-    public String getEvent() {
-        return event;
-    }
+    String getChannel();
 
-    public void setEvent(String event) {
-        this.event = event;
-    }
-
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
-    }
-
-    public String getAuthenticationToken() {
-        return authenticationToken;
-    }
-
-    public void setAuthenticationToken(String authenticationToken) {
-        this.authenticationToken = authenticationToken;
-    }
-
-    public String getTimeSource() {
-        return timeSource;
-    }
-
-    public void setTimeSource(String timeSource) {
-        this.timeSource = timeSource;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public long getTimeAsLong() {
-        return timeAsLong;
-    }
-
-    public void setTimeAsLong(long timeAsLong) {
-        this.timeAsLong = timeAsLong;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public boolean isTimeParsed() {
-        return timeParsed;
-    }
-
-    public void setTimeParsed(boolean timeParsed) {
-        this.timeParsed = timeParsed;
-    }
-
-    public Integer getAckID() {
-        return ackID;
-    }
-
-    public void setAckID(Integer ackID) {
-        this.ackID = ackID;
-    }
-
-    @Override
-    public String toString() {
-        return "HttpEventData [channel=" + channel + ", event=" + event + ", authenticationToken=" + authenticationToken
-                + ", timeSource=" + timeSource + ", time=" + time + ", timeAsLong=" + timeAsLong + ", timeParsed="
-                + timeParsed + ", ackID=" + ackID + "]";
-    }
+    String getAuthenticationToken();
 }

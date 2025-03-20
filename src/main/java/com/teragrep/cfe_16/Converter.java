@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2019-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,36 +51,36 @@ import com.cloudbees.syslog.SDElement;
 import com.cloudbees.syslog.Severity;
 import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.HttpEventData;
+import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /*
  * Converts HTTP Event Data into a Syslog message.
- * 
+ *
  * This class is NOT thread safe!
  *
  */
 @Component
 public class Converter {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
+    private final String hostName = "cfe-16";
     private Severity severity;
     private Facility facility;
-
     private SDElement metadataSDE;
     private SDElement headerSDE;
 
-    private final String hostName = "cfe-16";
-
-    public SyslogMessage httpToSyslog(HttpEventData httpEventData, HeaderInfo headerInfo) {
+    public SyslogMessage httpToSyslog(TimestampedHttpEventData httpEventData,
+        HeaderInfo headerInfo) {
 
         setEventSeverity();
         setEventFacility();
 
         setStructuredDataParams(httpEventData);
         setHeaderSDE(headerInfo);
-        
+
         SyslogMessage syslogMessage;
         if (httpEventData.isTimeParsed()) {
 
@@ -88,9 +88,11 @@ public class Converter {
              * Creates a Syslogmessage with a time stamp
              */
             LOGGER.debug("Creating new syslog message with timestamp");
-            syslogMessage = new SyslogMessage().withTimestamp(httpEventData.getTimeAsLong()).withSeverity(severity)
-                    .withAppName("capsulated").withHostname(hostName).withFacility(facility).withSDElement(metadataSDE)
-                    .withSDElement(headerSDE).withMsg(httpEventData.getEvent());
+            syslogMessage = new SyslogMessage().withTimestamp(httpEventData.getTimeAsLong())
+                .withSeverity(severity)
+                .withAppName("capsulated").withHostname(hostName).withFacility(facility)
+                .withSDElement(metadataSDE)
+                .withSDElement(headerSDE).withMsg(httpEventData.getEvent());
 
         } else {
             /*
@@ -98,9 +100,10 @@ public class Converter {
              * in the request.
              */
             LOGGER.debug("Creating new syslog message without timestamp");
-            syslogMessage = new SyslogMessage().withSeverity(severity).withAppName("capsulated").withHostname(hostName)
-                    .withFacility(facility).withSDElement(metadataSDE).withSDElement(headerSDE)
-                    .withMsg(httpEventData.getEvent());
+            syslogMessage = new SyslogMessage().withSeverity(severity).withAppName("capsulated")
+                .withHostname(hostName)
+                .withFacility(facility).withSDElement(metadataSDE).withSDElement(headerSDE)
+                .withMsg(httpEventData.getEvent());
         }
 
         return syslogMessage;
@@ -124,7 +127,7 @@ public class Converter {
      * Gets the data from the HTTP Event Data and adds it to SD Element as SD
      * Parameters.
      */
-    private void setStructuredDataParams(HttpEventData eventData) {
+    private void setStructuredDataParams(TimestampedHttpEventData eventData) {
         LOGGER.debug("Setting Structured Data params");
         metadataSDE = new SDElement("cfe_16-metadata@48577");
 
@@ -136,11 +139,6 @@ public class Converter {
         if (eventData.getChannel() != null) {
             LOGGER.debug("Setting channel");
             metadataSDE.addSDParam("channel", eventData.getChannel());
-        }
-
-        if (eventData.getAckID() != null) {
-            LOGGER.debug("Setting ack id");
-            metadataSDE.addSDParam("ack_id", String.valueOf(eventData.getAckID()));
         }
 
         if (eventData.getTimeSource() != null) {
@@ -159,8 +157,9 @@ public class Converter {
 
         SyslogMessage syslogMessage = null;
         setHeaderSDE(headerInfo);
-        syslogMessage = new SyslogMessage().withSeverity(severity).withAppName("capsulated").withHostname(hostName)
-                .withFacility(facility).withSDElement(headerSDE);
+        syslogMessage = new SyslogMessage().withSeverity(severity).withAppName("capsulated")
+            .withHostname(hostName)
+            .withFacility(facility).withSDElement(headerSDE);
 
         return syslogMessage;
     }

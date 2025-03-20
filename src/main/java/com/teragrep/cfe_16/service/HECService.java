@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2019-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -60,26 +60,26 @@ public interface HECService {
 
     /**
      * Returns the JSON object as a response of given HTTP event request.
-     * 
+     *
      * @param request
      * @param channel
      * @param eventInJson
      * @return
      */
     public ObjectNode sendEvents(HttpServletRequest request, String channel, String eventInJson);
-    
+
     /**
-     * 
+     *
      * @param request
      * @param channel
      * @param requestedAcksInJson
      * @return
      */
     public JsonNode getAcks(HttpServletRequest request, String channel, JsonNode requestedAcksInJson);
-    
+
     /**
      * Ping.
-     * 
+     *
      * @param request
      * @return
      */

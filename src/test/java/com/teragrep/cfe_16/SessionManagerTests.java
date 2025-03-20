@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2019-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -65,7 +65,7 @@ public class SessionManagerTests {
      */
     @BeforeEach
     public void initialize() {
-    	sessionManager = new SessionManager();
+        sessionManager = new SessionManager();
     }
 
     /*
@@ -82,15 +82,15 @@ public class SessionManagerTests {
         Session session1 = sessionManager.createSession(authToken1);
         Session session2 = sessionManager.createSession(authToken2);
         assertSame("Same session should be returned with the same authentication token", session1,
-                sessionManager.getSession(authToken1));
+            sessionManager.getSession(authToken1));
         assertSame("Same session should be returned with the same authentication token", session2,
-                sessionManager.getSession(authToken2));
+            sessionManager.getSession(authToken2));
         assertNotSame("Different session should be returned with a different authentication token", session1,
-                sessionManager.getSession(authToken2));
+            sessionManager.getSession(authToken2));
         assertNotSame("Different session should be returned with a different authentication token", session2,
-                sessionManager.getSession(authToken1));
+            sessionManager.getSession(authToken1));
         assertNull("Getting a session with an unused authentication token should return null",
-                sessionManager.getSession(authToken3));
+            sessionManager.getSession(authToken3));
     }
 
     @Test

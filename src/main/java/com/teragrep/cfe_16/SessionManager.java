@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2019-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -75,17 +75,17 @@ public class SessionManager implements Runnable, LifeCycle {
      * Cleans up outdated Session objects.
      */
     private Thread cleanerThread;
-    
+
     @Autowired
     private Configuration configuration;
-    
+
     /**
-     * 
+     *
      */
     public SessionManager() {
         this.sessions = new HashMap<String, Session>();
     }
-    
+
     @Override
     @PostConstruct
     public void start() {
@@ -97,7 +97,7 @@ public class SessionManager implements Runnable, LifeCycle {
     public void stop() {
         this.cleanerThread.interrupt();
     }
-    
+
     @Override
     public void run() {
         while (true) {
@@ -115,7 +115,7 @@ public class SessionManager implements Runnable, LifeCycle {
                     long thresholdInLong = entry.getValue().getLastTouchedTimestamp() + this.configuration.getMaxSessionAge();
                     if (now >= thresholdInLong) {
                         iterator.remove();
-                    }                    
+                    }
                 }
             }
         }

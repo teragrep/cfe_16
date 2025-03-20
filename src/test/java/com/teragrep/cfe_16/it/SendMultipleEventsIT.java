@@ -46,46 +46,51 @@
 
 package com.teragrep.cfe_16.it;
 
-
-import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.server.TestServer;
 import com.teragrep.cfe_16.server.TestServerFactory;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import com.teragrep.cfe_16.service.HECService;
 import java.util.concurrent.atomic.AtomicLong;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+@TestPropertySource(properties = {
+    "syslog.server.host=127.0.0.1",
+    "syslog.server.port=1236",
+    "syslog.server.protocol=RELP",
+    "max.channels=1000000",
+    "max.ack.value=1000000",
+    "max.ack.age=20000",
+    "max.session.age=30000",
+    "poll.time=30000",
+    "spring.devtools.add-properties=false",
+    "server.print.times=true"
+})
 @SpringBootTest
-public class ConfigurationIT {
+public class SendMultipleEventsIT {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationIT.class);
-    private static final String hostname = "localhost";
-    private static final Integer port = 1235;
+    private final static int SERVER_PORT = 1236;
     private static final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
     private static final AtomicLong openCount = new AtomicLong();
     private static final AtomicLong closeCount = new AtomicLong();
     private static TestServer server;
     @Autowired
-    private Configuration configuration;
+    private HECService service;
+    private MockHttpServletRequest request1;
+    private String eventInJson;
+    private String channel1;
 
     @BeforeAll
     public static void init() {
         TestServerFactory serverFactory = new TestServerFactory();
-        try {
-            server = serverFactory.create(port, messageList, openCount, closeCount);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        server = Assertions.assertDoesNotThrow(() -> serverFactory.create(SERVER_PORT, messageList, openCount, closeCount));
         server.run();
     }
 
@@ -105,17 +110,46 @@ public class ConfigurationIT {
         messageList.clear();
     }
 
-    @Test
-    public void instantiateConfigurationTest() {
-        String expected =
-            "Configuration [sysLogHost=127.0.0.1, sysLogProtocol=relp, sysLogPort=1235, "
-                + "maxAckValue=1000000, maxAckAge=20000, maxSessionAge=30000, "
-                + "maxChannels=1000000, pollTime=1000000, printTimes=true]";
-        LOGGER.debug(configuration.toString());
+    @BeforeEach
+    public void initEach() {
 
-        assertEquals(expected, configuration.toString());
-        assertEquals(0, messageList.size());
-        assertEquals(1, openCount.get());
-        assertEquals(0, closeCount.get()); // FIXME: does not close
+        this.request1 = new MockHttpServletRequest();
+        this.request1.addHeader("Authorization", "AUTH_TOKEN_11111");
+        this.channel1 = "CHANNEL_11111";
+        this.eventInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
+            + "\"event\": {\"message\":\"Access log test message 1\"}} "
+            + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
+            + "{\"message\":\"Access log test message 2\"}}";
+
+    }
+
+    @Test
+    public void sendEventsTest() throws IOException, InterruptedException, ExecutionException {
+        final int NUMBER_OF_EVENTS_TO_BE_SENT = 100;
+        List<CompletableFuture<String>> futures = new ArrayList<>();
+
+        for (int i = 0; i < NUMBER_OF_EVENTS_TO_BE_SENT; i++) {
+            CompletableFuture<String> f = CompletableFuture.supplyAsync(
+                () -> service.sendEvents(request1, channel1, eventInJson).toString());
+            futures.add(f);
+        }
+        List<String> supposedResponses = new ArrayList<>();
+        for (int i = 0; i < NUMBER_OF_EVENTS_TO_BE_SENT; i++) {
+            final String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":" + i + "}";
+            supposedResponses.add(supposedResponse);
+        }
+        int countFuture = 0;
+        for (Future<String> f : futures) {
+            final String actualResponse = f.get();
+            Assertions.assertTrue(supposedResponses.contains(actualResponse),
+                "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID "
+                    + "should be "
+                    + countFuture + ")");
+            countFuture++;
+        }
+
+        Assertions.assertEquals(NUMBER_OF_EVENTS_TO_BE_SENT, countFuture, "All futures have NOT been looped through");
+
+        Assertions.assertEquals(NUMBER_OF_EVENTS_TO_BE_SENT * 2, messageList.size());
     }
 }

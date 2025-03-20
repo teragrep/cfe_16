@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2019-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -72,7 +72,7 @@ public class Session {
      * Authentication key of this Session.
      */
     private String authenticationToken;
-    
+
     private long lastTouchedTimestamp;
 
     @SuppressWarnings("unchecked")
@@ -136,7 +136,7 @@ public class Session {
     public String toString() {
         return "channels=" + this.channels + ", authenticationToken=" + this.authenticationToken + "]";
     }
-    
+
     public void touch() {
         this.lastTouchedTimestamp = System.currentTimeMillis();
     }

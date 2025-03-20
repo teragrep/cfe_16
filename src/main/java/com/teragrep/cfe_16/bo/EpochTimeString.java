@@ -44,30 +44,30 @@
  * a licensee so wish it.
  */
 
-package com.teragrep.cfe_16.exceptionhandling;
+package com.teragrep.cfe_16.bo;
 
-@SuppressWarnings("serial")
-public class SessionNotFoundException extends RuntimeException {
+public final class EpochTimeString {
 
-    public SessionNotFoundException() {
-        super();
+    private final String timeString;
+    private final long timeAsLong;
+
+    public EpochTimeString(
+        String timeString,
+        long timeAsLong
+    ) {
+        this.timeString = timeString;
+        this.timeAsLong = timeAsLong;
     }
 
-    public SessionNotFoundException(String message, Throwable cause, boolean enableSuppression,
-        boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    /**
+     * Converts the given time stamp into epoch milliseconds. If the time value
+     * in the object has 13 digits, it means that time has been already given in epoch milliseconds.
+     */
+    public long asEpochMillis() {
+        if (timeString.length() >= 10 && timeString.length() < 13) {
+            return this.timeAsLong * (long) Math.pow(10, ((13 - timeString.length())));
+        } else {
+            return timeAsLong; // Time should already be in Epoch milliseconds
+        }
     }
-
-    public SessionNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public SessionNotFoundException(String message) {
-        super(message);
-    }
-
-    public SessionNotFoundException(Throwable cause) {
-        super(cause);
-    }
-
 }

@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2019-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -64,17 +64,17 @@ public class TestClient implements Runnable {
      * How many loops a single thread does.
      */
     private int n;
-    
+
     /**
      * Hostname or IP address of the cfe_16 server.
      */
     private String host;
-    
+
     /**
      * TCP port of the cfe_16 server.
      */
     private int port;
-    
+
     public TestClient(int n, String host, int port) throws IOException {
         this.n = n;
         this.host = host;
@@ -90,13 +90,13 @@ public class TestClient implements Runnable {
             throw new RuntimeException(e);
         }
         for (int i = 0; i < this.n; i++) {
-                       
+
             if (i % 10 == 0) {
                 System.out.print('.');
             }
-            
+
             socket = testSendEvent(socket);
-            socket = testSendEventWithAckID(socket);                                    
+            socket = testSendEventWithAckID(socket);
             socket = testSendEventWithoutAuthorization(socket);
             socket = testSendEventWithoutEventField(socket);
             socket = testSendEventWithBlankEventField(socket);
@@ -180,19 +180,19 @@ public class TestClient implements Runnable {
     }
 
     private Socket doRequestAndVerifyReply(Socket socket,
-                                           String path,
-                                           String expectedRegex, 
-                                           String request, 
-                                           String authorization,
-                                           int expectedHttpStatusCode) {
-        while (true) {            
+        String path,
+        String expectedRegex,
+        String request,
+        String authorization,
+        int expectedHttpStatusCode) {
+        while (true) {
             try {
                 // ensure that the TCP connection is alive
                 socket = ensureTcpConnection(socket);
-                
+
                 // send the http request
                 sendRequest(socket, path, request, authorization);
-                    
+
                 BufferedReader bufferedReader = getReader(socket);
                 // read first line of the HTTP response
                 String line;
@@ -208,7 +208,7 @@ public class TestClient implements Runnable {
                     cleanup(socket, bufferedReader);
                     continue;
                 }
-                
+
                 // parse the status code
                 checkHttpStatusCode(expectedHttpStatusCode, line);
 
@@ -216,11 +216,11 @@ public class TestClient implements Runnable {
                 // if connection is closed, a new socket is created
                 // but the response can still be read from bufferedReader
                 socket = readHeaders(socket, bufferedReader);
-                
+
                 // read the response
-                String responseBody = readResponseBody(bufferedReader);           
+                String responseBody = readResponseBody(bufferedReader);
                 // check if the response matches to regex
-                validateResponseBody(expectedRegex, responseBody); 
+                validateResponseBody(expectedRegex, responseBody);
                 // we are done
                 break;
             } catch (SocketException e) {
@@ -228,14 +228,14 @@ public class TestClient implements Runnable {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }        
+        }
         return socket;
     }
-    
+
     /**
      * Validates the response body line against the given
      * regural expression.
-     * 
+     *
      * @param expectedRegex
      * @param responseBody
      */
@@ -248,7 +248,7 @@ public class TestClient implements Runnable {
     /**
      * Verifies that the HTTP reply status code was what it was
      * supposed to me.
-     * 
+     *
      * @param expectedHttpStatusCode
      * @param line
      */
@@ -264,7 +264,7 @@ public class TestClient implements Runnable {
      * Advances buffered reader through HTTP headers.
      * If "Connection: close" header is seen, the socket
      * is closed and a new one is created.
-     * 
+     *
      * @param socket
      * @param bufferedReader
      * @return
@@ -289,7 +289,7 @@ public class TestClient implements Runnable {
     /**
      * Reads the reply line from the servere. Chunked transfer
      * is assumed.
-     * 
+     *
      * @param bufferedReader
      * @return
      * @throws IOException
@@ -311,7 +311,7 @@ public class TestClient implements Runnable {
     /**
      * Checks that the TCP connection is open, otherwis a new
      * connection is created and returned.
-     * 
+     *
      * @param socket
      * @return
      * @throws IOException
@@ -326,7 +326,7 @@ public class TestClient implements Runnable {
 
     /**
      * Does a HTTP request and keeps connection open.
-     * 
+     *
      * @param socket
      * @param path
      * @param request
@@ -334,7 +334,7 @@ public class TestClient implements Runnable {
      * @throws IOException
      */
     private void sendRequest(Socket socket, String path, String request, String authorization)
-            throws IOException {
+        throws IOException {
         OutputStream outputStream = socket.getOutputStream();
         PrintWriter printWriter = new PrintWriter(outputStream);
         printWriter.write("POST " + path + " HTTP/1.1\r\n");
@@ -356,7 +356,7 @@ public class TestClient implements Runnable {
         bufferedReader.close();
         socket.close();
     }
-    
+
     public static void main(String[] args) throws IOException, InterruptedException {
         if (args.length >= 4) {
             String host = args[0];
@@ -413,7 +413,7 @@ public class TestClient implements Runnable {
     }
 
     private static TestClient[] createTestClients(String host, int port, int numberOfThreads, int numberOfLoops)
-            throws IOException {
+        throws IOException {
         LOGGER.debug("Creating <[{}]> test clients", numberOfThreads);
         TestClient[] testClients = new TestClient[numberOfThreads];
         for (int i = 0; i < numberOfThreads; i++) {

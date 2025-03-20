@@ -43,31 +43,39 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
+package com.teragrep.cfe_16.server;
 
-package com.teragrep.cfe_16.exceptionhandling;
+import com.teragrep.net_01.eventloop.EventLoop;
+import com.teragrep.net_01.server.Server;
+import org.junit.jupiter.api.Assertions;
 
-@SuppressWarnings("serial")
-public class SessionNotFoundException extends RuntimeException {
+import java.util.concurrent.ExecutorService;
 
-    public SessionNotFoundException() {
-        super();
+public class TestServer implements Runnable, AutoCloseable {
+
+    private final EventLoop eventLoop;
+    private final Thread eventLoopThread;
+    private final ExecutorService executorService;
+    private final Server server;
+
+    public TestServer(EventLoop eventLoop, Thread eventLoopThread, ExecutorService executorService,
+        Server server) {
+        this.eventLoop = eventLoop;
+        this.eventLoopThread = eventLoopThread;
+        this.executorService = executorService;
+        this.server = server;
     }
 
-    public SessionNotFoundException(String message, Throwable cause, boolean enableSuppression,
-        boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    @Override
+    public void close() throws Exception {
+        eventLoop.stop();
+        executorService.shutdown();
+        eventLoopThread.join();
+        server.close(); // closes port
     }
 
-    public SessionNotFoundException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    public void run() {
+        eventLoopThread.start();
     }
-
-    public SessionNotFoundException(String message) {
-        super(message);
-    }
-
-    public SessionNotFoundException(Throwable cause) {
-        super(cause);
-    }
-
 }

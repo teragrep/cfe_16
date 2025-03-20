@@ -43,31 +43,27 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
+package com.teragrep.cfe_16.server;
 
-package com.teragrep.cfe_16.exceptionhandling;
+import com.teragrep.rlp_03.frame.delegate.FrameContext;
+import com.teragrep.rlp_03.frame.delegate.event.RelpEvent;
+import com.teragrep.rlp_03.frame.delegate.event.RelpEventClose;
 
-@SuppressWarnings("serial")
-public class SessionNotFoundException extends RuntimeException {
+import java.util.concurrent.atomic.AtomicLong;
 
-    public SessionNotFoundException() {
-        super();
+class RelpEventCloseCounting extends RelpEvent {
+
+    private final AtomicLong closeCount;
+    private final RelpEventClose relpEventClose;
+
+    RelpEventCloseCounting(AtomicLong closeCount) {
+        this.closeCount = closeCount;
+        this.relpEventClose = new RelpEventClose();
     }
 
-    public SessionNotFoundException(String message, Throwable cause, boolean enableSuppression,
-        boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    @Override
+    public void accept(FrameContext frameContext) {
+        relpEventClose.accept(frameContext);
+        closeCount.incrementAndGet();
     }
-
-    public SessionNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public SessionNotFoundException(String message) {
-        super(message);
-    }
-
-    public SessionNotFoundException(Throwable cause) {
-        super(cause);
-    }
-
 }

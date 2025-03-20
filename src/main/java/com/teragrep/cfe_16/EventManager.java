@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2019-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -47,14 +47,16 @@
 package com.teragrep.cfe_16;
 
 import com.cloudbees.syslog.SyslogMessage;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonStreamParser;
 import com.teragrep.cfe_16.bo.Ack;
+import com.teragrep.cfe_16.bo.DefaultHttpEventData;
 import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.Session;
+import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldBlankException;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
@@ -68,7 +70,6 @@ import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,14 +79,15 @@ import java.util.List;
  */
 @Component
 public class EventManager {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EventManager.class);
     private final ObjectMapper objectMapper;
 
     @Autowired
     private Configuration configuration;
-    
+
     private AbstractSender sender;
-    
+
     public EventManager() {
         this.objectMapper = new ObjectMapper();
     }
@@ -95,27 +97,27 @@ public class EventManager {
         LOGGER.debug("Setting up sender");
         try {
             this.sender = SenderFactory.createSender(this.configuration.getSysLogProtocol(),
-                                                     this.configuration.getSyslogHost(),
-                                                     this.configuration.getSyslogPort());
+                this.configuration.getSyslogHost(),
+                this.configuration.getSyslogPort());
         } catch (IOException e) {
             LOGGER.error("Error creating sender", e);
             throw new InternalServerErrorException();
-        }        
+        }
     }
-    
+
     /*
      * Method used when converting data and the channel is specified in the request.
      * Takes authentication token, all events sent in a request (in JSON format) and
      * the channel name as string parameters. Returns a JSON node with ack id if
      * everything is successful. Example: {"text":"Success","code":0,"ackID":0}
      */
-    public ObjectNode convertData(String authToken, 
-                                  String channel, 
-                                  String allEventsInJson, 
-                                  HeaderInfo headerInfo,
-                                  AckManager ackManager) {
-        HttpEventData previousEvent = null;
-        
+    public ObjectNode convertData(String authToken,
+        String channel,
+        String allEventsInJson,
+        HeaderInfo headerInfo,
+        AckManager ackManager) {
+        TimestampedHttpEventData previousEvent;
+
         ackManager.initializeContext(authToken, channel);
         int ackId = ackManager.getCurrentAckValue(authToken, channel);
         boolean incremented = ackManager.incrementAckValue(authToken, channel);
@@ -125,7 +127,8 @@ public class EventManager {
         Ack ack = new Ack(ackId, false);
         boolean addedAck = ackManager.addAck(authToken, channel, ack);
         if (!addedAck) {
-            throw new InternalServerErrorException("Ack ID " + ackId + " couldn't be added to the Ack set.");
+            throw new InternalServerErrorException(
+                "Ack ID " + ackId + " couldn't be added to the Ack set.");
         }
         JsonStreamParser parser = new JsonStreamParser(allEventsInJson);
 
@@ -137,14 +140,14 @@ public class EventManager {
          * After the event is handled, it is assigned as a value to previousEvent
          * variable.
          */
-        HttpEventData eventData = null;
+        TimestampedHttpEventData eventData = null;
         Converter converter = new Converter();
-        List<SyslogMessage> syslogMessages = new ArrayList<SyslogMessage>();
+        List<SyslogMessage> syslogMessages = new ArrayList<>();
         while (parser.hasNext()) {
             previousEvent = eventData;
             String jsonObjectStr = parser.next().toString();
             eventData = verifyJsonData(jsonObjectStr, previousEvent);
-            eventData = assignMetaData(eventData, authToken, channel);
+            assignMetaData(eventData, authToken, channel);
             SyslogMessage syslogMessage = converter.httpToSyslog(eventData, headerInfo);
             syslogMessages.add(syslogMessage);
         }
@@ -165,14 +168,15 @@ public class EventManager {
         // create a new object to avoid blocking of threads because
         // the SyslogMessageSender.sendMessage() is synchronized
         try {
-            SyslogMessage[] messages = syslogMessages.toArray(new SyslogMessage[syslogMessages.size()]);
+            SyslogMessage[] messages = syslogMessages.toArray(
+                new SyslogMessage[syslogMessages.size()]);
             this.sender.sendMessages(messages);
         } catch (IOException e) {
             throw new InternalServerErrorException(e);
         }
 
         boolean shouldAck = channel != null && !channel.equals(Session.DEFAULT_CHANNEL);
-        
+
         if (shouldAck) {
             boolean acked = ackManager.acknowledge(authToken, channel, ackId);
             if (!acked) {
@@ -202,10 +206,8 @@ public class EventManager {
      * the value is overridden, it will stay as so for the following events if it is
      * not overridden.
      */
-    private HttpEventData verifyJsonData(String eventInJson, HttpEventData previousEvent) {
-
-        HttpEventData eventData = new HttpEventData();
-
+    private TimestampedHttpEventData verifyJsonData(String eventInJson,
+        TimestampedHttpEventData previousEvent) {
         /*
          * Event field cannot be missing or blank. Throws an exception if this is the
          * case.
@@ -213,105 +215,27 @@ public class EventManager {
         JsonNode jsonObject;
         try {
             jsonObject = this.objectMapper.readTree(eventInJson);
-        } catch (IOException e) {
+        } catch (JsonProcessingException e) {
             jsonObject = null;
         }
-        
+
+        TimestampedHttpEventData eventData = new TimestampedHttpEventData();
+
         if (jsonObject != null) {
             JsonNode event = jsonObject.get("event");
             if (event != null) {
-                eventData.setEvent(event.toString());
+                final String eventString = event.toString();
+                DefaultHttpEventData defaultHttpEventData = new DefaultHttpEventData();
+                defaultHttpEventData.setEvent(eventString);
+
+                eventData = new TimestampedHttpEventData(defaultHttpEventData);
             } else {
                 throw new EventFieldMissingException();
             }
-            if (eventData.getEvent().matches("\"\"") || eventData.getEvent() == null) {
+            if (eventData.getEvent().matches("\"\"")) {
                 throw new EventFieldBlankException();
-            }            
-            eventData = handleTime(eventData, jsonObject, previousEvent);
-        }
-        return eventData;
-    }
-
-    /*
-     * The time stamp of the event can be given as epoch time in the request.
-     */
-    private HttpEventData handleTime(HttpEventData eventData, JsonNode jsonObject, HttpEventData previousEvent) {
-        JsonNode timeObject = jsonObject.get("time");
-
-        /*
-         * If the time is given as a string rather than as a numeral value, the time is
-         * handled in a same way as it is handled when time is not given in a request.
-         */
-        if (timeObject == null || timeObject.isTextual()) {
-            eventData.setTimeParsed(false);
-            eventData.setTimeSource("generated");
-            if (previousEvent != null) {
-                if (previousEvent.isTimeParsed()) {
-                    eventData.setTimeAsLong(previousEvent.getTimeAsLong());
-                    eventData.setTime(previousEvent.getTime());
-                    eventData.setTimeParsed(true);
-                    eventData.setTimeSource("reported");
-                }
             }
-            /*
-             * If the time is given as epoch seconds with a decimal (example:
-             * 1433188255.253), the decimal point must be removed and time is assigned to
-             * HttpEventData object as a long value. convertTimeToEpochMillis() will check
-             * that correct time format is used.
-             */
-        } else if (timeObject.isDouble()) {
-            eventData.setTimeAsLong(removeDecimal(timeObject.asDouble()));
-            eventData.setTime(String.valueOf(eventData.getTimeAsLong()));
-            eventData.setTimeParsed(true);
-            eventData.setTimeSource("reported");
-            eventData = convertTimeToEpochMillis(eventData);
-            /*
-             * If the time is given in a numeral value, it is assigned to HttpEventData
-             * object as a long value. convertTimeToEpochMillis() will check that correct
-             * time format is used.
-             */
-        } else if (timeObject.canConvertToLong()) {
-            eventData.setTimeAsLong(timeObject.asLong());
-            eventData.setTime(jsonObject.get("time").asText());
-            eventData.setTimeParsed(true);
-            eventData.setTimeSource("reported");
-            eventData = convertTimeToEpochMillis(eventData);
-        } else {
-            eventData.setTimeParsed(false);
-            eventData.setTimeSource("generated");
-        }
-
-        return eventData;
-    }
-
-    /*
-     * Takes a double value as a parameter, removes the decimal point from that
-     * value and returns the number as a long value.
-     */
-    private long removeDecimal(double doubleValue) {
-        BigDecimal doubleValueWithDecimal = BigDecimal.valueOf(doubleValue);
-        String stringValue = doubleValueWithDecimal.toString();
-        String stringValueWithoutDecimal = stringValue.replace(".", "");
-        long longValue = Long.parseLong(stringValueWithoutDecimal);
-
-        return longValue;
-    }
-
-    /*
-     * Converts the given time stamp into epoch milliseconds. Takes a HttpEventData
-     * object as a parameter. Gets the time from the variable set in the
-     * HttpEventData object. If the time value in the object has 13 digits, it means
-     * that time has been already given in epoch milliseconds.
-     */
-    private HttpEventData convertTimeToEpochMillis(HttpEventData eventData) {
-        String timeString = eventData.getTime();
-        if (timeString.length() == 13) {
-            return eventData;
-        } else if (timeString.length() >= 10 && timeString.length() < 13) {
-            eventData.setTimeAsLong(eventData.getTimeAsLong() * (long) Math.pow(10, ((13 - timeString.length()))));
-        } else {
-            eventData.setTimeParsed(false);
-            eventData.setTimeSource("generated");
+            eventData = eventData.handleTime(jsonObject, previousEvent);
         }
         return eventData;
     }
@@ -320,11 +244,9 @@ public class EventManager {
      * Assigns the metadata (authentication token and channel name) to the
      * HttpEventData object.
      */
-    private HttpEventData assignMetaData(HttpEventData eventData, String authToken, String channel) {
-
-        eventData.setAuthenticationToken(authToken);
-        eventData.setChannel(channel);
-
-        return eventData;
+    private void assignMetaData(TimestampedHttpEventData eventData, String authToken,
+        String channel) {
+        eventData.eventData().setAuthenticationToken(authToken);
+        eventData.eventData().setChannel(channel);
     }
 }

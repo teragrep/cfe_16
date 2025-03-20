@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2019-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -54,7 +54,7 @@ package com.teragrep.cfe_16;
 public interface LifeCycle {
 
     public void start();
-    
+
     /**
      * This call is supposed to do a graceful cleanup of the implementing class.
      */

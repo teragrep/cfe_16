@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2019-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -67,7 +67,7 @@ public class RelpSender extends AbstractSender {
     private int readTimeout = 15000;
     private int writeTimeout = 5000;
     private int reconnectInterval = 500;
-    
+
     public RelpSender(String hostname, int port) {
         super(hostname, port);
         this.sender = new RelpConnection();
@@ -116,7 +116,7 @@ public class RelpSender extends AbstractSender {
             this.tearDown();
         }
     }
-    
+
     @Override
     synchronized public void close() {
         this.disconnect();

@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2019-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -92,7 +92,7 @@ public class TokenManagerTests {
 
         assertTrue("Authorization header should be in basic format", manager.isTokenInBasic(basicAuthHeader));
         assertFalse("Authorization should not be in basic format when querying with only the authentication token.",
-                manager.isTokenInBasic(authToken));
+            manager.isTokenInBasic(authToken));
     }
 
     /*
@@ -107,7 +107,7 @@ public class TokenManagerTests {
         String basicAuthHeader = "Basic " + credentialsEncoded;
 
         assertEquals("Method should return the authentication token extracted from the Basic Authentication format",
-                authToken, manager.getTokenFromBasic(basicAuthHeader));
+            authToken, manager.getTokenFromBasic(basicAuthHeader));
     }
 
 }
