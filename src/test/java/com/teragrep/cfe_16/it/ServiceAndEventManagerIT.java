@@ -89,8 +89,7 @@ import static org.junit.Assert.*;
 		"max.ack.age=20000", 
 		"max.session.age=30000", 
 		"poll.time=30000", 
-		"spring.devtools.add-properties=false", 
-		"server.print.times=true" 
+		"server.print.times=true"
 		})
 public class ServiceAndEventManagerIT {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceAndEventManagerIT.class);
