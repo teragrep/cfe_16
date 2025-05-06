@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,18 +43,15 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16.sender;
 
 import com.cloudbees.syslog.SyslogMessage;
-import com.teragrep.cfe_16.rest.HECRestController;
 import com.teragrep.rlp_01.RelpBatch;
 import com.teragrep.rlp_01.RelpConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
 public class RelpSender extends AbstractSender {
@@ -67,7 +64,7 @@ public class RelpSender extends AbstractSender {
     private int readTimeout = 15000;
     private int writeTimeout = 5000;
     private int reconnectInterval = 500;
-    
+
     public RelpSender(String hostname, int port) {
         super(hostname, port);
         this.sender = new RelpConnection();
@@ -84,16 +81,19 @@ public class RelpSender extends AbstractSender {
             try {
                 LOGGER.debug("Connecting to RELP server");
                 connected = this.sender.connect(this.hostname, this.port);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOGGER.warn("Failed to connect to RELP Server: ", e);
             }
             if (connected) {
                 notConnected = false;
-            } else {
+            }
+            else {
                 try {
                     LOGGER.debug("Sleeping for <[{}]> before reconnecting", this.reconnectInterval);
                     Thread.sleep(this.reconnectInterval);
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                     LOGGER.warn("Sleep interrupted: ", e);
                 }
             }
@@ -109,14 +109,15 @@ public class RelpSender extends AbstractSender {
         try {
             LOGGER.debug("Disconnecting from RELP server");
             this.sender.disconnect();
-        } catch (IllegalStateException | IOException | TimeoutException e) {
+        }
+        catch (IllegalStateException | IOException | TimeoutException e) {
             LOGGER.warn("Failed to disconnect from RELP Server: ", e);
         }
         finally {
             this.tearDown();
         }
     }
-    
+
     @Override
     synchronized public void close() {
         this.disconnect();
@@ -145,7 +146,8 @@ public class RelpSender extends AbstractSender {
             try {
                 LOGGER.debug("Committing a RELP batch");
                 this.sender.commit(relpBatch);
-            } catch (IllegalStateException | IOException | TimeoutException e) {
+            }
+            catch (IllegalStateException | IOException | TimeoutException e) {
                 LOGGER.warn("Failed to commit batch: ", e);
             }
 
@@ -154,7 +156,8 @@ public class RelpSender extends AbstractSender {
                 relpBatch.retryAllFailed();
                 this.tearDown();
                 this.connect();
-            } else {
+            }
+            else {
                 notSent = false;
             }
         }

@@ -44,35 +44,38 @@
   ~ Teragrep, the applicable Commercial License may apply to this file if you as
   ~ a licensee so wish it.
   -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <packaging>jar</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <groupId>com.teragrep</groupId>
   <artifactId>cfe_16</artifactId>
   <version>${revision}${sha1}${changelist}</version>
+  <packaging>jar</packaging>
   <name>cfe_16</name>
   <description>cfe_16</description>
-  <groupId>com.teragrep</groupId>
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
+    </repository>
+  </distributionManagement>
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <aspectj.version>1.9.21.1</aspectj.version>
+    <changelist>-SNAPSHOT</changelist>
+    <jackson.version>2.16.2</jackson.version>
+    <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
     <java.version>17</java.version>
+    <junit.platform.version>1.12.0</junit.platform.version>
+    <junit.version>5.12.0</junit.version>
+    <log4j.version>2.23.1</log4j.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <revision>0.0.1</revision>
-    <changelist>-SNAPSHOT</changelist>
-    <sha1/>
-    <aspectj.version>1.9.21.1</aspectj.version>
-    <log4j.version>2.23.1</log4j.version>
-    <spring.boot.version>3.4.3</spring.boot.version>
-    <spring.session.version>3.4.2</spring.session.version>
-    <junit.version>5.12.0</junit.version>
-    <junit.platform.version>1.12.0</junit.platform.version>
     <rlp_01.version>4.0.1</rlp_01.version>
     <rlp_03.version>3.0.0</rlp_03.version>
-    <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
-    <jackson.version>2.16.2</jackson.version>
+    <sha1></sha1>
+    <spring.boot.version>3.4.3</spring.boot.version>
+    <spring.session.version>3.4.2</spring.session.version>
   </properties>
   <dependencies>
     <dependency>
@@ -226,10 +229,6 @@
         <version>3.4.1</version>
         <executions>
           <execution>
-            <id>enforce</id>
-            <phase>none</phase>
-          </execution>
-          <execution>
             <id>enforce-maven</id>
             <goals>
               <goal>enforce</goal>
@@ -245,6 +244,10 @@
               </rules>
             </configuration>
           </execution>
+          <execution>
+            <id>enforce</id>
+            <phase>none</phase>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -252,14 +255,6 @@
         <artifactId>apache-rat-plugin</artifactId>
         <version>0.15</version>
         <inherited>false</inherited>
-        <executions>
-          <execution>
-            <phase>test</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
         <configuration>
           <addDefaultLicenseMatchers>false</addDefaultLicenseMatchers>
           <licenses>
@@ -300,6 +295,14 @@
             <exclude>*.sh</exclude>
           </excludes>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>test</phase>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
@@ -414,10 +417,4 @@
       </plugin>
     </plugins>
   </build>
-  <distributionManagement>
-    <repository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
-    </repository>
-  </distributionManagement>
 </project>

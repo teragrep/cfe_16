@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,19 +43,23 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class CleanRequestBodyTests {
+
     @Test
     public void testCleanRequestBodyNormal() {
         String input = "{channel=[CHANNEL_11111], {\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}=[]}";
         String channel = "CHANNEL_11111";
         RequestBodyCleaner requestBodyCleaner = new RequestBodyCleaner();
         String cleaned = requestBodyCleaner.cleanAckRequestBody(input, channel);
-        Assertions.assertEquals("{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}", cleaned, "Did not clean channel properly");
+        Assertions
+                .assertEquals(
+                        "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}", cleaned,
+                        "Did not clean channel properly"
+                );
     }
 }

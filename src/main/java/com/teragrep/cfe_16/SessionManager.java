@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,6 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16;
 
 import com.teragrep.cfe_16.bo.Session;
@@ -65,6 +64,7 @@ import java.util.Map;
  */
 @Component
 public class SessionManager implements Runnable, LifeCycle {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionManager.class);
     /**
      * Maps auth token string => session object.
@@ -75,17 +75,17 @@ public class SessionManager implements Runnable, LifeCycle {
      * Cleans up outdated Session objects.
      */
     private Thread cleanerThread;
-    
+
     @Autowired
     private Configuration configuration;
-    
+
     /**
      * 
      */
     public SessionManager() {
         this.sessions = new HashMap<String, Session>();
     }
-    
+
     @Override
     @PostConstruct
     public void start() {
@@ -97,14 +97,15 @@ public class SessionManager implements Runnable, LifeCycle {
     public void stop() {
         this.cleanerThread.interrupt();
     }
-    
+
     @Override
     public void run() {
         while (true) {
             try {
                 LOGGER.debug("Sleeping for <{}>  while waiting for poll", this.configuration.getPollTime());
                 Thread.sleep(this.configuration.getPollTime());
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 break;
             }
             synchronized (this) {
@@ -112,16 +113,15 @@ public class SessionManager implements Runnable, LifeCycle {
                 while (iterator.hasNext()) {
                     Map.Entry<String, Session> entry = iterator.next();
                     long now = System.currentTimeMillis();
-                    long thresholdInLong = entry.getValue().getLastTouchedTimestamp() + this.configuration.getMaxSessionAge();
+                    long thresholdInLong = entry.getValue().getLastTouchedTimestamp()
+                            + this.configuration.getMaxSessionAge();
                     if (now >= thresholdInLong) {
                         iterator.remove();
-                    }                    
+                    }
                 }
             }
         }
     }
-
-
 
     /*
      * Gets a session for provided authentication token. returns null if
@@ -129,14 +129,13 @@ public class SessionManager implements Runnable, LifeCycle {
      */
     public Session getSession(String authenticationToken) {
         synchronized (this) {
-            Session session =  this.sessions.get(authenticationToken);
+            Session session = this.sessions.get(authenticationToken);
             return session;
         }
     }
 
     /**
-     * Returns an existing Session object based on authentication token.
-     * If no Session exists, a new one is created.
+     * Returns an existing Session object based on authentication token. If no Session exists, a new one is created.
      *
      * @param authenticationToken
      * @return
@@ -145,7 +144,7 @@ public class SessionManager implements Runnable, LifeCycle {
         LOGGER.debug("Getting or creating session");
         LOGGER.trace("Getting or creating session for authenticationToken: {}", authenticationToken);
         synchronized (this) {
-            Session session =  this.sessions.get(authenticationToken);
+            Session session = this.sessions.get(authenticationToken);
             if (session == null) {
                 session = new Session(null, authenticationToken);
                 this.sessions.put(authenticationToken, session);

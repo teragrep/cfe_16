@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,6 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16.bo;
 
 import org.slf4j.Logger;
@@ -53,11 +52,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-
 /**
- * A Session keeps track of channels that are contained
- * inside one Session. This class is not thread-safe.
- *
+ * A Session keeps track of channels that are contained inside one Session. This class is not thread-safe.
  */
 public class Session {
 
@@ -72,7 +68,7 @@ public class Session {
      * Authentication key of this Session.
      */
     private String authenticationToken;
-    
+
     private long lastTouchedTimestamp;
 
     @SuppressWarnings("unchecked")
@@ -127,7 +123,8 @@ public class Session {
         if (this.authenticationToken == null) {
             if (other.authenticationToken != null)
                 return false;
-        } else if (!this.authenticationToken.equals(other.authenticationToken))
+        }
+        else if (!this.authenticationToken.equals(other.authenticationToken))
             return false;
         return true;
     }
@@ -136,7 +133,7 @@ public class Session {
     public String toString() {
         return "channels=" + this.channels + ", authenticationToken=" + this.authenticationToken + "]";
     }
-    
+
     public void touch() {
         this.lastTouchedTimestamp = System.currentTimeMillis();
     }

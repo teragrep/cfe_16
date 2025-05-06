@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,6 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -72,12 +71,14 @@ import java.util.Map;
  */
 @Component
 public class AckManager implements Runnable, LifeCycle {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AckManager.class);
+
     /**
      * A class that encapsulates state of individual channels regarding to ACKs.
-     *
      */
     private class State {
+
         private int currentAckValue;
         private Ack ackToCompare;
         private Map<Integer, Ack> ackMap;
@@ -129,10 +130,10 @@ public class AckManager implements Runnable, LifeCycle {
      * The background thread for cleaning up ACKs.
      */
     private Thread cleanerThread;
-    
+
     @Autowired
     private Configuration configuration;
-    
+
     /**
      * An empty constructor for Spring @Autowired annotation.
      */
@@ -157,8 +158,8 @@ public class AckManager implements Runnable, LifeCycle {
     }
 
     /**
-     * A private Accessor for the State object indexed by the given auth token and channel.
-     * If no State object is found, a new object is created and added to the map.
+     * A private Accessor for the State object indexed by the given auth token and channel. If no State object is found,
+     * a new object is created and added to the map.
      * 
      * @param authToken
      * @param channel
@@ -177,8 +178,7 @@ public class AckManager implements Runnable, LifeCycle {
     }
 
     /**
-     * This method has to be called first before calling any other Ack related
-     * methods.
+     * This method has to be called first before calling any other Ack related methods.
      * 
      * @param authToken
      * @param channel
@@ -192,7 +192,7 @@ public class AckManager implements Runnable, LifeCycle {
             this.ackStates.put(key, state);
         }
     }
-    
+
     /*
      * Assignes an Ack value for the event. Checks it there are acks still available
      * for the channel If there are no Acks available, throws ServerIsBusyException.
@@ -206,11 +206,11 @@ public class AckManager implements Runnable, LifeCycle {
         if (state == null) {
             return false;
         }
-        
+
         if (!acksAvailable(state)) {
             throw new ServerIsBusyException();
         }
-        
+
         int currentAckValue;
         synchronized (state) {
             currentAckValue = state.getCurrentAckValue();
@@ -252,7 +252,7 @@ public class AckManager implements Runnable, LifeCycle {
             Map<Integer, Ack> ackMap = state.getAckMap();
             Ack ack = ackMap.get(ackId);
             if (ack == null) {
-                throw new InternalServerErrorException("Couldn't set the acknowledge status for Ack ID " + ackId);              
+                throw new InternalServerErrorException("Couldn't set the acknowledge status for Ack ID " + ackId);
             }
             ack.acknowledge();
             return true;
@@ -260,8 +260,8 @@ public class AckManager implements Runnable, LifeCycle {
     }
 
     /**
-     * Adds a new Ack object for given channel. If this is the first time a channel
-     * is assigned a new Ack, a new State object is created.
+     * Adds a new Ack object for given channel. If this is the first time a channel is assigned a new Ack, a new State
+     * object is created.
      * 
      * @param channel
      * @param ack
@@ -299,8 +299,8 @@ public class AckManager implements Runnable, LifeCycle {
     }
 
     /**
-     * Returns the Ack statuses of requested Ack id:s as a JSON node. JSON node with
-     * the id:s is given as a parameter. Example: {"acks": [1,3,4]}
+     * Returns the Ack statuses of requested Ack id:s as a JSON node. JSON node with the id:s is given as a parameter.
+     * Example: {"acks": [1,3,4]}
      */
     public JsonNode getRequestedAckStatuses(String authToken, String channel, JsonNode requestedAcksInJson) {
         JsonNode jsonNode = this.objectMapper.createObjectNode();
@@ -338,10 +338,11 @@ public class AckManager implements Runnable, LifeCycle {
                     int ackId = requestedAckIds[i];
                     Ack ack = ackMap.get(ackId);
                     if (ack == null) {
-                        ackStatuses.put(ackId, false);                        
-                    } else {
+                        ackStatuses.put(ackId, false);
+                    }
+                    else {
                         ackStatuses.put(ackId, ack.isAcknowledged());
-                        ackMap.remove(ackId);   
+                        ackMap.remove(ackId);
                     }
                 }
             }
@@ -361,7 +362,8 @@ public class AckManager implements Runnable, LifeCycle {
         int maxAckValue = this.configuration.getMaxAckValue();
         if (ackMapSize > maxAckValue) {
             return false;
-        } else {
+        }
+        else {
             return true;
         }
     }
@@ -389,13 +391,14 @@ public class AckManager implements Runnable, LifeCycle {
             try {
                 LOGGER.debug("Sleeping for <{}> while waiting for polls", this.configuration.getPollTime());
                 Thread.sleep(this.configuration.getPollTime());
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 break;
             }
 
             for (String key : this.ackStates.keySet()) {
                 State state = this.ackStates.get(key);
-              
+
                 synchronized (state) {
                     Map<Integer, Ack> ackMap = state.getAckMap();
                     Iterator<Ack> iterator = ackMap.values().iterator();
@@ -451,8 +454,7 @@ public class AckManager implements Runnable, LifeCycle {
     }
 
     /**
-     * Returns the current Ack value for given token and channel.
-     * A new State is created, so this method must be called
+     * Returns the current Ack value for given token and channel. A new State is created, so this method must be called
      * first before other Ack manipulating methods are called.
      * 
      * @param authToken
