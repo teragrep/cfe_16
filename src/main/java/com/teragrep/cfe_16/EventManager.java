@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,6 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16;
 
 import com.cloudbees.syslog.SyslogMessage;
@@ -78,14 +77,15 @@ import java.util.List;
  */
 @Component
 public class EventManager {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EventManager.class);
     private final ObjectMapper objectMapper;
 
     @Autowired
     private Configuration configuration;
-    
+
     private AbstractSender sender;
-    
+
     public EventManager() {
         this.objectMapper = new ObjectMapper();
     }
@@ -94,28 +94,33 @@ public class EventManager {
     public void setupSender() {
         LOGGER.debug("Setting up sender");
         try {
-            this.sender = SenderFactory.createSender(this.configuration.getSysLogProtocol(),
-                                                     this.configuration.getSyslogHost(),
-                                                     this.configuration.getSyslogPort());
-        } catch (IOException e) {
+            this.sender = SenderFactory
+                    .createSender(
+                            this.configuration.getSysLogProtocol(), this.configuration.getSyslogHost(),
+                            this.configuration.getSyslogPort()
+                    );
+        }
+        catch (IOException e) {
             LOGGER.error("Error creating sender", e);
             throw new InternalServerErrorException();
-        }        
+        }
     }
-    
+
     /*
      * Method used when converting data and the channel is specified in the request.
      * Takes authentication token, all events sent in a request (in JSON format) and
      * the channel name as string parameters. Returns a JSON node with ack id if
      * everything is successful. Example: {"text":"Success","code":0,"ackID":0}
      */
-    public ObjectNode convertData(String authToken, 
-                                  String channel, 
-                                  String allEventsInJson, 
-                                  HeaderInfo headerInfo,
-                                  AckManager ackManager) {
+    public ObjectNode convertData(
+            String authToken,
+            String channel,
+            String allEventsInJson,
+            HeaderInfo headerInfo,
+            AckManager ackManager
+    ) {
         HttpEventData previousEvent = null;
-        
+
         ackManager.initializeContext(authToken, channel);
         int ackId = ackManager.getCurrentAckValue(authToken, channel);
         boolean incremented = ackManager.incrementAckValue(authToken, channel);
@@ -167,12 +172,13 @@ public class EventManager {
         try {
             SyslogMessage[] messages = syslogMessages.toArray(new SyslogMessage[syslogMessages.size()]);
             this.sender.sendMessages(messages);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new InternalServerErrorException(e);
         }
 
         boolean shouldAck = channel != null && !channel.equals(Session.DEFAULT_CHANNEL);
-        
+
         if (shouldAck) {
             boolean acked = ackManager.acknowledge(authToken, channel, ackId);
             if (!acked) {
@@ -213,20 +219,22 @@ public class EventManager {
         JsonNode jsonObject;
         try {
             jsonObject = this.objectMapper.readTree(eventInJson);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             jsonObject = null;
         }
-        
+
         if (jsonObject != null) {
             JsonNode event = jsonObject.get("event");
             if (event != null) {
                 eventData.setEvent(event.toString());
-            } else {
+            }
+            else {
                 throw new EventFieldMissingException();
             }
             if (eventData.getEvent().matches("\"\"") || eventData.getEvent() == null) {
                 throw new EventFieldBlankException();
-            }            
+            }
             eventData = handleTime(eventData, jsonObject, previousEvent);
         }
         return eventData;
@@ -259,7 +267,8 @@ public class EventManager {
              * HttpEventData object as a long value. convertTimeToEpochMillis() will check
              * that correct time format is used.
              */
-        } else if (timeObject.isDouble()) {
+        }
+        else if (timeObject.isDouble()) {
             eventData.setTimeAsLong(removeDecimal(timeObject.asDouble()));
             eventData.setTime(String.valueOf(eventData.getTimeAsLong()));
             eventData.setTimeParsed(true);
@@ -270,13 +279,15 @@ public class EventManager {
              * object as a long value. convertTimeToEpochMillis() will check that correct
              * time format is used.
              */
-        } else if (timeObject.canConvertToLong()) {
+        }
+        else if (timeObject.canConvertToLong()) {
             eventData.setTimeAsLong(timeObject.asLong());
             eventData.setTime(jsonObject.get("time").asText());
             eventData.setTimeParsed(true);
             eventData.setTimeSource("reported");
             eventData = convertTimeToEpochMillis(eventData);
-        } else {
+        }
+        else {
             eventData.setTimeParsed(false);
             eventData.setTimeSource("generated");
         }
@@ -307,9 +318,11 @@ public class EventManager {
         String timeString = eventData.getTime();
         if (timeString.length() == 13) {
             return eventData;
-        } else if (timeString.length() >= 10 && timeString.length() < 13) {
+        }
+        else if (timeString.length() >= 10 && timeString.length() < 13) {
             eventData.setTimeAsLong(eventData.getTimeAsLong() * (long) Math.pow(10, ((13 - timeString.length()))));
-        } else {
+        }
+        else {
             eventData.setTimeParsed(false);
             eventData.setTimeSource("generated");
         }

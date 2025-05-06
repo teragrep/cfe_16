@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,6 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16;
 
 import com.cloudbees.syslog.Facility;
@@ -64,6 +63,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class Converter {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
     private Severity severity;
     private Facility facility;
@@ -80,7 +80,7 @@ public class Converter {
 
         setStructuredDataParams(httpEventData);
         setHeaderSDE(headerInfo);
-        
+
         SyslogMessage syslogMessage;
         if (httpEventData.isTimeParsed()) {
 
@@ -88,18 +88,30 @@ public class Converter {
              * Creates a Syslogmessage with a time stamp
              */
             LOGGER.debug("Creating new syslog message with timestamp");
-            syslogMessage = new SyslogMessage().withTimestamp(httpEventData.getTimeAsLong()).withSeverity(severity)
-                    .withAppName("capsulated").withHostname(hostName).withFacility(facility).withSDElement(metadataSDE)
-                    .withSDElement(headerSDE).withMsg(httpEventData.getEvent());
+            syslogMessage = new SyslogMessage()
+                    .withTimestamp(httpEventData.getTimeAsLong())
+                    .withSeverity(severity)
+                    .withAppName("capsulated")
+                    .withHostname(hostName)
+                    .withFacility(facility)
+                    .withSDElement(metadataSDE)
+                    .withSDElement(headerSDE)
+                    .withMsg(httpEventData.getEvent());
 
-        } else {
+        }
+        else {
             /*
              * Creates a Syslogmessage without timestamp, because the time is already given
              * in the request.
              */
             LOGGER.debug("Creating new syslog message without timestamp");
-            syslogMessage = new SyslogMessage().withSeverity(severity).withAppName("capsulated").withHostname(hostName)
-                    .withFacility(facility).withSDElement(metadataSDE).withSDElement(headerSDE)
+            syslogMessage = new SyslogMessage()
+                    .withSeverity(severity)
+                    .withAppName("capsulated")
+                    .withHostname(hostName)
+                    .withFacility(facility)
+                    .withSDElement(metadataSDE)
+                    .withSDElement(headerSDE)
                     .withMsg(httpEventData.getEvent());
         }
 
@@ -159,8 +171,12 @@ public class Converter {
 
         SyslogMessage syslogMessage = null;
         setHeaderSDE(headerInfo);
-        syslogMessage = new SyslogMessage().withSeverity(severity).withAppName("capsulated").withHostname(hostName)
-                .withFacility(facility).withSDElement(headerSDE);
+        syslogMessage = new SyslogMessage()
+                .withSeverity(severity)
+                .withAppName("capsulated")
+                .withHostname(hostName)
+                .withFacility(facility)
+                .withSDElement(headerSDE);
 
         return syslogMessage;
     }

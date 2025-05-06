@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,9 +43,7 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16.service;
-
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -54,7 +52,6 @@ import org.springframework.http.ResponseEntity;
 
 /**
  * An interface that specified the REST back end API.
- *
  */
 public interface HECService {
 
@@ -67,16 +64,15 @@ public interface HECService {
      * @return
      */
     public ObjectNode sendEvents(HttpServletRequest request, String channel, String eventInJson);
-    
+
     /**
-     * 
      * @param request
      * @param channel
      * @param requestedAcksInJson
      * @return
      */
     public JsonNode getAcks(HttpServletRequest request, String channel, JsonNode requestedAcksInJson);
-    
+
     /**
      * Ping.
      * 

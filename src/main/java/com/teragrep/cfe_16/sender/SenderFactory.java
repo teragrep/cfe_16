@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,6 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16.sender;
 
 import org.slf4j.Logger;
@@ -52,16 +51,21 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 public class SenderFactory {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SenderFactory.class);
+
     public static AbstractSender createSender(String type, String hostname, int port) throws IOException {
         LOGGER.debug("Creating sender for type <[{}]> to <[{}]>:<[{}]>", type, hostname, port);
         if (type.equalsIgnoreCase("UDP")) {
             return new UdpSender(hostname, port);
-        } else if (type.equalsIgnoreCase("TCP")) {
+        }
+        else if (type.equalsIgnoreCase("TCP")) {
             return new TcpSender(hostname, port);
-        } else if (type.equalsIgnoreCase("RELP")) {
+        }
+        else if (type.equalsIgnoreCase("RELP")) {
             return new RelpSender(hostname, port);
-        } else {
+        }
+        else {
             throw new IOException("Invalid sender type: " + type);
         }
     }

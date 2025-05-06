@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,6 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16.sender;
 
 import com.cloudbees.syslog.SyslogMessage;
@@ -54,16 +53,17 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 public class UdpSender extends AbstractSender {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UdpSender.class);
     private UdpSyslogMessageSender sender;
-    
+
     public UdpSender(String hostname, int port) {
         super(hostname, port);
         this.sender = new UdpSyslogMessageSender();
         this.sender.setSyslogServerHostname(this.hostname);
         this.sender.setSyslogServerPort(this.port);
     }
-    
+
     @Override
     public void sendMessages(SyslogMessage[] syslogMessages) throws IOException {
         LOGGER.debug("Sending messages");

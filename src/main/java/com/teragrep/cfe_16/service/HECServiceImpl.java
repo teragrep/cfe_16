@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,6 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -66,20 +65,20 @@ import org.springframework.stereotype.Service;
 
 /**
  * Implementation of the REST Service back end.
- *
  */
 @Service
 public class HECServiceImpl implements HECService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(HECServiceImpl.class);
     @Autowired
     private AckManager ackManager;
-    
+
     @Autowired
     private SessionManager sessionManager;
-    
+
     @Autowired
     private TokenManager tokenManager;
-    
+
     @Autowired
     private EventManager eventManager;
 
@@ -93,9 +92,7 @@ public class HECServiceImpl implements HECService {
 
     @Override
     // @LogAnnotation(type = LogType.METRIC_COUNTER)
-    public ObjectNode sendEvents(HttpServletRequest request, 
-                                 String channel, 
-                                 String eventInJson) {
+    public ObjectNode sendEvents(HttpServletRequest request, String channel, String eventInJson) {
         LOGGER.debug("Sending events to channel <{}>", channel);
         if (this.tokenManager.tokenIsMissing(request)) {
             throw new AuthenticationTokenMissingException("Authentication token must be provided");
@@ -110,31 +107,29 @@ public class HECServiceImpl implements HECService {
         if (tokenManager.isTokenInBasic(authHeader)) {
             LOGGER.debug("Token was provided via Basic");
             authToken = this.tokenManager.getTokenFromBasic(authHeader);
-        } else {
+        }
+        else {
             LOGGER.debug("Token was provided via header");
             authToken = authHeader;
         }
-        
+
         // if there is no channel, we'll use the default channel
         if (channel == null) {
             channel = Session.DEFAULT_CHANNEL;
             LOGGER.debug("Channel was not provided, using <{}>", channel);
         }
-        
+
         Session session = this.sessionManager.getOrCreateSession(authToken);
-        
+
         // if the channel is not in the session, let's add the channel into it
         if (!session.doesChannelExist(channel)) {
             LOGGER.debug("Adding channel <{}>", channel);
             session.addChannel(channel);
         }
-        
+
         // TODO: find a nice way of not passing AckManager instance
-        ObjectNode ackNode = this.eventManager.convertData(authToken, 
-                                                           channel, 
-                                                           eventInJson,
-                                                           headerInfo,
-                                                           this.ackManager);
+        ObjectNode ackNode = this.eventManager
+                .convertData(authToken, channel, eventInJson, headerInfo, this.ackManager);
 
         return ackNode;
     }
@@ -142,32 +137,31 @@ public class HECServiceImpl implements HECService {
     // @LogAnnotation(type = LogType.RESPONSE)
     @SuppressWarnings("deprecation")
     @Override
-    public JsonNode getAcks(HttpServletRequest request, 
-                            String channel,
-                            JsonNode requestedAcksInJson) {
+    public JsonNode getAcks(HttpServletRequest request, String channel, JsonNode requestedAcksInJson) {
 
         // filter out error cases
         // authentication header is required always
         if (this.tokenManager.tokenIsMissing(request)) {
             throw new AuthenticationTokenMissingException("Authentication token must be provided");
         }
-        
+
         String authHeader = request.getHeader("Authorization");
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {
             LOGGER.debug("Token was provided via Basic");
             authToken = this.tokenManager.getTokenFromBasic(authHeader);
-        } else {
+        }
+        else {
             LOGGER.debug("Token was provided via header");
             authToken = authHeader;
         }
-        
+
         // channel is required
         if (channel == null) {
             throw new ChannelNotProvidedException("Channel must be provided when requesting ack statuses");
         }
-       
+
         // session is also required
         Session session = this.sessionManager.getSession(authToken);
         if (session == null) {
@@ -179,9 +173,10 @@ public class HECServiceImpl implements HECService {
             throw new ChannelNotFoundException();
         }
         session.touch();
-        
+
         ObjectNode responseNode = objectMapper.createObjectNode();
-        JsonNode requestedAckStatuses = this.ackManager.getRequestedAckStatuses(authToken, channel, requestedAcksInJson);
+        JsonNode requestedAckStatuses = this.ackManager
+                .getRequestedAckStatuses(authToken, channel, requestedAcksInJson);
         responseNode.put("acks", requestedAckStatuses);
         return responseNode;
     }
