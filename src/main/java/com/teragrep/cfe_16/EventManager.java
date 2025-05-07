@@ -226,11 +226,11 @@ public class EventManager {
         if (jsonObject != null) {
             JsonNode event = jsonObject.get("event");
             if (event != null) {
-                final String eventString = event.toString();
-                DefaultHttpEventData defaultHttpEventData = new DefaultHttpEventData();
-                defaultHttpEventData.setEvent(eventString);
-
-                eventData = new TimestampedHttpEventData(defaultHttpEventData);
+                eventData = new TimestampedHttpEventData(
+                    new DefaultHttpEventData(
+                    event.toString()
+                    )
+                );
             } else {
                 throw new EventFieldMissingException();
             }
