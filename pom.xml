@@ -121,6 +121,7 @@
           <excludes>
             <exclude>src/test/resources/application.properties</exclude>
             <exclude>src/main/resources/application.properties</exclude>
+            <exclude>eclipse-java-formatter.xml</exclude>
             <!-- git -->
             <exclude>.git/**</exclude>
             <exclude>.gitattributes</exclude>
