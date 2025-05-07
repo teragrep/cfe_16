@@ -128,7 +128,7 @@ public class RelpSender extends AbstractSender {
     synchronized public void sendMessages(SyslogMessage[] syslogMessages) throws IOException {
         final RelpBatch relpBatch = new RelpBatch();
         for (SyslogMessage syslogMessage : syslogMessages) {
-            relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes("UTF-8"));
+            relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
         }
         doSend(relpBatch);
     }
@@ -136,7 +136,7 @@ public class RelpSender extends AbstractSender {
     @Override
     synchronized public void sendMessage(SyslogMessage syslogMessage) throws IOException {
         final RelpBatch relpBatch = new RelpBatch();
-        relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes("UTF-8"));
+        relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
         doSend(relpBatch);
     }
 
