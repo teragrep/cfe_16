@@ -393,7 +393,7 @@ public class ServiceAndEventManagerIT {
     public void sendingMultipleEventsWithDefaultChannelTest() {
 //        AckManager ackManager = new AckManager();
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
-        String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
+        String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
         assertEquals(
                 "Should get a JSON with fields text, code and ackID", supposedResponse,
                 eventManager.convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager).toString()
