@@ -61,8 +61,7 @@ import com.teragrep.cfe_16.service.HECService;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -70,8 +69,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.function.Supplier;
 
 import static org.junit.Assert.*;
 
@@ -160,11 +157,6 @@ public class ServiceAndEventManagerIT {
      */
     @BeforeEach
     public void initialize() {
-        /*
-         * try { serverSocket = new ServerSocket(props.getSyslogPort()); } catch
-         * (IOException e) { e.printStackTrace(); }
-         */
-
         objectMapper = new ObjectMapper();
         request1 = new MockHttpServletRequest();
         request2 = new MockHttpServletRequest();
