@@ -54,6 +54,14 @@ public final class DefaultHttpEventData implements HttpEventData {
     public DefaultHttpEventData() {
     }
 
+    public DefaultHttpEventData(String event) {
+        this(
+            "",
+            event,
+            ""
+        );
+    }
+
     public DefaultHttpEventData(
         String channel,
         String event,
