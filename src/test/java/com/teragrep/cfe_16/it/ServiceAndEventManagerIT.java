@@ -58,8 +58,7 @@ import com.teragrep.cfe_16.service.HECService;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -67,8 +66,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.function.Supplier;
 
 import static org.junit.Assert.*;
 
@@ -157,11 +154,6 @@ public class ServiceAndEventManagerIT {
      */
     @BeforeEach
     public void initialize() {
-        /*
-         * try { serverSocket = new ServerSocket(props.getSyslogPort()); } catch
-         * (IOException e) { e.printStackTrace(); }
-         */
-
         objectMapper = new ObjectMapper();
         request1 = new MockHttpServletRequest();
         request2 = new MockHttpServletRequest();
@@ -313,7 +305,6 @@ public class ServiceAndEventManagerIT {
      */
     @Test
     public void convertDataTest() {
-        /*AckManager ackManager = new AckManager();*/
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
         String response = eventManager
@@ -332,7 +323,6 @@ public class ServiceAndEventManagerIT {
      */
     @Test
     public void convertDataTestWithDefaultChannel() {
-        /* AckManager ackManager = new AckManager(); */
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
 
@@ -350,7 +340,6 @@ public class ServiceAndEventManagerIT {
     @Test
     public void noEventFieldInRequestTest() {
         Assertions.assertThrows(EventFieldMissingException.class, () -> {
-            /*AckManager ackManager = new AckManager();*/
 	        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
         });
@@ -363,7 +352,6 @@ public class ServiceAndEventManagerIT {
     @Test
     public void eventFieldBlankInRequestTest() {
         Assertions.assertThrows(EventFieldBlankException.class, () -> {
-            /*AckManager ackManager = new AckManager();*/
 	        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
         });
@@ -375,7 +363,6 @@ public class ServiceAndEventManagerIT {
      */
     @Test
     public void sendingMultipleEventsTest() {
-//        AckManager ackManager = new AckManager();
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
         assertEquals(
@@ -391,7 +378,6 @@ public class ServiceAndEventManagerIT {
      */
     @Test
     public void sendingMultipleEventsWithDefaultChannelTest() {
-//        AckManager ackManager = new AckManager();
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
         assertEquals(
