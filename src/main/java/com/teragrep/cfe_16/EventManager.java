@@ -57,6 +57,8 @@ import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import com.teragrep.cfe_16.config.Configuration;
+import com.teragrep.cfe_16.event.EventString;
+import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldBlankException;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
 import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
@@ -149,10 +151,19 @@ public class EventManager {
         while (parser.hasNext()) {
             previousEvent = eventData;
             String jsonObjectStr = parser.next().toString();
-            eventData = verifyJsonData(jsonObjectStr, previousEvent);
-            assignMetaData(eventData, authToken, channel);
-            SyslogMessage syslogMessage = converter.httpToSyslog(eventData);
-            syslogMessages.add(syslogMessage);
+            try {
+                eventData = verifyJsonData(jsonObjectStr, previousEvent);
+            }
+            catch (JsonProcessingException e) {
+                LOGGER.error("Problem processing JsonObjectString <{}>", jsonObjectStr);
+                continue;
+            }
+
+            final TimestampedHttpEventData finalEvent = new TimestampedHttpEventData(
+                    new DefaultHttpEventData(channel, eventData.getEvent(), authToken)
+            );
+
+            syslogMessages.add(converter.httpToSyslog(finalEvent));
         }
 
         /*
@@ -208,46 +219,27 @@ public class EventManager {
      * the value is overridden, it will stay as so for the following events if it is
      * not overridden.
      */
-    private TimestampedHttpEventData verifyJsonData(String eventInJson, TimestampedHttpEventData previousEvent) {
+    private TimestampedHttpEventData verifyJsonData(String eventInJson, TimestampedHttpEventData previousEvent)
+            throws JsonProcessingException {
         /*
          * Event field cannot be missing or blank. Throws an exception if this is the
          * case.
          */
-        JsonNode jsonObject;
-        try {
-            jsonObject = this.objectMapper.readTree(eventInJson);
-        }
-        catch (JsonProcessingException e) {
-            jsonObject = null;
-        }
+        final JsonEvent jsonEvent = new JsonEvent(new EventString(eventInJson).node());
 
-        TimestampedHttpEventData eventData = new TimestampedHttpEventData();
+        TimestampedHttpEventData eventData;
 
-        if (jsonObject != null) {
-            JsonNode event = jsonObject.get("event");
-            if (event != null) {
-                eventData = new TimestampedHttpEventData(
-                    new DefaultHttpEventData(
-                    event.toString()
-                    )
-                );
-            } else {
-                throw new EventFieldMissingException();
-            }
-            if (eventData.getEvent().matches("\"\"")) {
-                throw new EventFieldBlankException();
-            }
-            eventData = eventData.handleTime(jsonObject, previousEvent);
+        JsonNode event = jsonEvent.event();
+        if (event != null) {
+            eventData = new TimestampedHttpEventData(new DefaultHttpEventData(event.toString()));
         }
+        else {
+            throw new EventFieldMissingException();
+        }
+        if (eventData.getEvent().matches("\"\"")) {
+            throw new EventFieldBlankException();
+        }
+        eventData = eventData.handleTime(jsonEvent.node(), previousEvent);
         return eventData;
-    }
-
-    /*
-     * Assigns the metadata (authentication token and channel name) to the
-     * HttpEventData object.
-     */
-    private void assignMetaData(TimestampedHttpEventData eventData, String authToken, String channel) {
-        eventData.eventData().setAuthenticationToken(authToken);
-        eventData.eventData().setChannel(channel);
     }
 }
