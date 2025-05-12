@@ -48,6 +48,7 @@ package com.teragrep.cfe_16.bo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teragrep.cfe_16.event.DefaultJsonEvent;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,7 +80,7 @@ class TimestampedHttpEventDataTest {
         }
 
         final TimestampedHttpEventData httpEventDataWithHandledTime = eventData.handleTime(
-            jsonNode,
+            new DefaultJsonEvent(jsonNode).time(),
             null
         );
         Assertions.assertAll(
@@ -113,7 +114,7 @@ class TimestampedHttpEventDataTest {
         }
 
         final TimestampedHttpEventData httpEventDataWithHandledTime = eventData.handleTime(
-            jsonNode,
+            new DefaultJsonEvent(jsonNode).time(),
             null
         );
 
@@ -148,7 +149,7 @@ class TimestampedHttpEventDataTest {
         }
 
         final TimestampedHttpEventData httpEventDataWithHandledTime = eventData.handleTime(
-            jsonNode,
+            new DefaultJsonEvent(jsonNode).time(),
             null
         );
 
@@ -185,7 +186,7 @@ class TimestampedHttpEventDataTest {
         }
 
         final TimestampedHttpEventData httpEventDataWithHandledTime = eventData.handleTime(
-            jsonNode,
+            new DefaultJsonEvent(jsonNode).time(),
             null
         );
 
@@ -221,7 +222,7 @@ class TimestampedHttpEventDataTest {
         }
 
         final TimestampedHttpEventData httpEventDataWithHandledTime = eventData.handleTime(
-            jsonNode,
+            new DefaultJsonEvent(jsonNode).time(),
             null
         );
 
@@ -256,7 +257,7 @@ class TimestampedHttpEventDataTest {
         }
 
         final TimestampedHttpEventData httpEventDataWithHandledTime = eventData.handleTime(
-            jsonNode,
+            new DefaultJsonEvent(jsonNode).time(),
             null
         );
 
@@ -294,7 +295,7 @@ class TimestampedHttpEventDataTest {
         }
 
         final TimestampedHttpEventData httpEventDataWithHandledTime = eventData.handleTime(
-            jsonNode,
+            new DefaultJsonEvent(jsonNode).time(),
             null
         );
         Assertions.assertAll(
@@ -325,7 +326,7 @@ class TimestampedHttpEventDataTest {
         JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content));
 
         final TimestampedHttpEventData httpEventDataWithHandledTime = eventData.handleTime(
-            jsonNode,
+            new DefaultJsonEvent(jsonNode).time(),
             null
         );
         Assertions.assertAll(
