@@ -95,10 +95,9 @@ public final class TimestampedHttpEventData implements HttpEventData {
 
 
     public TimestampedHttpEventData handleTime(
-        final JsonNode jsonObject,
+        final JsonNode timeObject,
         final TimestampedHttpEventData previousEvent
     ) {
-        JsonNode timeObject = jsonObject.get("time");
         /*
          * If the time is given as a string rather than as a numeral value, the time is
          * handled in a same way as it is handled when time is not given in a request.
@@ -149,7 +148,7 @@ public final class TimestampedHttpEventData implements HttpEventData {
              * time format is used.
              */
         } else if (timeObject.canConvertToLong()) {
-            time = jsonObject.get("time").asText();
+            time = timeObject.asText();
             timeAsLong = new EpochTimeString(time, timeObject.asLong()).asEpochMillis();
             timeParsed = true;
             timeSource = "reported";

@@ -58,7 +58,9 @@ import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.event.EventString;
+import com.teragrep.cfe_16.event.DefaultJsonEvent;
 import com.teragrep.cfe_16.event.JsonEvent;
+import com.teragrep.cfe_16.event.ValidatedJsonEvent;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldBlankException;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
 import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
@@ -225,21 +227,22 @@ public class EventManager {
          * Event field cannot be missing or blank. Throws an exception if this is the
          * case.
          */
-        final JsonEvent jsonEvent = new JsonEvent(new EventString(eventInJson).node());
+        final JsonEvent jsonEvent = new ValidatedJsonEvent(
+            new DefaultJsonEvent(
+                new EventString(
+                    eventInJson
+                ).node()
+            )
+        );
 
-        TimestampedHttpEventData eventData;
+        final JsonNode event = jsonEvent.event(); // Can throw EventFieldBlankException
+        TimestampedHttpEventData eventData = new TimestampedHttpEventData(
+            new DefaultHttpEventData(
+                event.toString()
+            )
+        );
 
-        JsonNode event = jsonEvent.event();
-        if (event != null) {
-            eventData = new TimestampedHttpEventData(new DefaultHttpEventData(event.toString()));
-        }
-        else {
-            throw new EventFieldMissingException();
-        }
-        if (eventData.getEvent().matches("\"\"")) {
-            throw new EventFieldBlankException();
-        }
-        eventData = eventData.handleTime(jsonEvent.node(), previousEvent);
+        eventData = eventData.handleTime(jsonEvent.time(), previousEvent);
         return eventData;
     }
 }
