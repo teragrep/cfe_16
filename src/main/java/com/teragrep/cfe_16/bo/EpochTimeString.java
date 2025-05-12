@@ -46,6 +46,8 @@
 
 package com.teragrep.cfe_16.bo;
 
+import java.util.Objects;
+
 public final class EpochTimeString {
 
     private final String timeString;
@@ -69,5 +71,20 @@ public final class EpochTimeString {
         } else {
             return timeAsLong; // Time should already be in Epoch milliseconds
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {return false;}
+
+        EpochTimeString that = (EpochTimeString) o;
+        return timeAsLong == that.timeAsLong && Objects.equals(timeString, that.timeString);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(timeString);
+        result = 31 * result + Long.hashCode(timeAsLong);
+        return result;
     }
 }
