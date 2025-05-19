@@ -214,6 +214,11 @@ public final class TimestampedHttpEventData implements HttpEventData {
         return this.timeAsLong;
     }
 
+    @Override
+    public Integer getAckID() {
+        return this.eventData.getAckID();
+    }
+
     public boolean isTimeParsed() {
         if (this.time == null) {
             return false;

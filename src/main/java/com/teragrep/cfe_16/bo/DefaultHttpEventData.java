@@ -47,53 +47,55 @@ package com.teragrep.cfe_16.bo;
 
 public final class DefaultHttpEventData implements HttpEventData {
 
-    private String channel;
-    private String event;
-    private String authenticationToken;
+    private final String channel;
+    private final String event;
+    private final String authenticationToken;
+    private final Integer ackID;
 
     public DefaultHttpEventData() {
+        this(
+            "",
+            "",
+            "",
+            0
+        );
     }
 
     public DefaultHttpEventData(String event) {
         this(
             "",
             event,
-            ""
+            "",
+            0
         );
     }
 
     public DefaultHttpEventData(
         String channel,
         String event,
-        String authenticationToken
+        String authenticationToken,
+        Integer ackID
     ) {
         this.channel = channel;
         this.event = event;
         this.authenticationToken = authenticationToken;
+        this.ackID = ackID;
     }
 
     public String getEvent() {
         return event;
     }
 
-    public void setEvent(String event) {
-        this.event = event;
-    }
-
     public String getChannel() {
         return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
     }
 
     public String getAuthenticationToken() {
         return authenticationToken;
     }
 
-    public void setAuthenticationToken(String authenticationToken) {
-        this.authenticationToken = authenticationToken;
+    public Integer getAckID() {
+        return ackID;
     }
 
     @Override

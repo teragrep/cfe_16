@@ -114,17 +114,20 @@ public class ConverterTests {
         final DefaultHttpEventData defaultEventData1 = new DefaultHttpEventData(
             "CHANNEL_11111",
             "Event 1",
-            "AUTH_TOKEN_11111"
+            "AUTH_TOKEN_11111",
+            0
         );
         final DefaultHttpEventData defaultEventData2 = new DefaultHttpEventData(
             "CHANNEL_22222",
             "Event 2",
-            "AUTH_TOKEN_22222"
+            "AUTH_TOKEN_22222",
+            1
         );
         final DefaultHttpEventData defaultEventData3 = new DefaultHttpEventData(
             "defaultchannel",
             "Event 3",
-            "AUTH_TOKEN_33333"
+            "AUTH_TOKEN_33333",
+            null
         );
 
         eventData1 = new TimestampedHttpEventData(
@@ -151,12 +154,14 @@ public class ConverterTests {
 
         metadataSDE1.addSDParam("authentication_token", eventData1.getAuthenticationToken());
         metadataSDE1.addSDParam("channel", eventData1.getChannel());
+        metadataSDE1.addSDParam("ack_id", String.valueOf(eventData1.getAckID()));
         metadataSDE1.addSDParam("time_source", eventData1.getTimeSource());
         metadataSDE1.addSDParam("time_parsed", "true");
         metadataSDE1.addSDParam("time", eventData1.getTime());
 
         metadataSDE2.addSDParam("authentication_token", eventData2.getAuthenticationToken());
         metadataSDE2.addSDParam("channel", eventData2.getChannel());
+        metadataSDE2.addSDParam("ack_id", String.valueOf(eventData2.getAckID()));
         metadataSDE2.addSDParam("time_source", eventData2.getTimeSource());
 
         metadataSDE3.addSDParam("authentication_token", eventData3.getAuthenticationToken());
@@ -334,7 +339,7 @@ public class ConverterTests {
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
-        final int expectedReturnedSDParamsAssertions = 5;
+        final int expectedReturnedSDParamsAssertions = 6; // See lines 155 - 160
         int loopedReturnedSDParamsAssertions =0;
         for (int i = 0; i < returnedSDParams.size(); i++) {
             loopedReturnedSDParamsAssertions++;
@@ -346,7 +351,7 @@ public class ConverterTests {
 
         // Goes through all supposed SDParams and checks that they are all found in
         // returned SDParams
-        final int expectedSupposedSDParamsAssertions = 5;
+        final int expectedSupposedSDParamsAssertions = 6; // See lines 155 - 160
         int loopedSupposedSDParamsAssertions =0;
         for (int i = 0; i < supposedSDParams.size(); i++) {
             loopedSupposedSDParamsAssertions++;
@@ -380,7 +385,7 @@ public class ConverterTests {
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
-        final int expectedReturnedSDParamsAssertions1 = 3;
+        final int expectedReturnedSDParamsAssertions1 = 4; // See lines 162 - 165
         int loopedReturnedSDParamsAssertions1 =0;
         for (int i = 0; i < returnedSDParams.size(); i++) {
             loopedReturnedSDParamsAssertions1++;
@@ -392,7 +397,7 @@ public class ConverterTests {
 
         // Goes through all supposed SDParams and checks that they are all found in
         // returned SDParams
-        final int expectedSupposedSDParamsAssertions1 = 3;
+        final int expectedSupposedSDParamsAssertions1 = 4; // See lines 162 - 165
         int loopedSupposedSDParamsAssertions1 =0;
         for (int i = 0; i < supposedSDParams.size(); i++) {
             loopedSupposedSDParamsAssertions1++;

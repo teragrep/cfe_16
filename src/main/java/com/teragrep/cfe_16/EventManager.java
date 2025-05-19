@@ -162,7 +162,7 @@ public class EventManager {
             }
 
             final TimestampedHttpEventData finalEvent = new TimestampedHttpEventData(
-                    new DefaultHttpEventData(channel, eventData.getEvent(), authToken)
+                    new DefaultHttpEventData(channel, eventData.getEvent(), authToken, null)
             );
 
             syslogMessages.add(converter.httpToSyslog(finalEvent, headerInfo));
