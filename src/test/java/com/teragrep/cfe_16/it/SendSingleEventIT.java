@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2019-2025 Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,6 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16.it;
 
 import com.teragrep.cfe_16.server.TestServer;
@@ -64,16 +63,16 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
 @TestPropertySource(properties = {
-    "syslog.server.host=127.0.0.1",
-    "syslog.server.port=1238",
-    "syslog.server.protocol=RELP",
-    "max.channels=1000000",
-    "max.ack.value=1000000",
-    "max.ack.age=20000",
-    "max.session.age=30000",
-    "poll.time=30000",
-    "spring.devtools.add-properties=false",
-    "server.print.times=true"
+        "syslog.server.host=127.0.0.1",
+        "syslog.server.port=1238",
+        "syslog.server.protocol=RELP",
+        "max.channels=1000000",
+        "max.ack.value=1000000",
+        "max.ack.age=20000",
+        "max.session.age=30000",
+        "poll.time=30000",
+        "spring.devtools.add-properties=false",
+        "server.print.times=true"
 })
 @SpringBootTest
 public class SendSingleEventIT {
@@ -94,7 +93,8 @@ public class SendSingleEventIT {
         TestServerFactory serverFactory = new TestServerFactory();
         try {
             server = serverFactory.create(SERVER_PORT, messageList, openCount, closeCount);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
         server.run();
@@ -104,7 +104,8 @@ public class SendSingleEventIT {
     public static void close() {
         try {
             server.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -123,22 +124,19 @@ public class SendSingleEventIT {
         this.request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         this.channel1 = "CHANNEL_11111";
         this.eventInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
-            + "\"event\": {\"message\":\"Access log test message 1\"}} "
-            + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
-            + "{\"message\":\"Access log test message 2\"}}";
+                + "\"event\": {\"message\":\"Access log test message 1\"}} "
+                + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
+                + "{\"message\":\"Access log test message 2\"}}";
 
     }
 
     @Test
     public void send1EventTest() throws IOException, InterruptedException {
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":" + 0 + "}";
-        Assertions.assertEquals(supposedResponse,
-            service.sendEvents(request1, channel1, eventInJson).toString(),
-            "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID "
-                + "should be "
-                + 0 + ")");
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request1, channel1, eventInJson).toString(), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID " + "should be " + 0 + ")");
 
-        Assertions.assertEquals(2, messageList.size(),
-            "Number of events received should match the number of sent ones");
+        Assertions
+                .assertEquals(2, messageList.size(), "Number of events received should match the number of sent ones");
     }
 }

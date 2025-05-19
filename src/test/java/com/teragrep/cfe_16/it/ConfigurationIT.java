@@ -81,7 +81,8 @@ public class ConfigurationIT {
         TestServerFactory serverFactory = new TestServerFactory();
         try {
             server = serverFactory.create(port, messageList, openCount, closeCount);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
         server.run();
@@ -91,7 +92,8 @@ public class ConfigurationIT {
     public static void close() {
         try {
             server.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

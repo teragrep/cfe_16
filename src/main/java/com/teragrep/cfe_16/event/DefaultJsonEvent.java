@@ -73,7 +73,9 @@ public final class DefaultJsonEvent implements JsonEvent {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {return false;}
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         DefaultJsonEvent defaultJsonEvent = (DefaultJsonEvent) o;
         return Objects.equals(jsonNode, defaultJsonEvent.jsonNode);

@@ -88,7 +88,8 @@ public class SendMultipleEventsIT {
     @BeforeAll
     public static void init() {
         TestServerFactory serverFactory = new TestServerFactory();
-        server = Assertions.assertDoesNotThrow(() -> serverFactory.create(SERVER_PORT, messageList, openCount, closeCount));
+        server = Assertions
+                .assertDoesNotThrow(() -> serverFactory.create(SERVER_PORT, messageList, openCount, closeCount));
         server.run();
     }
 
@@ -96,7 +97,8 @@ public class SendMultipleEventsIT {
     public static void close() {
         try {
             server.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

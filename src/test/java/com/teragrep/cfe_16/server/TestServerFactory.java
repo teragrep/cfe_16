@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2019-2025 Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -67,8 +67,12 @@ import java.util.function.Supplier;
 
 public class TestServerFactory {
 
-    public TestServer create(int port, ConcurrentLinkedDeque<byte[]> messageList,
-        AtomicLong connectionOpenCount, AtomicLong connectionCleanCloseCount) throws IOException {
+    public TestServer create(
+            int port,
+            ConcurrentLinkedDeque<byte[]> messageList,
+            AtomicLong connectionOpenCount,
+            AtomicLong connectionCleanCloseCount
+    ) throws IOException {
         EventLoopFactory eventLoopFactory = new EventLoopFactory();
 
         EventLoop eventLoop = eventLoopFactory.create();
@@ -78,22 +82,21 @@ public class TestServerFactory {
         Supplier<FrameDelegate> frameDelegateSupplier = () -> {
             Map<String, RelpEvent> relpCommandConsumerMap = new HashMap<>();
 
-            relpCommandConsumerMap.put("close",
-                new RelpEventCloseCounting(connectionCleanCloseCount));
+            relpCommandConsumerMap.put("close", new RelpEventCloseCounting(connectionCleanCloseCount));
 
             relpCommandConsumerMap.put("open", new RelpEventOpenCounting(connectionOpenCount));
 
-            relpCommandConsumerMap.put("syslog", new RelpEventSyslog(
-                (frame) -> messageList.add(frame.relpFrame().payload().toBytes())));
+            relpCommandConsumerMap
+                    .put("syslog", new RelpEventSyslog((frame) -> messageList.add(frame.relpFrame().payload().toBytes())));
 
             return new EventDelegate(relpCommandConsumerMap);
         };
 
         ServerFactory serverFactory = new ServerFactory(
-            eventLoop,
-            executorService,
-            new PlainFactory(),
-            new FrameDelegationClockFactory(frameDelegateSupplier)
+                eventLoop,
+                executorService,
+                new PlainFactory(),
+                new FrameDelegationClockFactory(frameDelegateSupplier)
         );
         Server server = serverFactory.create(port);
 

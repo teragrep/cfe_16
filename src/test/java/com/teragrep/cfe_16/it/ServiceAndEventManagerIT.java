@@ -126,7 +126,8 @@ public class ServiceAndEventManagerIT {
         TestServerFactory serverFactory = new TestServerFactory();
         try {
             server = serverFactory.create(port, messageList, openCount, closeCount);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
         server.run();
@@ -136,7 +137,8 @@ public class ServiceAndEventManagerIT {
     public static void close() {
         try {
             server.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -344,7 +346,7 @@ public class ServiceAndEventManagerIT {
     @Test
     public void noEventFieldInRequestTest() {
         Assertions.assertThrows(EventFieldMissingException.class, () -> {
-	        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+            String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements);
         });
     }
@@ -356,7 +358,7 @@ public class ServiceAndEventManagerIT {
     @Test
     public void eventFieldBlankInRequestTest() {
         Assertions.assertThrows(EventFieldBlankException.class, () -> {
-	        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+            String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements);
         });
     }

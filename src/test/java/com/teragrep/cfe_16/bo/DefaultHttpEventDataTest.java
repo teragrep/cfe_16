@@ -1,3 +1,48 @@
+/*
+ * HTTP Event Capture to RFC5424 CFE_16
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ *
+ * Additional permission under GNU Affero General Public License version 3
+ * section 7
+ *
+ * If you modify this Program, or any covered work, by linking or combining it
+ * with other code, such other code is not for that reason alone subject to any
+ * of the requirements of the GNU Affero GPL version 3 as long as this Program
+ * is the same Program as licensed from Suomen Kanuuna Oy without any additional
+ * modifications.
+ *
+ * Supplemented terms under GNU Affero General Public License version 3
+ * section 7
+ *
+ * Origin of the software must be attributed to Suomen Kanuuna Oy. Any modified
+ * versions must be marked as "Modified version of" The Program.
+ *
+ * Names of the licensors and authors may not be used for publicity purposes.
+ *
+ * No rights are granted for use of trade names, trademarks, or service marks
+ * which are in The Program if any.
+ *
+ * Licensee must indemnify licensors and authors for any liability that these
+ * contractual assumptions impose on licensors and authors.
+ *
+ * To the extent this program is licensed as part of the Commercial versions of
+ * Teragrep, the applicable Commercial License may apply to this file if you as
+ * a licensee so wish it.
+ */
 package com.teragrep.cfe_16.bo;
 
 import org.junit.jupiter.api.Assertions;
@@ -10,17 +55,17 @@ class DefaultHttpEventDataTest {
     @DisplayName("Happy equals test")
     void happyEqualsTest() {
         final DefaultHttpEventData defaultHttpEventData1 = new DefaultHttpEventData(
-            "channel 1",
-            "event",
-            "auth token",
-            123
+                "channel 1",
+                "event",
+                "auth token",
+                123
         );
 
         final DefaultHttpEventData defaultHttpEventData2 = new DefaultHttpEventData(
-            "channel 1",
-            "event",
-            "auth token",
-            123
+                "channel 1",
+                "event",
+                "auth token",
+                123
         );
 
         Assertions.assertEquals(defaultHttpEventData1, defaultHttpEventData2);
@@ -30,17 +75,17 @@ class DefaultHttpEventDataTest {
     @DisplayName("Unhappy equals test")
     void unhappyEqualsTest() {
         final DefaultHttpEventData defaultHttpEventData1 = new DefaultHttpEventData(
-            "channel 1",
-            "event",
-            "auth token",
-            123
+                "channel 1",
+                "event",
+                "auth token",
+                123
         );
 
         final DefaultHttpEventData defaultHttpEventData2 = new DefaultHttpEventData(
-            "channel 123", // Not the same
-            "event",
-            "auth token",
-            123
+                "channel 123", // Not the same
+                "event",
+                "auth token",
+                123
         );
 
         Assertions.assertNotEquals(defaultHttpEventData1, defaultHttpEventData2);
@@ -50,10 +95,10 @@ class DefaultHttpEventDataTest {
     @DisplayName("getEvent returns event")
     void getEventReturnsEvent() {
         final DefaultHttpEventData defaultHttpEventData = new DefaultHttpEventData(
-            "channel 1",
-            "event",
-            "auth token",
-            123
+                "channel 1",
+                "event",
+                "auth token",
+                123
         );
 
         final String expectedResult = "event";
@@ -65,10 +110,10 @@ class DefaultHttpEventDataTest {
     @DisplayName("getChannel returns channel")
     void getChannelReturnsChannel() {
         final DefaultHttpEventData defaultHttpEventData = new DefaultHttpEventData(
-            "channel 1",
-            "event",
-            "auth token",
-            123
+                "channel 1",
+                "event",
+                "auth token",
+                123
         );
 
         final String expectedResult = "channel 1";
@@ -80,10 +125,10 @@ class DefaultHttpEventDataTest {
     @DisplayName("getAuthenticationToken returns authentication token")
     void getAuthenticationTokenReturnsAuthenticationToken() {
         final DefaultHttpEventData defaultHttpEventData = new DefaultHttpEventData(
-            "channel 1",
-            "event",
-            "auth token",
-            123
+                "channel 1",
+                "event",
+                "auth token",
+                123
         );
 
         final String expectedResult = "auth token";
@@ -95,10 +140,10 @@ class DefaultHttpEventDataTest {
     @DisplayName("getAckID returns ackID if not null")
     void getAckIdReturnsAckIdIfNotNull() {
         final DefaultHttpEventData defaultHttpEventData = new DefaultHttpEventData(
-            "channel 1",
-            "event",
-            "auth token",
-            123
+                "channel 1",
+                "event",
+                "auth token",
+                123
         );
 
         final Integer expectedResult = 123;
@@ -110,10 +155,10 @@ class DefaultHttpEventDataTest {
     @DisplayName("getAckID returns null if ackID is null")
     void getAckIdReturnsNullIfAckIdIsNull() {
         final DefaultHttpEventData defaultHttpEventData = new DefaultHttpEventData(
-            "channel 1",
-            "event",
-            "auth token",
-            null
+                "channel 1",
+                "event",
+                "auth token",
+                null
         );
 
         final Integer expectedResult = null;

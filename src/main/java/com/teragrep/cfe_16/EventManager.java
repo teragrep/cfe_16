@@ -61,8 +61,6 @@ import com.teragrep.cfe_16.event.EventString;
 import com.teragrep.cfe_16.event.DefaultJsonEvent;
 import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.event.ValidatedJsonEvent;
-import com.teragrep.cfe_16.exceptionhandling.EventFieldBlankException;
-import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
 import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
 import com.teragrep.cfe_16.connection.AbstractConnection;
 import com.teragrep.cfe_16.connection.ConnectionFactory;
@@ -227,20 +225,10 @@ public class EventManager {
          * Event field cannot be missing or blank. Throws an exception if this is the
          * case.
          */
-        final JsonEvent jsonEvent = new ValidatedJsonEvent(
-            new DefaultJsonEvent(
-                new EventString(
-                    eventInJson
-                ).node()
-            )
-        );
+        final JsonEvent jsonEvent = new ValidatedJsonEvent(new DefaultJsonEvent(new EventString(eventInJson).node()));
 
         final JsonNode event = jsonEvent.event(); // Can throw EventFieldBlankException
-        TimestampedHttpEventData eventData = new TimestampedHttpEventData(
-            new DefaultHttpEventData(
-                event.toString()
-            )
-        );
+        TimestampedHttpEventData eventData = new TimestampedHttpEventData(new DefaultHttpEventData(event.toString()));
 
         eventData = eventData.handleTime(jsonEvent.time(), previousEvent);
         return eventData;
