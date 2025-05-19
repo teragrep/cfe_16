@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 public class UdpSender extends AbstractSender {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UdpSender.class);
     private UdpSyslogMessageSender sender;
 

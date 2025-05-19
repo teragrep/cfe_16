@@ -70,11 +70,12 @@ public final class EventString {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {return false;}
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         EventString that = (EventString) o;
-        return Objects.equals(eventAsString, that.eventAsString) && Objects.equals(
-            objectMapper, that.objectMapper);
+        return Objects.equals(eventAsString, that.eventAsString) && Objects.equals(objectMapper, that.objectMapper);
     }
 
     @Override

@@ -52,7 +52,6 @@ import org.springframework.http.ResponseEntity;
 
 /**
  * An interface that specified the REST back end API.
- *
  */
 public interface HECService {
 
@@ -67,7 +66,6 @@ public interface HECService {
     public ObjectNode sendEvents(HttpServletRequest request, String channel, String eventInJson);
 
     /**
-     *
      * @param request
      * @param channel
      * @param requestedAcksInJson

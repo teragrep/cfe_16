@@ -55,29 +55,14 @@ public final class DefaultHttpEventData implements HttpEventData {
     private final Integer ackID;
 
     public DefaultHttpEventData() {
-        this(
-            "",
-            "",
-            "",
-            null
-        );
+        this("", "", "", null);
     }
 
     public DefaultHttpEventData(String event) {
-        this(
-            "",
-            event,
-            "",
-            null
-        );
+        this("", event, "", null);
     }
 
-    public DefaultHttpEventData(
-        String channel,
-        String event,
-        String authenticationToken,
-        Integer ackID
-    ) {
+    public DefaultHttpEventData(String channel, String event, String authenticationToken, Integer ackID) {
         this.channel = channel;
         this.event = event;
         this.authenticationToken = authenticationToken;
@@ -102,12 +87,14 @@ public final class DefaultHttpEventData implements HttpEventData {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {return false;}
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         DefaultHttpEventData that = (DefaultHttpEventData) o;
-        return Objects.equals(getChannel(), that.getChannel()) && Objects.equals(
-            getEvent(), that.getEvent()) && Objects.equals(getAuthenticationToken(),
-            that.getAuthenticationToken()) && Objects.equals(getAckID(), that.getAckID());
+        return Objects.equals(getChannel(), that.getChannel()) && Objects.equals(getEvent(), that.getEvent()) && Objects
+                .equals(getAuthenticationToken(), that.getAuthenticationToken())
+                && Objects.equals(getAckID(), that.getAckID());
     }
 
     @Override
@@ -121,10 +108,7 @@ public final class DefaultHttpEventData implements HttpEventData {
 
     @Override
     public String toString() {
-        return "DefaultHttpEventData{" +
-            "channel='" + channel + '\'' +
-            ", event='" + event + '\'' +
-            ", authenticationToken='" + authenticationToken + '\'' +
-            '}';
+        return "DefaultHttpEventData{" + "channel='" + channel + '\'' + ", event='" + event + '\''
+                + ", authenticationToken='" + authenticationToken + '\'' + '}';
     }
 }

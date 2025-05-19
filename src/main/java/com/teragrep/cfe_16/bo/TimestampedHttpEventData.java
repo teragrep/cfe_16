@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2019-2025 Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,6 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16.bo;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -58,11 +57,11 @@ public final class TimestampedHttpEventData implements HttpEventData {
     private final boolean timeParsed;
 
     public TimestampedHttpEventData(
-        DefaultHttpEventData eventData,
-        String timeSource,
-        String time,
-        long timeAsLong,
-        boolean timeParsed
+            DefaultHttpEventData eventData,
+            String timeSource,
+            String time,
+            long timeAsLong,
+            boolean timeParsed
     ) {
         this.eventData = eventData;
         this.timeSource = timeSource;
@@ -75,28 +74,19 @@ public final class TimestampedHttpEventData implements HttpEventData {
      *
      */
     public TimestampedHttpEventData(final DefaultHttpEventData defaultHttpEventData) {
-        this(
-            defaultHttpEventData,
-            "timeSource",
-            "time",
-            0L,
-            false
-        );
+        this(defaultHttpEventData, "timeSource", "time", 0L, false);
     }
 
     /**
      *
      */
     public TimestampedHttpEventData() {
-        this(
-            new DefaultHttpEventData()
-        );
+        this(new DefaultHttpEventData());
     }
 
-
     public TimestampedHttpEventData handleTime(
-        final JsonNode timeObject,
-        final TimestampedHttpEventData previousEvent
+            final JsonNode timeObject,
+            final TimestampedHttpEventData previousEvent
     ) {
         /*
          * If the time is given as a string rather than as a numeral value, the time is
@@ -113,17 +103,16 @@ public final class TimestampedHttpEventData implements HttpEventData {
             if (previousEvent != null) {
                 if (previousEvent.isTimeParsed()) {
                     time = previousEvent.getTime();
-                    timeAsLong = new EpochTimeString(
-                        time,
-                        previousEvent.getTimeAsLong()
-                    ).asEpochMillis();
+                    timeAsLong = new EpochTimeString(time, previousEvent.getTimeAsLong()).asEpochMillis();
                     timeParsed = true;
                     timeSource = "reported";
-                } else {
+                }
+                else {
                     time = previousEvent.getTime();
                     timeAsLong = previousEvent.getTimeAsLong();
                 }
-            } else {
+            }
+            else {
                 time = null;
                 timeAsLong = 0;
             }
@@ -133,13 +122,11 @@ public final class TimestampedHttpEventData implements HttpEventData {
              * HttpEventData object as a long value. convertTimeToEpochMillis() will check
              * that correct time format is used.
              */
-        } else if (timeObject.isDouble()) {
+        }
+        else if (timeObject.isDouble()) {
             final long decimalRemoved = removeDecimal(timeObject.asDouble());
             time = String.valueOf(decimalRemoved);
-            timeAsLong = new EpochTimeString(
-                time,
-                decimalRemoved
-            ).asEpochMillis();
+            timeAsLong = new EpochTimeString(time, decimalRemoved).asEpochMillis();
             timeParsed = true;
             timeSource = "reported";
             /*
@@ -147,30 +134,26 @@ public final class TimestampedHttpEventData implements HttpEventData {
              * object as a long value. convertTimeToEpochMillis() will check that correct
              * time format is used.
              */
-        } else if (timeObject.canConvertToLong()) {
+        }
+        else if (timeObject.canConvertToLong()) {
             time = timeObject.asText();
             timeAsLong = new EpochTimeString(time, timeObject.asLong()).asEpochMillis();
             timeParsed = true;
             timeSource = "reported";
-        } else {
+        }
+        else {
             time = previousEvent.getTime();
             timeAsLong = previousEvent.getTimeAsLong();
             timeParsed = false;
             timeSource = "generated";
         }
 
-        return new TimestampedHttpEventData(
-            this.eventData,
-            timeSource,
-            time,
-            timeAsLong,
-            timeParsed
-        );
+        return new TimestampedHttpEventData(this.eventData, timeSource, time, timeAsLong, timeParsed);
     }
 
     /**
-     * Takes a double value as a parameter, removes the decimal point from that value and returns
-     * the number as a long value.
+     * Takes a double value as a parameter, removes the decimal point from that value and returns the number as a long
+     * value.
      */
     private long removeDecimal(double doubleValue) {
         BigDecimal doubleValueWithDecimal = BigDecimal.valueOf(doubleValue);

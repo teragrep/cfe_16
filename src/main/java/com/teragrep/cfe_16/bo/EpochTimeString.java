@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2019-2025 Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,6 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
 package com.teragrep.cfe_16.bo;
 
 import java.util.Objects;
@@ -53,29 +52,29 @@ public final class EpochTimeString {
     private final String timeString;
     private final long timeAsLong;
 
-    public EpochTimeString(
-        String timeString,
-        long timeAsLong
-    ) {
+    public EpochTimeString(String timeString, long timeAsLong) {
         this.timeString = timeString;
         this.timeAsLong = timeAsLong;
     }
 
     /**
-     * Converts the given time stamp into epoch milliseconds. If the time value
-     * in the object has 13 digits, it means that time has been already given in epoch milliseconds.
+     * Converts the given time stamp into epoch milliseconds. If the time value in the object has 13 digits, it means
+     * that time has been already given in epoch milliseconds.
      */
     public long asEpochMillis() {
         if (timeString.length() >= 10 && timeString.length() < 13) {
             return this.timeAsLong * (long) Math.pow(10, ((13 - timeString.length())));
-        } else {
+        }
+        else {
             return timeAsLong; // Time should already be in Epoch milliseconds
         }
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {return false;}
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         EpochTimeString that = (EpochTimeString) o;
         return timeAsLong == that.timeAsLong && Objects.equals(timeString, that.timeString);

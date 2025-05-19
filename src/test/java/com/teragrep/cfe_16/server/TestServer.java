@@ -1,6 +1,6 @@
 /*
  * HTTP Event Capture to RFC5424 CFE_16
- * Copyright (C) 2019-2025 Suomen Kanuuna Oy
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -47,7 +47,6 @@ package com.teragrep.cfe_16.server;
 
 import com.teragrep.net_01.eventloop.EventLoop;
 import com.teragrep.net_01.server.Server;
-import org.junit.jupiter.api.Assertions;
 
 import java.util.concurrent.ExecutorService;
 
@@ -58,8 +57,7 @@ public class TestServer implements Runnable, AutoCloseable {
     private final ExecutorService executorService;
     private final Server server;
 
-    public TestServer(EventLoop eventLoop, Thread eventLoopThread, ExecutorService executorService,
-        Server server) {
+    public TestServer(EventLoop eventLoop, Thread eventLoopThread, ExecutorService executorService, Server server) {
         this.eventLoop = eventLoop;
         this.eventLoopThread = eventLoopThread;
         this.executorService = executorService;
