@@ -151,6 +151,11 @@ public final class Converter {
             metadataSDE.addSDParam("channel", eventData.getChannel());
         }
 
+        if (eventData.getAckID() != null) {
+            LOGGER.debug("Setting ack id");
+            metadataSDE.addSDParam("ack_id", String.valueOf(eventData.getAckID()));
+        }
+
         if (eventData.getTimeSource() != null) {
             LOGGER.debug("Setting time source");
             metadataSDE.addSDParam("time_source", eventData.getTimeSource());

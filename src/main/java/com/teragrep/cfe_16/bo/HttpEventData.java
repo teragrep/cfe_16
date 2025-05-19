@@ -53,4 +53,6 @@ public interface HttpEventData {
     String getChannel();
 
     String getAuthenticationToken();
+
+    Integer getAckID();
 }
