@@ -59,7 +59,7 @@ public final class DefaultHttpEventData implements HttpEventData {
             "",
             "",
             "",
-            0
+            null
         );
     }
 
@@ -68,7 +68,7 @@ public final class DefaultHttpEventData implements HttpEventData {
             "",
             event,
             "",
-            0
+            null
         );
     }
 
