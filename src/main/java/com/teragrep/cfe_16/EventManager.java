@@ -59,6 +59,7 @@ import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.event.EventString;
 import com.teragrep.cfe_16.event.DefaultJsonEvent;
+import com.teragrep.cfe_16.event.EventTime;
 import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.event.ValidatedJsonEvent;
 import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
@@ -229,9 +230,8 @@ public class EventManager {
         final JsonEvent jsonEvent = new ValidatedJsonEvent(new DefaultJsonEvent(new EventString(eventInJson).node()));
 
         final JsonNode event = jsonEvent.event(); // Can throw EventFieldBlankException
-        TimestampedHttpEventData eventData = new TimestampedHttpEventData(new DefaultHttpEventData(event.toString()));
 
-        eventData = eventData.handleTime(jsonEvent.time(), previousEvent);
-        return eventData;
+        return new EventTime(new DefaultHttpEventData(event.toString()), previousEvent, jsonEvent.time())
+                .timestampedHttpEventData();
     }
 }
