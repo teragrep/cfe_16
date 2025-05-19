@@ -45,6 +45,8 @@
  */
 package com.teragrep.cfe_16.bo;
 
+import java.util.Objects;
+
 public final class DefaultHttpEventData implements HttpEventData {
 
     private final String channel;
@@ -96,6 +98,25 @@ public final class DefaultHttpEventData implements HttpEventData {
 
     public Integer getAckID() {
         return ackID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {return false;}
+
+        DefaultHttpEventData that = (DefaultHttpEventData) o;
+        return Objects.equals(getChannel(), that.getChannel()) && Objects.equals(
+            getEvent(), that.getEvent()) && Objects.equals(getAuthenticationToken(),
+            that.getAuthenticationToken()) && Objects.equals(getAckID(), that.getAckID());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(getChannel());
+        result = 31 * result + Objects.hashCode(getEvent());
+        result = 31 * result + Objects.hashCode(getAuthenticationToken());
+        result = 31 * result + Objects.hashCode(getAckID());
+        return result;
     }
 
     @Override
