@@ -45,19 +45,16 @@
  */
 package com.teragrep.cfe_16.bo;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import java.math.BigDecimal;
-
 public final class TimestampedHttpEventData implements HttpEventData {
 
-    private final DefaultHttpEventData eventData;
+    private final HttpEventData eventData;
     private final String timeSource;
     private final String time;
     private final long timeAsLong;
     private final boolean timeParsed;
 
     public TimestampedHttpEventData(
-            DefaultHttpEventData eventData,
+            HttpEventData eventData,
             String timeSource,
             String time,
             long timeAsLong,
@@ -84,86 +81,7 @@ public final class TimestampedHttpEventData implements HttpEventData {
         this(new DefaultHttpEventData());
     }
 
-    public TimestampedHttpEventData handleTime(
-            final JsonNode timeObject,
-            final TimestampedHttpEventData previousEvent
-    ) {
-        /*
-         * If the time is given as a string rather than as a numeral value, the time is
-         * handled in a same way as it is handled when time is not given in a request.
-         */
-        String timeSource;
-        final String time;
-        final long timeAsLong;
-        boolean timeParsed;
-
-        if (timeObject == null || timeObject.isTextual()) {
-            timeParsed = false;
-            timeSource = "generated";
-            if (previousEvent != null) {
-                if (previousEvent.isTimeParsed()) {
-                    time = previousEvent.getTime();
-                    timeAsLong = new EpochTimeString(time, previousEvent.getTimeAsLong()).asEpochMillis();
-                    timeParsed = true;
-                    timeSource = "reported";
-                }
-                else {
-                    time = previousEvent.getTime();
-                    timeAsLong = previousEvent.getTimeAsLong();
-                }
-            }
-            else {
-                time = null;
-                timeAsLong = 0;
-            }
-            /*
-             * If the time is given as epoch seconds with a decimal (example:
-             * 1433188255.253), the decimal point must be removed and time is assigned to
-             * HttpEventData object as a long value. convertTimeToEpochMillis() will check
-             * that correct time format is used.
-             */
-        }
-        else if (timeObject.isDouble()) {
-            final long decimalRemoved = removeDecimal(timeObject.asDouble());
-            time = String.valueOf(decimalRemoved);
-            timeAsLong = new EpochTimeString(time, decimalRemoved).asEpochMillis();
-            timeParsed = true;
-            timeSource = "reported";
-            /*
-             * If the time is given in a numeral value, it is assigned to HttpEventData
-             * object as a long value. convertTimeToEpochMillis() will check that correct
-             * time format is used.
-             */
-        }
-        else if (timeObject.canConvertToLong()) {
-            time = timeObject.asText();
-            timeAsLong = new EpochTimeString(time, timeObject.asLong()).asEpochMillis();
-            timeParsed = true;
-            timeSource = "reported";
-        }
-        else {
-            time = previousEvent.getTime();
-            timeAsLong = previousEvent.getTimeAsLong();
-            timeParsed = false;
-            timeSource = "generated";
-        }
-
-        return new TimestampedHttpEventData(this.eventData, timeSource, time, timeAsLong, timeParsed);
-    }
-
-    /**
-     * Takes a double value as a parameter, removes the decimal point from that value and returns the number as a long
-     * value.
-     */
-    private long removeDecimal(double doubleValue) {
-        BigDecimal doubleValueWithDecimal = BigDecimal.valueOf(doubleValue);
-        String stringValue = doubleValueWithDecimal.toString();
-        String stringValueWithoutDecimal = stringValue.replace(".", "");
-
-        return Long.parseLong(stringValueWithoutDecimal);
-    }
-
-    public DefaultHttpEventData eventData() {
+    public HttpEventData eventData() {
         return eventData;
     }
 
