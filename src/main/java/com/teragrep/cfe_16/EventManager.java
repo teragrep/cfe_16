@@ -122,7 +122,7 @@ public class EventManager {
             HeaderInfo headerInfo,
             AckManager ackManager
     ) {
-        TimestampedHttpEventData previousEvent = null;
+        TimestampedHttpEventData previousEvent;
 
         ackManager.initializeContext(authToken, channel);
         int ackId = ackManager.getCurrentAckValue(authToken, channel);
@@ -152,7 +152,23 @@ public class EventManager {
             previousEvent = eventData;
             String jsonObjectStr = parser.next().toString();
             try {
-                eventData = verifyJsonData(jsonObjectStr, previousEvent);
+                /*
+                 * Event field cannot be missing or blank. Throws an exception if this is the
+                 * case.
+                 */
+                final JsonEvent jsonEvent = new ValidatedJsonEvent(
+                        new DefaultJsonEvent(new EventString(jsonObjectStr).node())
+                );
+                /*
+                * Construct TimestampedHttpEventData with correct time values, based on the previous event
+                *
+                * Can throw an EventFieldBlankException
+                */
+                eventData = new EventTime(
+                        new DefaultHttpEventData(jsonEvent.event().toString()),
+                        previousEvent,
+                        jsonEvent.time()
+                ).timestampedHttpEventData();
             }
             catch (JsonProcessingException e) {
                 LOGGER.error("Problem processing JsonObjectString <{}>", jsonObjectStr);
@@ -165,19 +181,6 @@ public class EventManager {
 
             syslogMessages.add(converter.httpToSyslog(finalEvent, headerInfo));
         }
-
-        /*
-         * SyslogMessage syslogMessage =
-         * converter.getHeaderInfoSyslogMessage(headerInfo);
-         * requestInfo.getConvertedData().add(syslogMessage);
-         */
-        /*
-         * After all the events are sent, previousEvent object is set to null, the
-         * events are sent with the ackManager and ack id and JSON node with an ack id
-         * will be returned informing that the sending of the events has been
-         * successful.
-         */
-        previousEvent = null;
 
         // create a new object to avoid blocking of threads because
         // the SyslogMessageSender.sendMessage() is synchronized
@@ -207,29 +210,5 @@ public class EventManager {
         }
 
         return responseNode;
-    }
-
-    /*
-     * Pre-handles the event and assigns it's information into HttpEventData object
-     * and returns it. Information from the string is read with ObjectMapper into a
-     * JsonNode. After that the supposed fields are checked from the JsonNode and if
-     * the field is found, information from it will be saved in HttpEventData
-     * object. Finally handleTime() is called to assign correct time information to
-     * the object. When multiple events are sent in one request, the value of the
-     * fields are saved for the following events. The values can be overriden. If
-     * the value is overridden, it will stay as so for the following events if it is
-     * not overridden.
-     */
-    private TimestampedHttpEventData verifyJsonData(String eventInJson, TimestampedHttpEventData previousEvent)
-            throws JsonProcessingException {
-        /*
-         * Event field cannot be missing or blank. Throws an exception if this is the
-         * case.
-         */
-        final JsonEvent jsonEvent = new ValidatedJsonEvent(new DefaultJsonEvent(new EventString(eventInJson).node()));
-
-        // Can throw EventFieldBlankException
-        return new EventTime(new DefaultHttpEventData(jsonEvent.event().toString()), previousEvent, jsonEvent.time())
-                .timestampedHttpEventData();
     }
 }
