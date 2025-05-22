@@ -78,15 +78,15 @@ public final class EventTime {
             timeParsed = false;
             timeSource = "generated";
             if (previousEvent != null) {
-                if (previousEvent.isTimeParsed()) {
-                    time = previousEvent.getTime();
-                    timeAsLong = new EpochTimeString(time, previousEvent.getTimeAsLong()).asEpochMillis();
+                if (previousEvent.timeParsed()) {
+                    time = previousEvent.time();
+                    timeAsLong = new EpochTimeString(time, previousEvent.timeAsLong()).asEpochMillis();
                     timeParsed = true;
                     timeSource = "reported";
                 }
                 else {
-                    time = previousEvent.getTime();
-                    timeAsLong = previousEvent.getTimeAsLong();
+                    time = previousEvent.time();
+                    timeAsLong = previousEvent.timeAsLong();
                 }
             }
             else {
@@ -119,8 +119,8 @@ public final class EventTime {
             timeSource = "reported";
         }
         else {
-            time = previousEvent.getTime();
-            timeAsLong = previousEvent.getTimeAsLong();
+            time = previousEvent.time();
+            timeAsLong = previousEvent.timeAsLong();
             timeParsed = false;
             timeSource = "generated";
         }

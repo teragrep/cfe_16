@@ -137,30 +137,30 @@ public class ConverterTests {
         eventData2 = new TimestampedHttpEventData(defaultEventData2, "generated", null, 0L, false);
         eventData3 = new TimestampedHttpEventData(defaultEventData3, "generated", null, 0L, false);
 
-        metadataSDE1.addSDParam("authentication_token", eventData1.getAuthenticationToken());
-        metadataSDE1.addSDParam("channel", eventData1.getChannel());
-        metadataSDE1.addSDParam("ack_id", String.valueOf(eventData1.getAckID()));
-        metadataSDE1.addSDParam("time_source", eventData1.getTimeSource());
+        metadataSDE1.addSDParam("authentication_token", eventData1.authenticationToken());
+        metadataSDE1.addSDParam("channel", eventData1.channel());
+        metadataSDE1.addSDParam("ack_id", String.valueOf(eventData1.ackID()));
+        metadataSDE1.addSDParam("time_source", eventData1.timeSource());
         metadataSDE1.addSDParam("time_parsed", "true");
-        metadataSDE1.addSDParam("time", eventData1.getTime());
+        metadataSDE1.addSDParam("time", eventData1.time());
 
-        metadataSDE2.addSDParam("authentication_token", eventData2.getAuthenticationToken());
-        metadataSDE2.addSDParam("channel", eventData2.getChannel());
-        metadataSDE2.addSDParam("ack_id", String.valueOf(eventData2.getAckID()));
-        metadataSDE2.addSDParam("time_source", eventData2.getTimeSource());
+        metadataSDE2.addSDParam("authentication_token", eventData2.authenticationToken());
+        metadataSDE2.addSDParam("channel", eventData2.channel());
+        metadataSDE2.addSDParam("ack_id", String.valueOf(eventData2.ackID()));
+        metadataSDE2.addSDParam("time_source", eventData2.timeSource());
 
-        metadataSDE3.addSDParam("authentication_token", eventData3.getAuthenticationToken());
-        metadataSDE3.addSDParam("channel", eventData3.getChannel());
-        metadataSDE3.addSDParam("time_source", eventData3.getTimeSource());
+        metadataSDE3.addSDParam("authentication_token", eventData3.authenticationToken());
+        metadataSDE3.addSDParam("channel", eventData3.channel());
+        metadataSDE3.addSDParam("time_source", eventData3.timeSource());
 
         supposedSyslogMessage1 = new SyslogMessage()
-                .withTimestamp(eventData1.getTimeAsLong())
+                .withTimestamp(eventData1.timeAsLong())
                 .withSeverity(supposedSeverity)
                 .withAppName("capsulated")
                 .withHostname("cfe-16")
                 .withFacility(supposedFacility)
                 .withSDElement(metadataSDE1)
-                .withMsg(eventData1.getEvent());
+                .withMsg(eventData1.event());
 
         supposedSyslogMessage2 = new SyslogMessage()
                 .withSeverity(supposedSeverity)
@@ -168,7 +168,7 @@ public class ConverterTests {
                 .withHostname("cfe-16")
                 .withFacility(supposedFacility)
                 .withSDElement(metadataSDE2)
-                .withMsg(eventData2.getEvent());
+                .withMsg(eventData2.event());
 
         supposedSyslogMessage3 = new SyslogMessage()
                 .withSeverity(supposedSeverity)
@@ -176,7 +176,7 @@ public class ConverterTests {
                 .withHostname("cfe-16")
                 .withFacility(supposedFacility)
                 .withSDElement(metadataSDE3)
-                .withMsg(eventData3.getEvent());
+                .withMsg(eventData3.event());
 
         returnedMessage1 = converter.httpToSyslog(eventData1);
         returnedMessage2 = converter.httpToSyslog(eventData2);

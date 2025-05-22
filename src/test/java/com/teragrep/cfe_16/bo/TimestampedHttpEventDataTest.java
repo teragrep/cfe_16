@@ -52,8 +52,8 @@ import org.junit.jupiter.api.Test;
 class TimestampedHttpEventDataTest {
 
     @Test
-    @DisplayName("getTimeSource() returns \"generated\" if time field is null")
-    void getTimeSourceReturnsGeneratedIfTimeFieldIsNull() {
+    @DisplayName("TimeSource() returns \"generated\" if time field is null")
+    void timeSourceReturnsGeneratedIfTimeFieldIsNull() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
                 new DefaultHttpEventData(),
                 "timeSource",
@@ -62,12 +62,12 @@ class TimestampedHttpEventDataTest {
                 true
         );
 
-        Assertions.assertEquals("generated", timestampedHttpEventData.getTimeSource());
+        Assertions.assertEquals("generated", timestampedHttpEventData.timeSource());
     }
 
     @Test
-    @DisplayName("getTimeSource() returns \"generated\" if time is less than 10 characters long")
-    void getTimeSourceReturnsGeneratedIfTimeIsLessThan10CharactersLong() {
+    @DisplayName("TimeSource() returns \"generated\" if time is less than 10 characters long")
+    void timeSourceReturnsGeneratedIfTimeIsLessThan10CharactersLong() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
                 new DefaultHttpEventData(),
                 "timeSource",
@@ -76,12 +76,12 @@ class TimestampedHttpEventDataTest {
                 true
         );
 
-        Assertions.assertEquals("generated", timestampedHttpEventData.getTimeSource());
+        Assertions.assertEquals("generated", timestampedHttpEventData.timeSource());
     }
 
     @Test
-    @DisplayName("getTimeSource() returns \"generated\" if time is more than 13 characters long")
-    void getTimeSourceReturnsGeneratedIfTimeIsMoreThan13CharactersLong() {
+    @DisplayName("TimeSource() returns \"generated\" if time is more than 13 characters long")
+    void timeSourceReturnsGeneratedIfTimeIsMoreThan13CharactersLong() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
                 new DefaultHttpEventData(),
                 "timeSource",
@@ -90,12 +90,12 @@ class TimestampedHttpEventDataTest {
                 true
         );
 
-        Assertions.assertEquals("generated", timestampedHttpEventData.getTimeSource());
+        Assertions.assertEquals("generated", timestampedHttpEventData.timeSource());
     }
 
     @Test
-    @DisplayName("getTimeSource returns timeSource if time is between 10 and 13 characters")
-    void getTimeSourceReturnsTimeSourceIfTimeIsBetween10And13Characters() {
+    @DisplayName("TimeSource returns timeSource if time is between 10 and 13 characters")
+    void timeSourceReturnsTimeSourceIfTimeIsBetween10And13Characters() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
                 new DefaultHttpEventData(),
                 "timeSource",
@@ -104,7 +104,7 @@ class TimestampedHttpEventDataTest {
                 true
         );
 
-        Assertions.assertEquals("timeSource", timestampedHttpEventData.getTimeSource());
+        Assertions.assertEquals("timeSource", timestampedHttpEventData.timeSource());
     }
 
     @Test

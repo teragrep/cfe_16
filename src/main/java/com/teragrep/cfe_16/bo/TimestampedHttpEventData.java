@@ -87,19 +87,19 @@ public final class TimestampedHttpEventData implements HttpEventData {
         return eventData;
     }
 
-    public String getEvent() {
-        return this.eventData.getEvent();
+    public String event() {
+        return this.eventData.event();
     }
 
-    public String getChannel() {
-        return this.eventData.getChannel();
+    public String channel() {
+        return this.eventData.channel();
     }
 
-    public String getAuthenticationToken() {
-        return this.eventData.getAuthenticationToken();
+    public String authenticationToken() {
+        return this.eventData.authenticationToken();
     }
 
-    public String getTimeSource() {
+    public String timeSource() {
         if (this.time == null) {
             return "generated";
         }
@@ -109,20 +109,20 @@ public final class TimestampedHttpEventData implements HttpEventData {
         return this.timeSource;
     }
 
-    public String getTime() {
+    public String time() {
         return this.time;
     }
 
-    public long getTimeAsLong() {
+    public long timeAsLong() {
         return this.timeAsLong;
     }
 
     @Override
-    public Integer getAckID() {
-        return this.eventData.getAckID();
+    public Integer ackID() {
+        return this.eventData.ackID();
     }
 
-    public boolean isTimeParsed() {
+    public boolean timeParsed() {
         if (this.time == null) {
             return false;
         }
@@ -139,18 +139,18 @@ public final class TimestampedHttpEventData implements HttpEventData {
         }
 
         TimestampedHttpEventData that = (TimestampedHttpEventData) o;
-        return getTimeAsLong() == that.getTimeAsLong() && isTimeParsed() == that.isTimeParsed() && Objects
-                .equals(eventData, that.eventData) && Objects.equals(getTimeSource(), that.getTimeSource())
-                && Objects.equals(getTime(), that.getTime());
+        return timeAsLong() == that.timeAsLong() && timeParsed() == that.timeParsed() && Objects
+                .equals(eventData, that.eventData) && Objects.equals(timeSource(), that.timeSource())
+                && Objects.equals(time(), that.time());
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hashCode(eventData);
-        result = 31 * result + Objects.hashCode(getTimeSource());
-        result = 31 * result + Objects.hashCode(getTime());
-        result = 31 * result + Long.hashCode(getTimeAsLong());
-        result = 31 * result + Boolean.hashCode(isTimeParsed());
+        result = 31 * result + Objects.hashCode(timeSource());
+        result = 31 * result + Objects.hashCode(time());
+        result = 31 * result + Long.hashCode(timeAsLong());
+        result = 31 * result + Boolean.hashCode(timeParsed());
         return result;
     }
 }

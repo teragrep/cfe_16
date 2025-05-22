@@ -69,19 +69,19 @@ public final class DefaultHttpEventData implements HttpEventData {
         this.ackID = ackID;
     }
 
-    public String getEvent() {
+    public String event() {
         return event;
     }
 
-    public String getChannel() {
+    public String channel() {
         return channel;
     }
 
-    public String getAuthenticationToken() {
+    public String authenticationToken() {
         return authenticationToken;
     }
 
-    public Integer getAckID() {
+    public Integer ackID() {
         return ackID;
     }
 
@@ -92,17 +92,16 @@ public final class DefaultHttpEventData implements HttpEventData {
         }
 
         DefaultHttpEventData that = (DefaultHttpEventData) o;
-        return Objects.equals(getChannel(), that.getChannel()) && Objects.equals(getEvent(), that.getEvent()) && Objects
-                .equals(getAuthenticationToken(), that.getAuthenticationToken())
-                && Objects.equals(getAckID(), that.getAckID());
+        return Objects.equals(channel(), that.channel()) && Objects.equals(event(), that.event()) && Objects
+                .equals(authenticationToken(), that.authenticationToken()) && Objects.equals(ackID(), that.ackID());
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(getChannel());
-        result = 31 * result + Objects.hashCode(getEvent());
-        result = 31 * result + Objects.hashCode(getAuthenticationToken());
-        result = 31 * result + Objects.hashCode(getAckID());
+        int result = Objects.hashCode(channel());
+        result = 31 * result + Objects.hashCode(event());
+        result = 31 * result + Objects.hashCode(authenticationToken());
+        result = 31 * result + Objects.hashCode(ackID());
         return result;
     }
 

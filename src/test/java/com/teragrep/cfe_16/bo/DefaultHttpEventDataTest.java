@@ -92,8 +92,8 @@ class DefaultHttpEventDataTest {
     }
 
     @Test
-    @DisplayName("getEvent returns event")
-    void getEventReturnsEvent() {
+    @DisplayName("Event returns event")
+    void eventReturnsEvent() {
         final DefaultHttpEventData defaultHttpEventData = new DefaultHttpEventData(
                 "channel 1",
                 "event",
@@ -103,12 +103,12 @@ class DefaultHttpEventDataTest {
 
         final String expectedResult = "event";
 
-        Assertions.assertEquals(expectedResult, defaultHttpEventData.getEvent());
+        Assertions.assertEquals(expectedResult, defaultHttpEventData.event());
     }
 
     @Test
-    @DisplayName("getChannel returns channel")
-    void getChannelReturnsChannel() {
+    @DisplayName("Channel returns channel")
+    void channelReturnsChannel() {
         final DefaultHttpEventData defaultHttpEventData = new DefaultHttpEventData(
                 "channel 1",
                 "event",
@@ -118,12 +118,12 @@ class DefaultHttpEventDataTest {
 
         final String expectedResult = "channel 1";
 
-        Assertions.assertEquals(expectedResult, defaultHttpEventData.getChannel());
+        Assertions.assertEquals(expectedResult, defaultHttpEventData.channel());
     }
 
     @Test
-    @DisplayName("getAuthenticationToken returns authentication token")
-    void getAuthenticationTokenReturnsAuthenticationToken() {
+    @DisplayName("AuthenticationToken returns authentication token")
+    void authenticationTokenReturnsAuthenticationToken() {
         final DefaultHttpEventData defaultHttpEventData = new DefaultHttpEventData(
                 "channel 1",
                 "event",
@@ -133,12 +133,12 @@ class DefaultHttpEventDataTest {
 
         final String expectedResult = "auth token";
 
-        Assertions.assertEquals(expectedResult, defaultHttpEventData.getAuthenticationToken());
+        Assertions.assertEquals(expectedResult, defaultHttpEventData.authenticationToken());
     }
 
     @Test
-    @DisplayName("getAckID returns ackID if not null")
-    void getAckIdReturnsAckIdIfNotNull() {
+    @DisplayName("AckID returns ackID if not null")
+    void ackIdReturnsAckIdIfNotNull() {
         final DefaultHttpEventData defaultHttpEventData = new DefaultHttpEventData(
                 "channel 1",
                 "event",
@@ -148,12 +148,12 @@ class DefaultHttpEventDataTest {
 
         final Integer expectedResult = 123;
 
-        Assertions.assertEquals(expectedResult, defaultHttpEventData.getAckID());
+        Assertions.assertEquals(expectedResult, defaultHttpEventData.ackID());
     }
 
     @Test
-    @DisplayName("getAckID returns null if ackID is null")
-    void getAckIdReturnsNullIfAckIdIsNull() {
+    @DisplayName("AckID returns null if ackID is null")
+    void ackIdReturnsNullIfAckIdIsNull() {
         final DefaultHttpEventData defaultHttpEventData = new DefaultHttpEventData(
                 "channel 1",
                 "event",
@@ -161,8 +161,6 @@ class DefaultHttpEventDataTest {
                 null
         );
 
-        final Integer expectedResult = null;
-
-        Assertions.assertEquals(expectedResult, defaultHttpEventData.getAckID());
+        Assertions.assertNull(defaultHttpEventData.ackID());
     }
 }
