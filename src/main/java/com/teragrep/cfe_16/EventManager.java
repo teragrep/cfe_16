@@ -47,7 +47,6 @@ package com.teragrep.cfe_16;
 
 import com.cloudbees.syslog.SyslogMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonStreamParser;
@@ -228,9 +227,8 @@ public class EventManager {
          */
         final JsonEvent jsonEvent = new ValidatedJsonEvent(new DefaultJsonEvent(new EventString(eventInJson).node()));
 
-        final JsonNode event = jsonEvent.event(); // Can throw EventFieldBlankException
-
-        return new EventTime(new DefaultHttpEventData(event.toString()), previousEvent, jsonEvent.time())
+        // Can throw EventFieldBlankException
+        return new EventTime(new DefaultHttpEventData(jsonEvent.event().toString()), previousEvent, jsonEvent.time())
                 .timestampedHttpEventData();
     }
 }
