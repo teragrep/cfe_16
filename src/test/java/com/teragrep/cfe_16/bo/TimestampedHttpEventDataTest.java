@@ -106,4 +106,47 @@ class TimestampedHttpEventDataTest {
 
         Assertions.assertEquals("timeSource", timestampedHttpEventData.getTimeSource());
     }
+
+    @Test
+    @DisplayName("Happy equals test")
+    void happyEqualsTest() {
+        final TimestampedHttpEventData timestampedHttpEventData1 = new TimestampedHttpEventData(
+                new DefaultHttpEventData(),
+                "timeSource",
+                "1234567890123",
+                123L,
+                true
+        );
+
+        final TimestampedHttpEventData timestampedHttpEventData2 = new TimestampedHttpEventData(
+                new DefaultHttpEventData(),
+                "timeSource",
+                "1234567890123",
+                123L,
+                true
+        );
+        Assertions.assertEquals(timestampedHttpEventData1, timestampedHttpEventData2);
+    }
+
+    @Test
+    @DisplayName("Unhappy equals test")
+    void unhappyEqualsTest() {
+        final TimestampedHttpEventData timestampedHttpEventData1 = new TimestampedHttpEventData(
+                new DefaultHttpEventData(),
+                "timeSource",
+                "1234567890123",
+                123L,
+                true
+        );
+
+        final TimestampedHttpEventData timestampedHttpEventData2 = new TimestampedHttpEventData(
+                new DefaultHttpEventData(),
+                "timeSourceIsNotTheSame",
+                "1234567890123",
+                123L,
+                true
+        );
+
+        Assertions.assertNotEquals(timestampedHttpEventData1, timestampedHttpEventData2);
+    }
 }

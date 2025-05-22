@@ -50,6 +50,7 @@ import com.teragrep.cfe_16.bo.EpochTimeString;
 import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public final class EventTime {
 
@@ -137,5 +138,24 @@ public final class EventTime {
         String stringValueWithoutDecimal = stringValue.replace(".", "");
 
         return Long.parseLong(stringValueWithoutDecimal);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        EventTime eventTime = (EventTime) o;
+        return Objects.equals(eventData, eventTime.eventData) && Objects.equals(previousEvent, eventTime.previousEvent)
+                && Objects.equals(timeObject, eventTime.timeObject);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(eventData);
+        result = 31 * result + Objects.hashCode(previousEvent);
+        result = 31 * result + Objects.hashCode(timeObject);
+        return result;
     }
 }

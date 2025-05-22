@@ -382,4 +382,48 @@ class EventTimeTest {
                                 )
                 );
     }
+
+    @Test
+    @DisplayName("Happy equals test")
+    void happyEqualsTest() {
+        String content = "{\"event\": \"Pony 1 has left the barn\", "
+                + "\"sourcetype\":\"mysourcetype\", \"time\": 1433188255252321}";
+        JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content));
+
+        final EventTime eventTime1 = new EventTime(
+                new TimestampedHttpEventData(),
+                null,
+                new DefaultJsonEvent(jsonNode).time()
+        );
+
+        final EventTime eventTime2 = new EventTime(
+                new TimestampedHttpEventData(),
+                null,
+                new DefaultJsonEvent(jsonNode).time()
+        );
+
+        Assertions.assertEquals(eventTime1, eventTime2);
+    }
+
+    @Test
+    @DisplayName("Unhappy equals test")
+    void unhappyEqualsTest() {
+        String content = "{\"event\": \"Pony 1 has left the barn\", "
+                + "\"sourcetype\":\"mysourcetype\", \"time\": 1433188255252321}";
+        JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content));
+
+        final EventTime eventTime1 = new EventTime(
+                new TimestampedHttpEventData(),
+                null,
+                new DefaultJsonEvent(jsonNode).time()
+        );
+
+        final EventTime eventTime2 = new EventTime(
+                new TimestampedHttpEventData(),
+                new TimestampedHttpEventData(),
+                new DefaultJsonEvent(jsonNode).time()
+        );
+
+        Assertions.assertNotEquals(eventTime1, eventTime2);
+    }
 }

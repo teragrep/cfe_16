@@ -45,6 +45,8 @@
  */
 package com.teragrep.cfe_16.bo;
 
+import java.util.Objects;
+
 public final class TimestampedHttpEventData implements HttpEventData {
 
     private final HttpEventData eventData;
@@ -128,5 +130,27 @@ public final class TimestampedHttpEventData implements HttpEventData {
             return false;
         }
         return this.timeParsed;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        TimestampedHttpEventData that = (TimestampedHttpEventData) o;
+        return getTimeAsLong() == that.getTimeAsLong() && isTimeParsed() == that.isTimeParsed() && Objects
+                .equals(eventData, that.eventData) && Objects.equals(getTimeSource(), that.getTimeSource())
+                && Objects.equals(getTime(), that.getTime());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(eventData);
+        result = 31 * result + Objects.hashCode(getTimeSource());
+        result = 31 * result + Objects.hashCode(getTime());
+        result = 31 * result + Long.hashCode(getTimeAsLong());
+        result = 31 * result + Boolean.hashCode(isTimeParsed());
+        return result;
     }
 }
