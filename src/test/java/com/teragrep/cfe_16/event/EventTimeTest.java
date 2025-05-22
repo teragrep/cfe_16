@@ -87,17 +87,17 @@ class EventTimeTest {
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "reported", httpEventDataWithHandledTime.getTimeSource(),
+                                        "reported", httpEventDataWithHandledTime.timeSource(),
                                         "Time source should be 'reported' when the time is specified in a request"
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        httpEventDataWithHandledTime.isTimeParsed(),
+                                        httpEventDataWithHandledTime.timeParsed(),
                                         "timeParsed should be true when the time is specified in a request"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        1277464192000L, httpEventDataWithHandledTime.getTimeAsLong(),
+                                        1277464192000L, httpEventDataWithHandledTime.timeAsLong(),
                                         "Time should have been converted to epoch milliseconds"
                                 )
                 );
@@ -126,17 +126,17 @@ class EventTimeTest {
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "generated", httpEventDataWithHandledTime.getTimeSource(),
+                                        "generated", httpEventDataWithHandledTime.timeSource(),
                                         "Time source should be 'generated' when it's not specified in a request"
                                 ),
                         () -> Assertions
                                 .assertFalse(
-                                        httpEventDataWithHandledTime.isTimeParsed(),
+                                        httpEventDataWithHandledTime.timeParsed(),
                                         "timeParsed should be false when time is not specified in a request"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        0, httpEventDataWithHandledTime.getTimeAsLong(),
+                                        0, httpEventDataWithHandledTime.timeAsLong(),
                                         "Time as long should be 0 when time is not specified in a request"
                                 )
                 );
@@ -166,17 +166,17 @@ class EventTimeTest {
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "reported", httpEventDataWithHandledTime.getTimeSource(),
+                                        "reported", httpEventDataWithHandledTime.timeSource(),
                                         "Time source should be 'reported' when the time is specified in a request"
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        httpEventDataWithHandledTime.isTimeParsed(),
+                                        httpEventDataWithHandledTime.timeParsed(),
                                         "timeParsed should be true when time is specified in a request"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        1433188255253L, httpEventDataWithHandledTime.getTimeAsLong(),
+                                        1433188255253L, httpEventDataWithHandledTime.timeAsLong(),
                                         "Time should be converted to epoch milliseconds when it's provided in a request in "
                                                 + "epoch seconds with decimals"
                                 )
@@ -207,17 +207,17 @@ class EventTimeTest {
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "reported", httpEventDataWithHandledTime.getTimeSource(),
+                                        "reported", httpEventDataWithHandledTime.timeSource(),
                                         "Time source should be 'reported' when the time is specified in a request"
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        httpEventDataWithHandledTime.isTimeParsed(),
+                                        httpEventDataWithHandledTime.timeParsed(),
                                         "timeParsed should be true when time is specified in a request"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        1433188255253L, httpEventDataWithHandledTime.getTimeAsLong(),
+                                        1433188255253L, httpEventDataWithHandledTime.timeAsLong(),
                                         "Time should be converted to epoch milliseconds when it's provided in a request in "
                                                 + "epoch seconds with decimals"
                                 )
@@ -248,17 +248,17 @@ class EventTimeTest {
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "generated", httpEventDataWithHandledTime.getTimeSource(),
+                                        "generated", httpEventDataWithHandledTime.timeSource(),
                                         "Time source should be 'generated' when time is given as a string in a request"
                                 ),
                         () -> Assertions
                                 .assertFalse(
-                                        httpEventDataWithHandledTime.isTimeParsed(),
+                                        httpEventDataWithHandledTime.timeParsed(),
                                         "timeParsed should be false when time is given as a string in a request"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        0, httpEventDataWithHandledTime.getTimeAsLong(),
+                                        0, httpEventDataWithHandledTime.timeAsLong(),
                                         "Time should be 0 when time is given as a string in a request"
                                 )
                 );
@@ -288,19 +288,19 @@ class EventTimeTest {
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "generated", httpEventDataWithHandledTime.getTimeSource(),
+                                        "generated", httpEventDataWithHandledTime.timeSource(),
                                         "Time source should be 'generated' when time is given as an integer with less "
                                                 + "than 10" + " digits"
                                 ),
                         () -> Assertions
                                 .assertFalse(
-                                        httpEventDataWithHandledTime.isTimeParsed(),
+                                        httpEventDataWithHandledTime.timeParsed(),
                                         "timeParsed should be false when time is given as an integer with less than 10 "
                                                 + "digits"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        143318, httpEventDataWithHandledTime.getTimeAsLong(),
+                                        143318, httpEventDataWithHandledTime.timeAsLong(),
                                         "Time as long should be as provided in the request"
                                 )
                 );
@@ -330,18 +330,18 @@ class EventTimeTest {
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "reported", httpEventDataWithHandledTime.getTimeSource(),
+                                        "reported", httpEventDataWithHandledTime.timeSource(),
                                         "Time source should be 'reported' when the time is specified in a request "
                                                 + "with 10-13 " + "digits"
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        httpEventDataWithHandledTime.isTimeParsed(),
+                                        httpEventDataWithHandledTime.timeParsed(),
                                         "timeParsed should be true when time is specified in a request with 10-13 digits"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        1433188255250L, httpEventDataWithHandledTime.getTimeAsLong(),
+                                        1433188255250L, httpEventDataWithHandledTime.timeAsLong(),
                                         "Time should be converted to epoch milliseconds when provided in a request with "
                                                 + "10-13 digits"
                                 )
@@ -365,19 +365,19 @@ class EventTimeTest {
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "generated", httpEventDataWithHandledTime.getTimeSource(),
+                                        "generated", httpEventDataWithHandledTime.timeSource(),
                                         "Time source should be 'generated' when time is given as an integer with more "
                                                 + "than 13 digits"
                                 ),
                         () -> Assertions
                                 .assertFalse(
-                                        httpEventDataWithHandledTime.isTimeParsed(),
+                                        httpEventDataWithHandledTime.timeParsed(),
                                         "timeParsed should be false when time is given as an integer with more than 13 "
                                                 + "digits"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        1433188255252321L, httpEventDataWithHandledTime.getTimeAsLong(),
+                                        1433188255252321L, httpEventDataWithHandledTime.timeAsLong(),
                                         "Time should be as it's provided in a request."
                                 )
                 );

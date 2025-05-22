@@ -81,21 +81,21 @@ public class Converter {
         setHeaderSDE(headerInfo);
 
         SyslogMessage syslogMessage;
-        if (httpEventData.isTimeParsed()) {
+        if (httpEventData.timeParsed()) {
 
             /*
              * Creates a Syslogmessage with a time stamp
              */
             LOGGER.debug("Creating new syslog message with timestamp");
             syslogMessage = new SyslogMessage()
-                    .withTimestamp(httpEventData.getTimeAsLong())
+                    .withTimestamp(httpEventData.timeAsLong())
                     .withSeverity(severity)
                     .withAppName("capsulated")
                     .withHostname(hostName)
                     .withFacility(facility)
                     .withSDElement(metadataSDE)
                     .withSDElement(headerSDE)
-                    .withMsg(httpEventData.getEvent());
+                    .withMsg(httpEventData.event());
 
         }
         else {
@@ -111,7 +111,7 @@ public class Converter {
                     .withFacility(facility)
                     .withSDElement(metadataSDE)
                     .withSDElement(headerSDE)
-                    .withMsg(httpEventData.getEvent());
+                    .withMsg(httpEventData.event());
         }
 
         return syslogMessage;
@@ -139,30 +139,30 @@ public class Converter {
         LOGGER.debug("Setting Structured Data params");
         metadataSDE = new SDElement("cfe_16-metadata@48577");
 
-        if (eventData.getAuthenticationToken() != null) {
+        if (eventData.authenticationToken() != null) {
             LOGGER.debug("Setting authentication token");
-            metadataSDE.addSDParam("authentication_token", eventData.getAuthenticationToken());
+            metadataSDE.addSDParam("authentication_token", eventData.authenticationToken());
         }
 
-        if (eventData.getChannel() != null) {
+        if (eventData.channel() != null) {
             LOGGER.debug("Setting channel");
-            metadataSDE.addSDParam("channel", eventData.getChannel());
+            metadataSDE.addSDParam("channel", eventData.channel());
         }
 
-        if (eventData.getAckID() != null) {
+        if (eventData.ackID() != null) {
             LOGGER.debug("Setting ack id");
-            metadataSDE.addSDParam("ack_id", String.valueOf(eventData.getAckID()));
+            metadataSDE.addSDParam("ack_id", String.valueOf(eventData.ackID()));
         }
 
-        if (eventData.getTimeSource() != null) {
+        if (eventData.timeSource() != null) {
             LOGGER.debug("Setting time source");
-            metadataSDE.addSDParam("time_source", eventData.getTimeSource());
+            metadataSDE.addSDParam("time_source", eventData.timeSource());
         }
 
-        if (eventData.isTimeParsed()) {
+        if (eventData.timeParsed()) {
             LOGGER.debug("Setting time_parsed and time");
             metadataSDE.addSDParam("time_parsed", "true");
-            metadataSDE.addSDParam("time", eventData.getTime());
+            metadataSDE.addSDParam("time", eventData.time());
         }
     }
 
