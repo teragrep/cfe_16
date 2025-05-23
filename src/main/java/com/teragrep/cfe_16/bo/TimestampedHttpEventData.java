@@ -54,6 +54,23 @@ public final class TimestampedHttpEventData implements HttpEventData {
     private final String time;
     private final long timeAsLong;
     private final boolean timeParsed;
+    private final boolean isDefault;
+
+    public TimestampedHttpEventData(
+            HttpEventData eventData,
+            String timeSource,
+            String time,
+            long timeAsLong,
+            boolean timeParsed,
+            boolean isDefault
+    ) {
+        this.eventData = eventData;
+        this.timeSource = timeSource;
+        this.time = time;
+        this.timeAsLong = timeAsLong;
+        this.timeParsed = timeParsed;
+        this.isDefault = isDefault;
+    }
 
     public TimestampedHttpEventData(
             HttpEventData eventData,
@@ -62,25 +79,19 @@ public final class TimestampedHttpEventData implements HttpEventData {
             long timeAsLong,
             boolean timeParsed
     ) {
-        this.eventData = eventData;
-        this.timeSource = timeSource;
-        this.time = time;
-        this.timeAsLong = timeAsLong;
-        this.timeParsed = timeParsed;
+        this(eventData, timeSource, time, timeAsLong, timeParsed, false);
     }
 
-    /**
-     *
-     */
     public TimestampedHttpEventData(final DefaultHttpEventData defaultHttpEventData) {
-        this(defaultHttpEventData, "timeSource", "time", 0L, false);
+        this(defaultHttpEventData, false);
     }
 
-    /**
-     *
-     */
+    public TimestampedHttpEventData(final DefaultHttpEventData defaultHttpEventData, boolean isDefault) {
+        this(defaultHttpEventData, "timeSource", "time", 0L, false, isDefault);
+    }
+
     public TimestampedHttpEventData() {
-        this(new DefaultHttpEventData());
+        this(new DefaultHttpEventData(), true);
     }
 
     public HttpEventData eventData() {
@@ -132,8 +143,8 @@ public final class TimestampedHttpEventData implements HttpEventData {
         return this.timeParsed;
     }
 
-    public boolean notDefault() {
-        return !this.equals(new TimestampedHttpEventData());
+    public boolean isDefault() {
+        return this.isDefault;
     }
 
     @Override
