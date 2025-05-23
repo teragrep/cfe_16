@@ -114,9 +114,6 @@ public final class TimestampedHttpEventData implements HttpEventData {
         if (this.time == null) {
             return "generated";
         }
-        if (this.time.length() < 10 || this.time.length() > 13) {
-            return "generated";
-        }
         return this.timeSource;
     }
 
