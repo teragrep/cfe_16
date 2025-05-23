@@ -145,7 +145,7 @@ public class EventManager {
          * After the event is handled, it is assigned as a value to previousEvent
          * variable.
          */
-        TimestampedHttpEventData eventData = null;
+        TimestampedHttpEventData eventData = new TimestampedHttpEventData();
         Converter converter = new Converter(headerInfo);
         List<SyslogMessage> syslogMessages = new ArrayList<>();
         while (parser.hasNext()) {
