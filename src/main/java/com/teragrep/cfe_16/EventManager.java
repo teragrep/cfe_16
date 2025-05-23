@@ -175,11 +175,15 @@ public class EventManager {
                 continue;
             }
 
-            final TimestampedHttpEventData finalEvent = new TimestampedHttpEventData(
-                    new DefaultHttpEventData(channel, eventData.event(), authToken, null)
-            );
-
-            syslogMessages.add(converter.httpToSyslog(finalEvent, headerInfo));
+            syslogMessages
+                    .add(
+                            converter
+                                    .httpToSyslog(
+                                            new TimestampedHttpEventData(
+                                                    new DefaultHttpEventData(channel, eventData.event(), authToken, null)
+                                            ), headerInfo
+                                    )
+                    );
         }
 
         // create a new object to avoid blocking of threads because

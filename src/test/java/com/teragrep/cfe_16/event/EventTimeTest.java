@@ -429,7 +429,7 @@ class EventTimeTest {
     }
 
     @Test
-    @DisplayName("timestampedHttpEventData() sets time as null if previousEvent is constructed " + "with default ctor")
+    @DisplayName("timestampedHttpEventData() sets time as null if previousEvent is constructed with default ctor")
     void timestampedHttpEventDataSetsTimeAsNullIfPreviousEventIsConstructedWithDefaultCtor() {
         final TimestampedHttpEventData previousEvent = new TimestampedHttpEventData();
 

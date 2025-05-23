@@ -151,8 +151,8 @@ class TimestampedHttpEventDataTest {
     }
 
     @Test
-    @DisplayName("notDefault() returns true if object is not default")
-    void notDefaultReturnsTrueIfObjectIsNotDefault() {
+    @DisplayName("isDefault() returns false if object is not default")
+    void isDefaultReturnsFalseIfObjectIsIsDefault() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
                 new DefaultHttpEventData(),
                 "timeSource",
@@ -161,14 +161,14 @@ class TimestampedHttpEventDataTest {
                 true
         );
 
-        Assertions.assertTrue(timestampedHttpEventData.notDefault());
+        Assertions.assertFalse(timestampedHttpEventData.isDefault());
     }
 
     @Test
-    @DisplayName("notDefault() returns false if object is default")
-    void notDefaultReturnsFalseIfObjectIsDefault() {
+    @DisplayName("isDefault() returns true if object is default")
+    void isDefaultReturnsTrueIfObjectIsDefault() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData();
 
-        Assertions.assertFalse(timestampedHttpEventData.notDefault());
+        Assertions.assertTrue(timestampedHttpEventData.isDefault());
     }
 }

@@ -77,7 +77,7 @@ public final class EventTime {
         if (timeObject == null || timeObject.isTextual()) {
             timeParsed = false;
             timeSource = "generated";
-            if (previousEvent != null && previousEvent.notDefault()) {
+            if (previousEvent != null && !previousEvent.isDefault()) {
                 if (previousEvent.timeParsed()) {
                     time = previousEvent.time();
                     timeAsLong = new EpochTimeString(time, previousEvent.timeAsLong()).asEpochMillis();
