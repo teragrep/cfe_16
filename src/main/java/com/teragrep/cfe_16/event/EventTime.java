@@ -46,10 +46,10 @@
 package com.teragrep.cfe_16.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.teragrep.cfe_16.bo.EpochTimeString;
 import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Objects;
 
 public final class EventTime {
@@ -65,62 +65,71 @@ public final class EventTime {
     }
 
     public TimestampedHttpEventData timestampedHttpEventData() {
-        /*
-         * If the time is given as a string rather than as a numeral value, the time is
-         * handled in a same way as it is handled when time is not given in a request.
-         */
-        String timeSource;
+        final String timeSource;
         final String time;
         final long timeAsLong;
-        boolean timeParsed;
+        final boolean timeParsed;
 
-        if (timeObject == null || timeObject.isTextual()) {
+        // No time provided in the event
+        if (timeObject == null) {
+            // Previous event does not have a proper time
+            if (previousEvent == null || previousEvent.isDefault()) {
+                // Take current time as the event time
+                time = String.valueOf(Instant.now().toEpochMilli());
+                timeAsLong = Instant.now().toEpochMilli();
+            }
+            else {
+                time = previousEvent.time();
+                timeAsLong = previousEvent.timeAsLong();
+            }
             timeParsed = false;
             timeSource = "generated";
-            if (previousEvent != null && !previousEvent.isDefault()) {
+        }
+        // Time is a number, no calculations required
+        else if (timeObject.canConvertToLong()) {
+            time = timeObject.asText();
+            timeAsLong = timeObject.asLong();
+            timeParsed = true;
+            timeSource = "reported";
+        }
+        // Time is a String
+        else if (timeObject.isTextual()) {
+            // Try to convert the String to a long (if not convertable, default to 0L)
+            final long tryAsLong = timeObject.asLong(0L);
+            if (tryAsLong != 0L) {
+                time = String.valueOf(tryAsLong);
+                timeAsLong = tryAsLong;
+                timeParsed = false;
+                timeSource = "generated";
+            }
+            // Previous event contains a time
+            else if (previousEvent != null && !previousEvent.isDefault()) {
                 if (previousEvent.timeParsed()) {
                     time = previousEvent.time();
-                    timeAsLong = new EpochTimeString(time, previousEvent.timeAsLong()).asEpochMillis();
+                    timeAsLong = previousEvent.timeAsLong();
                     timeParsed = true;
                     timeSource = "reported";
                 }
                 else {
                     time = previousEvent.time();
                     timeAsLong = previousEvent.timeAsLong();
+                    timeParsed = false;
+                    timeSource = "generated";
                 }
             }
+            // No time found in current or previous event
             else {
-                time = null;
-                timeAsLong = 0L;
+                time = String.valueOf(Instant.now().toEpochMilli());
+                timeAsLong = Instant.now().toEpochMilli();
+                timeParsed = false;
+                timeSource = "generated";
             }
-            /*
-             * If the time is given as epoch seconds with a decimal (example:
-             * 1433188255.253), the decimal point must be removed and time is assigned to
-             * HttpEventData object as a long value. convertTimeToEpochMillis() will check
-             * that correct time format is used.
-             */
         }
-        else if (timeObject.isDouble()) {
-            final long decimalRemoved = removeDecimal(timeObject.asDouble());
-            time = String.valueOf(decimalRemoved);
-            timeAsLong = new EpochTimeString(time, decimalRemoved).asEpochMillis();
-            timeParsed = true;
-            timeSource = "reported";
-            /*
-             * If the time is given in a numeral value, it is assigned to HttpEventData
-             * object as a long value. convertTimeToEpochMillis() will check that correct
-             * time format is used.
-             */
-        }
-        else if (timeObject.canConvertToLong()) {
-            time = timeObject.asText();
-            timeAsLong = new EpochTimeString(time, timeObject.asLong()).asEpochMillis();
-            timeParsed = true;
-            timeSource = "reported";
-        }
+        // Unknown format
         else {
-            time = previousEvent.time();
-            timeAsLong = previousEvent.timeAsLong();
+            // Take current time as the event time
+            time = String.valueOf(Instant.now().toEpochMilli());
+            timeAsLong = Instant.now().toEpochMilli();
             timeParsed = false;
             timeSource = "generated";
         }
