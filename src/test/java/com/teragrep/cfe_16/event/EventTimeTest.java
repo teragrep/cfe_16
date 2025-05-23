@@ -47,6 +47,7 @@ package com.teragrep.cfe_16.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teragrep.cfe_16.bo.DefaultHttpEventData;
 import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
@@ -425,5 +426,28 @@ class EventTimeTest {
         );
 
         Assertions.assertNotEquals(eventTime1, eventTime2);
+    }
+
+    @Test
+    @DisplayName("timestampedHttpEventData() sets time as null if previousEvent is constructed " + "with default ctor")
+    void timestampedHttpEventDataSetsTimeAsNullIfPreviousEventIsConstructedWithDefaultCtor() {
+        final TimestampedHttpEventData previousEvent = new TimestampedHttpEventData();
+
+        final TimestampedHttpEventData currentEvent = new TimestampedHttpEventData(
+                new DefaultHttpEventData(),
+                "timeSource",
+                "time",
+                123456L,
+                true
+        );
+
+        final EventTime eventTime = new EventTime(currentEvent, previousEvent, null);
+
+        final TimestampedHttpEventData result = eventTime.timestampedHttpEventData();
+
+        final long expectedTimeAsLong = 0L;
+
+        Assertions.assertEquals(expectedTimeAsLong, result.timeAsLong());
+        Assertions.assertNull(result.time());
     }
 }

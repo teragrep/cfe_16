@@ -132,6 +132,10 @@ public final class TimestampedHttpEventData implements HttpEventData {
         return this.timeParsed;
     }
 
+    public boolean notDefault() {
+        return !this.equals(new TimestampedHttpEventData());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {

@@ -149,4 +149,26 @@ class TimestampedHttpEventDataTest {
 
         Assertions.assertNotEquals(timestampedHttpEventData1, timestampedHttpEventData2);
     }
+
+    @Test
+    @DisplayName("notDefault() returns true if object is not default")
+    void notDefaultReturnsTrueIfObjectIsNotDefault() {
+        final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
+                new DefaultHttpEventData(),
+                "timeSource",
+                "1234567890123",
+                123L,
+                true
+        );
+
+        Assertions.assertTrue(timestampedHttpEventData.notDefault());
+    }
+
+    @Test
+    @DisplayName("notDefault() returns false if object is default")
+    void notDefaultReturnsFalseIfObjectIsDefault() {
+        final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData();
+
+        Assertions.assertFalse(timestampedHttpEventData.notDefault());
+    }
 }

@@ -77,7 +77,7 @@ public final class EventTime {
         if (timeObject == null || timeObject.isTextual()) {
             timeParsed = false;
             timeSource = "generated";
-            if (previousEvent != null) {
+            if (previousEvent != null && previousEvent.notDefault()) {
                 if (previousEvent.timeParsed()) {
                     time = previousEvent.time();
                     timeAsLong = new EpochTimeString(time, previousEvent.timeAsLong()).asEpochMillis();
@@ -91,7 +91,7 @@ public final class EventTime {
             }
             else {
                 time = null;
-                timeAsLong = 0;
+                timeAsLong = 0L;
             }
             /*
              * If the time is given as epoch seconds with a decimal (example:
