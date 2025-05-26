@@ -49,7 +49,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Objects;
 
 public final class EventTime {
@@ -64,7 +63,7 @@ public final class EventTime {
         this.timeObject = timeObject;
     }
 
-    public TimestampedHttpEventData timestampedHttpEventData() {
+    public TimestampedHttpEventData timestampedHttpEventData(long defaultValue) {
         final String timeSource;
         final String time;
         final long timeAsLong;
@@ -74,9 +73,9 @@ public final class EventTime {
         if (timeObject == null) {
             // Previous event does not have a proper time
             if (previousEvent == null || previousEvent.isDefault()) {
-                // Take current time as the event time
-                time = String.valueOf(Instant.now().toEpochMilli());
-                timeAsLong = Instant.now().toEpochMilli();
+                // Use default value
+                time = String.valueOf(defaultValue);
+                timeAsLong = defaultValue;
             }
             else {
                 time = previousEvent.time();
@@ -84,6 +83,14 @@ public final class EventTime {
             }
             timeParsed = false;
             timeSource = "generated";
+        }
+        // Check if time is a double and convert to long
+        else if (timeObject.isDouble()) {
+            final long decimalsRemoved = this.removeDecimal(timeObject.doubleValue());
+            time = String.valueOf(decimalsRemoved);
+            timeAsLong = decimalsRemoved;
+            timeParsed = true;
+            timeSource = "reported";
         }
         // Time is a number, no calculations required
         else if (timeObject.canConvertToLong()) {
@@ -119,17 +126,18 @@ public final class EventTime {
             }
             // No time found in current or previous event
             else {
-                time = String.valueOf(Instant.now().toEpochMilli());
-                timeAsLong = Instant.now().toEpochMilli();
+                // Use default value
+                time = String.valueOf(defaultValue);
+                timeAsLong = defaultValue;
                 timeParsed = false;
                 timeSource = "generated";
             }
         }
         // Unknown format
         else {
-            // Take current time as the event time
-            time = String.valueOf(Instant.now().toEpochMilli());
-            timeAsLong = Instant.now().toEpochMilli();
+            // Use default value
+            time = String.valueOf(defaultValue);
+            timeAsLong = defaultValue;
             timeParsed = false;
             timeSource = "generated";
         }

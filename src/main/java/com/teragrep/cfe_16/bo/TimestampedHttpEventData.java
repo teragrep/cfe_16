@@ -98,14 +98,17 @@ public final class TimestampedHttpEventData implements HttpEventData {
         return eventData;
     }
 
+    @Override
     public String event() {
         return this.eventData.event();
     }
 
+    @Override
     public String channel() {
         return this.eventData.channel();
     }
 
+    @Override
     public String authenticationToken() {
         return this.eventData.authenticationToken();
     }
@@ -132,9 +135,6 @@ public final class TimestampedHttpEventData implements HttpEventData {
 
     public boolean timeParsed() {
         if (this.time == null) {
-            return false;
-        }
-        if (this.time.length() < 10 || this.time.length() > 13) {
             return false;
         }
         return this.timeParsed;
