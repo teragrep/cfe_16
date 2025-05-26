@@ -64,6 +64,7 @@ import com.teragrep.cfe_16.event.ValidatedJsonEvent;
 import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
 import com.teragrep.cfe_16.sender.AbstractSender;
 import com.teragrep.cfe_16.sender.SenderFactory;
+import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,7 +169,7 @@ public class EventManager {
                         new DefaultHttpEventData(jsonEvent.event().toString()),
                         previousEvent,
                         jsonEvent.time()
-                ).timestampedHttpEventData();
+                ).timestampedHttpEventData(Instant.now().toEpochMilli());
             }
             catch (JsonProcessingException e) {
                 LOGGER.error("Problem processing JsonObjectString <{}>", jsonObjectStr);

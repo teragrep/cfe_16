@@ -66,8 +66,8 @@ class TimestampedHttpEventDataTest {
     }
 
     @Test
-    @DisplayName("TimeSource() returns \"generated\" if time is less than 10 characters long")
-    void timeSourceReturnsGeneratedIfTimeIsLessThan10CharactersLong() {
+    @DisplayName("TimeSource() returns the timeSource even if time is less than 10 characters long")
+    void timeSourceReturnsTheTimeSourceEvenIfTimeIsLessThan10CharactersLong() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
                 new DefaultHttpEventData(),
                 "timeSource",
@@ -76,12 +76,12 @@ class TimestampedHttpEventDataTest {
                 true
         );
 
-        Assertions.assertEquals("generated", timestampedHttpEventData.timeSource());
+        Assertions.assertEquals("timeSource", timestampedHttpEventData.timeSource());
     }
 
     @Test
-    @DisplayName("TimeSource() returns \"generated\" if time is more than 13 characters long")
-    void timeSourceReturnsGeneratedIfTimeIsMoreThan13CharactersLong() {
+    @DisplayName("TimeSource() returns the timeSource even if time is more than 13 characters long")
+    void timeSourceReturnsTheTimeSourceEvenIfTimeIsMoreThan13CharactersLong() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
                 new DefaultHttpEventData(),
                 "timeSource",
@@ -90,7 +90,7 @@ class TimestampedHttpEventDataTest {
                 true
         );
 
-        Assertions.assertEquals("generated", timestampedHttpEventData.timeSource());
+        Assertions.assertEquals("timeSource", timestampedHttpEventData.timeSource());
     }
 
     @Test
