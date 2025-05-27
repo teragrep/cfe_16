@@ -66,42 +66,8 @@ class EventTimeTest {
     }
 
     @Test
-    @DisplayName("Test timestampedHttpEventData with epoch seconds, 10 digits")
-    void testTimestampedHttpEventDataWithEpochSeconds10Digits() throws JsonProcessingException {
-        String content = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
-                + "\"mysourcetype\", \"time\": 1277464192}";
-
-        final JsonNode jsonNode = objectMapper.readTree(content);
-
-        final TimestampedHttpEventData httpEventDataWithHandledTime = new EventTime(
-                new TimestampedHttpEventData(),
-                null,
-                new DefaultJsonEvent(jsonNode).time()
-        ).timestampedHttpEventData(Instant.now().toEpochMilli());
-
-        Assertions
-                .assertAll(
-                        () -> Assertions
-                                .assertEquals(
-                                        "reported", httpEventDataWithHandledTime.timeSource(),
-                                        "Time source should be 'reported' when the time is specified in a request"
-                                ),
-                        () -> Assertions
-                                .assertTrue(
-                                        httpEventDataWithHandledTime.timeParsed(),
-                                        "timeParsed should be true when the time is specified in a request"
-                                ),
-                        () -> Assertions
-                                .assertEquals(
-                                        1277464192L, httpEventDataWithHandledTime.timeAsLong(),
-                                        "Time should have been converted to epoch milliseconds"
-                                )
-                );
-    }
-
-    @Test
-    @DisplayName("Test timestampedHttpEventData with no time, will use default value")
-    void testTimestampedHttpEventDataWithNoTimeWillUseDefaultValue() throws JsonProcessingException {
+    @DisplayName("Time is generated, not parsed and uses the defaultValue when time is missing from the event")
+    void timeIsGeneratedNotParsedAndUsesTheDefaultValueWhenTimeIsMissingFromTheEvent() throws JsonProcessingException {
         String content = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": " + "\"mysourcetype\"}";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
@@ -135,8 +101,8 @@ class EventTimeTest {
     }
 
     @Test
-    @DisplayName("Test timestampedHttpEventData with epoch seconds and decimal milliseconds")
-    void testTimestampedHttpEventDataWithEpochSecondsAndDecimalMilliseconds() throws JsonProcessingException {
+    @DisplayName("Time is reported and parsed when time is a double")
+    void timeIsReportedAndParsedWhenTimeIsADouble() throws JsonProcessingException {
         String content = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
                 + "\"mysourcetype\", \"time\": 1433188255.253}";
 
@@ -170,8 +136,8 @@ class EventTimeTest {
     }
 
     @Test
-    @DisplayName("Test handleTime with epoch milliseconds, 13 digits")
-    void testTimestampedHttpEventDataWithEpochMilliseconds13digits() throws JsonProcessingException {
+    @DisplayName("Time is reported and parsed when time is exactly 13 digits")
+    void timeIsReportedAndParsedWhenTimeIsExactly13Digits() throws JsonProcessingException {
         String content = "{\"event\": \"Pony 1 has left the barn\", "
                 + "\"sourcetype\":\"mysourcetype\", \"time\": 1433188255253}";
 
@@ -205,8 +171,8 @@ class EventTimeTest {
     }
 
     @Test
-    @DisplayName("Test timestampedHttpEventData with time as String")
-    void testTimestampedHttpEventDataWithTimeAsString() throws JsonProcessingException {
+    @DisplayName("Time is generated and not parsed when time is a string with numbers")
+    void timeIsGeneratedAndNotParsedWhenTimeIsAStringWithNumbers() throws JsonProcessingException {
         String content = "{\"event\": \"Pony 1 has left the barn\", "
                 + "\"sourcetype\":\"mysourcetype\", \"time\": \"1433188255253\"}";
 
@@ -239,8 +205,8 @@ class EventTimeTest {
     }
 
     @Test
-    @DisplayName("Test timestampedHttpEventData with too little digits")
-    void testTimestampedHttpEventDataWithTooLittleDigits() throws JsonProcessingException {
+    @DisplayName("Time is reported and parsed with less than 13 digits")
+    void timeIsReportedAndParsedWithLessThan13Digits() throws JsonProcessingException {
         String content = "{\"event\": \"Pony 1 has left the barn\", "
                 + "\"sourcetype\":\"mysourcetype\", \"time\": 143318}";
 
@@ -275,44 +241,8 @@ class EventTimeTest {
     }
 
     @Test
-    @DisplayName("Test timestampedHttpEventData with epoch centiseconds")
-    void testTimestampedHttpEventDataWithEpochCentiseconds() throws JsonProcessingException {
-        String content = "{\"event\": \"Pony 1 has left the barn\", "
-                + "\"sourcetype\":\"mysourcetype\", \"time\": 143318825525}";
-
-        final JsonNode jsonNode = objectMapper.readTree(content);
-
-        final TimestampedHttpEventData httpEventDataWithHandledTime = new EventTime(
-                new TimestampedHttpEventData(),
-                null,
-                new DefaultJsonEvent(jsonNode).time()
-        ).timestampedHttpEventData(Instant.now().toEpochMilli());
-
-        Assertions
-                .assertAll(
-                        () -> Assertions
-                                .assertEquals(
-                                        "reported", httpEventDataWithHandledTime.timeSource(),
-                                        "Time source should be 'reported' when the time is specified in a request "
-                                                + "with 10-13 " + "digits"
-                                ),
-                        () -> Assertions
-                                .assertTrue(
-                                        httpEventDataWithHandledTime.timeParsed(),
-                                        "timeParsed should be true when time is specified in a request with 10-13 digits"
-                                ),
-                        () -> Assertions
-                                .assertEquals(
-                                        143318825525L, httpEventDataWithHandledTime.timeAsLong(),
-                                        "Time should be converted to epoch milliseconds when provided in a request with "
-                                                + "10-13 digits"
-                                )
-                );
-    }
-
-    @Test
-    @DisplayName("Test timestampedHttpEventData with 14 digits")
-    void testTimestampedHttpEventDataWith14Digits() throws JsonProcessingException {
+    @DisplayName("Time is reported and parsed when time is longer than 13 digits")
+    void timeIsReportedAndParsedWhenTimeIsLongerThan13Digits() throws JsonProcessingException {
         String content = "{\"event\": \"Pony 1 has left the barn\", "
                 + "\"sourcetype\":\"mysourcetype\", \"time\": 14331882552523}";
 
@@ -393,8 +323,10 @@ class EventTimeTest {
     }
 
     @Test
-    @DisplayName("timestampedHttpEventData() sets time as null if previousEvent is constructed with default ctor")
-    void timestampedHttpEventDataSetsTimeAsNullIfPreviousEventIsConstructedWithDefaultCtor() {
+    @DisplayName(
+        "Time is the defaultValue when previous event is constructed with the default ctor and timeObject is null"
+    )
+    void timeIsTheDefaultValueWhenPreviousEventIsConstructedWithTheDefaultCtorAndTimeObjectIsNull() {
         final TimestampedHttpEventData previousEvent = new TimestampedHttpEventData(); // Default ctor
 
         final TimestampedHttpEventData currentEvent = new TimestampedHttpEventData(
@@ -405,7 +337,31 @@ class EventTimeTest {
                 true
         );
 
-        final EventTime eventTime = new EventTime(currentEvent, previousEvent, null);
+        final EventTime eventTime = new EventTime(currentEvent, previousEvent, null); // TimeObject is null
+
+        final long currentEpoch = Instant.now().toEpochMilli();
+        final TimestampedHttpEventData result = eventTime.timestampedHttpEventData(currentEpoch); // Should use the defaultValue param, since previous event is default
+
+        Assertions.assertEquals(currentEpoch, result.timeAsLong());
+        Assertions.assertEquals(String.valueOf(currentEpoch), result.time());
+    }
+
+    @Test
+    @DisplayName("Time is the defaultValue when timeObject is not numerical or textual")
+    void timeIsTheDefaultValueWhenTimeObjectIsNotNumericalOrTextual() {
+        final TimestampedHttpEventData previousEvent = new TimestampedHttpEventData(); // Default ctor
+
+        final TimestampedHttpEventData currentEvent = new TimestampedHttpEventData(
+                new DefaultHttpEventData(),
+                "timeSource",
+                "time",
+                123456L,
+                true
+        );
+
+        final ObjectMapper objectMapper1 = new ObjectMapper();
+
+        final EventTime eventTime = new EventTime(currentEvent, previousEvent, objectMapper1.createArrayNode()); // TimeObject is an arrayNode
 
         final long currentEpoch = Instant.now().toEpochMilli();
         final TimestampedHttpEventData result = eventTime.timestampedHttpEventData(currentEpoch); // Should use the defaultValue param, since previous event is default
