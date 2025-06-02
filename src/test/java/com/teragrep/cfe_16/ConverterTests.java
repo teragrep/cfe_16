@@ -138,15 +138,22 @@ public class ConverterTests {
         metadataSDE1.addSDParam("time_source", eventData1.timeSource());
         metadataSDE1.addSDParam("time_parsed", "true");
         metadataSDE1.addSDParam("time", eventData1.time());
+        metadataSDE1.addSDParam("generated", "false");
 
         metadataSDE2.addSDParam("authentication_token", eventData2.authenticationToken());
         metadataSDE2.addSDParam("channel", eventData2.channel());
         metadataSDE2.addSDParam("ack_id", String.valueOf(eventData2.ackID()));
         metadataSDE2.addSDParam("time_source", eventData2.timeSource());
+        metadataSDE2.addSDParam("time_parsed", "false");
+        metadataSDE2.addSDParam("time", eventData2.time());
+        metadataSDE2.addSDParam("generated", "true");
 
         metadataSDE3.addSDParam("authentication_token", eventData3.authenticationToken());
         metadataSDE3.addSDParam("channel", eventData3.channel());
         metadataSDE3.addSDParam("time_source", eventData3.timeSource());
+        metadataSDE3.addSDParam("time_parsed", "false");
+        metadataSDE3.addSDParam("time", eventData3.time());
+        metadataSDE3.addSDParam("generated", "true");
 
         supposedSyslogMessage1 = new SyslogMessage()
                 .withTimestamp(eventData1.timeAsLong())
@@ -319,7 +326,7 @@ public class ConverterTests {
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
-        final int expectedReturnedSDParamsAssertions = 6; // See lines 155 - 160
+        final int expectedReturnedSDParamsAssertions = 7; // See lines 135 - 141
         int loopedReturnedSDParamsAssertions = 0;
         for (int i = 0; i < returnedSDParams.size(); i++) {
             loopedReturnedSDParamsAssertions++;
@@ -335,7 +342,7 @@ public class ConverterTests {
 
         // Goes through all supposed SDParams and checks that they are all found in
         // returned SDParams
-        final int expectedSupposedSDParamsAssertions = 6; // See lines 155 - 160
+        final int expectedSupposedSDParamsAssertions = 7; // See lines 135 - 141
         int loopedSupposedSDParamsAssertions = 0;
         for (int i = 0; i < supposedSDParams.size(); i++) {
             loopedSupposedSDParamsAssertions++;
@@ -372,7 +379,7 @@ public class ConverterTests {
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
-        final int expectedReturnedSDParamsAssertions1 = 4; // See lines 162 - 165
+        final int expectedReturnedSDParamsAssertions1 = 7; // See lines 143 - 147
         int loopedReturnedSDParamsAssertions1 = 0;
         for (int i = 0; i < returnedSDParams.size(); i++) {
             loopedReturnedSDParamsAssertions1++;
@@ -388,7 +395,7 @@ public class ConverterTests {
 
         // Goes through all supposed SDParams and checks that they are all found in
         // returned SDParams
-        final int expectedSupposedSDParamsAssertions1 = 4; // See lines 162 - 165
+        final int expectedSupposedSDParamsAssertions1 = 7; // See lines 143 - 147
         int loopedSupposedSDParamsAssertions1 = 0;
         for (int i = 0; i < supposedSDParams.size(); i++) {
             loopedSupposedSDParamsAssertions1++;
@@ -425,7 +432,7 @@ public class ConverterTests {
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
-        final int expectedReturnedSDParamsAssertions2 = 3;
+        final int expectedReturnedSDParamsAssertions2 = 6;
         int loopedReturnedSDParamsAssertions2 = 0;
         for (int i = 0; i < returnedSDParams.size(); i++) {
             loopedReturnedSDParamsAssertions2++;
@@ -441,7 +448,7 @@ public class ConverterTests {
 
         // Goes through all supposed SDParams and checks that they are all found in
         // returned SDParams
-        final int expectedSupposedSDParamsAssertions2 = 3;
+        final int expectedSupposedSDParamsAssertions2 = 6;
         int loopedSupposedSDParamsAssertions2 = 0;
         for (int i = 0; i < supposedSDParams.size(); i++) {
             loopedSupposedSDParamsAssertions2++;

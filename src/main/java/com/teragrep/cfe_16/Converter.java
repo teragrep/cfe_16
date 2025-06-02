@@ -159,10 +159,16 @@ public class Converter {
             metadataSDE.addSDParam("time_source", eventData.timeSource());
         }
 
+        LOGGER.debug("Setting time_parsed and time");
+        metadataSDE.addSDParam("time_parsed", String.valueOf(eventData.timeParsed()));
+        metadataSDE.addSDParam("time", eventData.time());
         if (eventData.timeParsed()) {
-            LOGGER.debug("Setting time_parsed and time");
-            metadataSDE.addSDParam("time_parsed", "true");
-            metadataSDE.addSDParam("time", eventData.time());
+            LOGGER.debug("TimeParsed was true");
+            metadataSDE.addSDParam("generated", "false");
+        }
+        else {
+            LOGGER.debug("TimeParsed was false");
+            metadataSDE.addSDParam("generated", "true");
         }
     }
 
