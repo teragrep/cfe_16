@@ -78,16 +78,16 @@ public class SessionManagerTests {
 
         Session session1 = sessionManager.createSession(authToken1);
         Session session2 = sessionManager.createSession(authToken2);
-        Assertions.assertSame(session1, sessionManager.getSession(authToken1),
-            "Same session should be returned with the same authentication token");
-        Assertions.assertSame(session2, sessionManager.getSession(authToken2),
-            "Same session should be returned with the same authentication token");
-        Assertions.assertNotSame(session1, sessionManager.getSession(authToken2),
-            "Different session should be returned with a different authentication token");
-        Assertions.assertNotSame(session2, sessionManager.getSession(authToken1),
-            "Different session should be returned with a different authentication token");
-        Assertions.assertNull(sessionManager.getSession(authToken3),
-            "Getting a session with an unused authentication token should return null");
+        Assertions
+                .assertSame(session1, sessionManager.getSession(authToken1), "Same session should be returned with the same authentication token");
+        Assertions
+                .assertSame(session2, sessionManager.getSession(authToken2), "Same session should be returned with the same authentication token");
+        Assertions
+                .assertNotSame(session1, sessionManager.getSession(authToken2), "Different session should be returned with a different authentication token");
+        Assertions
+                .assertNotSame(session2, sessionManager.getSession(authToken1), "Different session should be returned with a different authentication token");
+        Assertions
+                .assertNull(sessionManager.getSession(authToken3), "Getting a session with an unused authentication token should return null");
     }
 
     @Test

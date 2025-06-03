@@ -72,12 +72,10 @@ public class TokenManagerTests {
         requestWithHttpHeaderAuth.addHeader("Authorization", authToken);
         requestWithBasicAuth.addHeader("Authorization", "Basic x:" + authToken);
 
-        Assertions.assertFalse(manager.tokenIsMissing(requestWithHttpHeaderAuth),
-            "Token should be found from the request");
-        Assertions.assertFalse(manager.tokenIsMissing(requestWithBasicAuth),
-            "Token should be found from the request");
-        Assertions.assertTrue(manager.tokenIsMissing(requestWithoutAuth),
-            "Token should not be found from the request");
+        Assertions
+                .assertFalse(manager.tokenIsMissing(requestWithHttpHeaderAuth), "Token should be found from the request");
+        Assertions.assertFalse(manager.tokenIsMissing(requestWithBasicAuth), "Token should be found from the request");
+        Assertions.assertTrue(manager.tokenIsMissing(requestWithoutAuth), "Token should not be found from the request");
     }
 
     /*
@@ -90,11 +88,10 @@ public class TokenManagerTests {
         String authToken = "AUTH_TOKEN_11111";
         String basicAuthHeader = "Basic x:" + authToken;
 
-        Assertions.assertTrue(manager.isTokenInBasic(basicAuthHeader),
-            "Authorization header should be in basic format");
-        Assertions.assertFalse(manager.isTokenInBasic(authToken),
-            "Authorization should not be in basic format when querying with only the "
-                + "authentication token.");
+        Assertions
+                .assertTrue(manager.isTokenInBasic(basicAuthHeader), "Authorization header should be in basic format");
+        Assertions
+                .assertFalse(manager.isTokenInBasic(authToken), "Authorization should not be in basic format when querying with only the " + "authentication token.");
     }
 
     /*
@@ -105,12 +102,10 @@ public class TokenManagerTests {
     public void getTokenFromBasicAuthTest() {
         String authToken = "AUTH_TOKEN_11111";
         String basicAuthCredentials = "x:" + authToken;
-        String credentialsEncoded = Base64.getEncoder()
-            .encodeToString(basicAuthCredentials.getBytes());
+        String credentialsEncoded = Base64.getEncoder().encodeToString(basicAuthCredentials.getBytes());
         String basicAuthHeader = "Basic " + credentialsEncoded;
 
-        Assertions.assertEquals(authToken, manager.getTokenFromBasic(basicAuthHeader),
-            "Method should return the authentication token extracted from the Basic "
-                + "Authentication format");
+        Assertions
+                .assertEquals(authToken, manager.getTokenFromBasic(basicAuthHeader), "Method should return the authentication token extracted from the Basic " + "Authentication format");
     }
 }

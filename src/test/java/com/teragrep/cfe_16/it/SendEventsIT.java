@@ -75,15 +75,15 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
 @TestPropertySource(properties = {
-    "syslog.server.host=127.0.0.1",
-    "syslog.server.port=1236",
-    "syslog.server.protocol=TCP",
-    "max.channels=1000000",
-    "max.ack.value=1000000",
-    "max.ack.age=20000",
-    "max.session.age=30000",
-    "poll.time=30000",
-    "server.print.times=true"
+        "syslog.server.host=127.0.0.1",
+        "syslog.server.port=1236",
+        "syslog.server.protocol=TCP",
+        "max.channels=1000000",
+        "max.ack.value=1000000",
+        "max.ack.age=20000",
+        "max.session.age=30000",
+        "poll.time=30000",
+        "server.print.times=true"
 })
 @SpringBootTest
 public class SendEventsIT implements Runnable {
@@ -111,9 +111,9 @@ public class SendEventsIT implements Runnable {
         this.request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         this.channel1 = "CHANNEL_11111";
         this.eventInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
-            + "\"event\": {\"message\":\"Access log test message 1\"}} "
-            + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
-            + "{\"message\":\"Access log test message 2\"}}";
+                + "\"event\": {\"message\":\"Access log test message 1\"}} "
+                + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
+                + "{\"message\":\"Access log test message 2\"}}";
 
         this.thread.start();
     }
@@ -127,8 +127,7 @@ public class SendEventsIT implements Runnable {
         while (true) {
             try {
                 Socket socket = this.serverSocket.accept();
-                BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
                     this.numberOfRequestsMade.getAndIncrement();
@@ -158,8 +157,8 @@ public class SendEventsIT implements Runnable {
         List<CompletableFuture<String>> futures = new ArrayList<>();
 
         for (int i = 0; i < NUMBER_OF_EVENTS_TO_BE_SENT; i++) {
-            CompletableFuture<String> f = CompletableFuture.supplyAsync(
-                () -> service.sendEvents(request1, channel1, eventInJson).toString());
+            CompletableFuture<String> f = CompletableFuture
+                    .supplyAsync(() -> service.sendEvents(request1, channel1, eventInJson).toString());
             futures.add(f);
         }
         List<String> supposedResponses = new ArrayList<String>();
@@ -170,9 +169,8 @@ public class SendEventsIT implements Runnable {
         int countFuture = 0;
         for (Future<String> f : futures) {
             final String actualResponse = f.get();
-            Assertions.assertTrue(supposedResponses.contains(actualResponse),
-                "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID "
-                    + "should be " + countFuture + ")");
+            Assertions
+                    .assertTrue(supposedResponses.contains(actualResponse), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID " + "should be " + countFuture + ")");
             countFuture++;
         }
         countDownLatch.await(1, TimeUnit.SECONDS);
@@ -189,14 +187,14 @@ public class SendEventsIT implements Runnable {
     public void send1EventTest() throws InterruptedException {
         countDownLatch = new CountDownLatch(1);
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":" + 0 + "}";
-        Assertions.assertEquals(supposedResponse,
-            service.sendEvents(request1, channel1, eventInJson).toString(),
-            "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID "
-                + "should be "
-                + 0 + ")");
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request1, channel1, eventInJson).toString(), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID " + "should be " + 0 + ")");
 
         countDownLatch.await(5, TimeUnit.SECONDS);
-        Assertions.assertEquals(2, this.numberOfRequestsMade.get(),
-            "Number of events received should match the number of sent ones");
+        Assertions
+                .assertEquals(
+                        2, this.numberOfRequestsMade.get(),
+                        "Number of events received should match the number of sent ones"
+                );
     }
 }
