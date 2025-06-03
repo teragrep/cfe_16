@@ -255,7 +255,7 @@
             <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
               <notes>Also allow the license url to be https.</notes>
               <patterns>
-                <pattern>Copyright (C) 2021 Suomen Kanuuna Oy</pattern>
+                <pattern>Copyright (C) 2021-2025 Suomen Kanuuna Oy</pattern>
               </patterns>
             </license>
           </licenses>
@@ -280,13 +280,14 @@
             <!-- third party -->
             <exclude>src/main/java/com/teragrep/cfe_16/ThirdParty/SyslogMessageSender/SyslogMessageSender.java</exclude>
             <!-- resources -->
-            <exclude>src/main/resources/*</exclude>
-            <exclude>src/test/resources/cfe-16-test-plan.jmx</exclude>
+            <exclude>src/main/resources/**</exclude>
+            <exclude>src/test/resources/**</exclude>
             <!-- misc -->
             <exclude>rpm/rpm.pom.xml</exclude>
             <exclude>Dockerfile</exclude>
             <exclude>config/*</exclude>
             <exclude>*.sh</exclude>
+            <exclude>eclipse-java-formatter.xml</exclude>
           </excludes>
         </configuration>
         <executions>
