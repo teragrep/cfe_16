@@ -82,8 +82,6 @@ public final class EpochTimeString {
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(timeString);
-        result = 31 * result + Long.hashCode(timeAsLong);
-        return result;
+        return Objects.hash(timeString, timeAsLong);
     }
 }

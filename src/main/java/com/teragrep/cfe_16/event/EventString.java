@@ -80,8 +80,6 @@ public final class EventString {
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(eventAsString);
-        result = 31 * result + Objects.hashCode(objectMapper);
-        return result;
+        return Objects.hash(eventAsString, objectMapper);
     }
 }
