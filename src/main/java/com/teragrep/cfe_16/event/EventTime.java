@@ -170,9 +170,6 @@ public final class EventTime {
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(eventData);
-        result = 31 * result + Objects.hashCode(previousEvent);
-        result = 31 * result + Objects.hashCode(timeObject);
-        return result;
+        return Objects.hash(eventData, previousEvent, timeObject);
     }
 }

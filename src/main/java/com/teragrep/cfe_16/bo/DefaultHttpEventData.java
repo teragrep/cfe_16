@@ -98,11 +98,7 @@ public final class DefaultHttpEventData implements HttpEventData {
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(channel());
-        result = 31 * result + Objects.hashCode(event());
-        result = 31 * result + Objects.hashCode(authenticationToken());
-        result = 31 * result + Objects.hashCode(ackID());
-        return result;
+        return Objects.hash(channel, event, authenticationToken, ackID);
     }
 
     @Override

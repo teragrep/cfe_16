@@ -158,11 +158,6 @@ public final class TimestampedHttpEventData implements HttpEventData {
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(eventData);
-        result = 31 * result + Objects.hashCode(timeSource());
-        result = 31 * result + Objects.hashCode(time());
-        result = 31 * result + Long.hashCode(timeAsLong());
-        result = 31 * result + Boolean.hashCode(timeParsed());
-        return result;
+        return Objects.hash(eventData, timeSource, time, timeAsLong, timeParsed);
     }
 }
