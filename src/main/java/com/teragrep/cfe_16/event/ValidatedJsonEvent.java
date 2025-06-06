@@ -52,51 +52,56 @@ import java.util.Objects;
 
 public class ValidatedJsonEvent implements JsonEvent {
 
-    private final JsonEvent jsonEvent;
+    private final JsonNode jsonNode;
 
-    public ValidatedJsonEvent(JsonEvent jsonEvent) {
-        this.jsonEvent = jsonEvent;
+    public ValidatedJsonEvent(JsonNode jsonNode) {
+        this.jsonNode = jsonNode;
     }
 
     @Override
-    public JsonNode event() {
+    public String asEvent() {
         // Event field completely missing
-        if (!this.node().has("event")) {
+        if (!this.asNode().has("event")) {
             throw new EventFieldMissingException("event field is missing");
         }
         // Event field contains subfield "message"
-        else if (this.node().get("event").isObject() && this.node().get("event").has("message")) {
+        else if (this.asNode().get("event").isObject() && this.asNode().get("event").has("message")) {
             if (
-                this.node().get("event").get("message").isTextual()
-                        && !Objects.equals(this.node().get("event").get("message").asText(), "")
+                this.asNode().get("event").get("message").isTextual()
+                        && !Objects.equals(this.asNode().get("event").get("message").asText(), "")
             ) {
-                return this.node().get("event").get("message");
+                return this.asNode().get("event").get("message").asText();
             }
         }
         // Event field has a String value
-        else if (this.node().get("event").isTextual() && !Objects.equals(this.node().get("event").asText(), "")) {
-            return this.jsonEvent.event();
+        else if (this.asNode().get("event").isTextual() && !Objects.equals(this.asNode().get("event").asText(), "")) {
+            return this.jsonNode.get("event").asText();
         }
         throw new EventFieldBlankException("jsonEvent node's event not valid");
     }
 
     @Override
-    public JsonNode node() {
-        if (this.jsonEvent != null && this.jsonEvent.node() != null && this.jsonEvent.node().isObject()) {
-            return this.jsonEvent.node();
+    public JsonNode asNode() {
+        if (this.jsonNode != null && this.jsonNode.isObject()) {
+            return this.jsonNode;
         }
         throw new IllegalStateException("jsonEvent node not valid");
     }
 
+    @Override
+    public JsonNode asTimeNode() {
+        return this.jsonNode.get("time");
+    }
+
     /**
-     * Return the time from the {@link #jsonEvent}. If it is null, it is the responsibility of someone else to generate
-     * a valid time.
+     * Return the time from the {@link #jsonNode}. If it is null, it is the responsibility of someone else to generate a
+     * valid time.
      * 
-     * @return time as it is reported in the {@link #jsonEvent}, since it might be null, which is valid
+     * @return time as it is reported in the {@link #jsonNode}, since it might be null, which is valid
      */
     @Override
-    public JsonNode time() {
-        return this.jsonEvent.time();
+    public String asTime() {
+        return this.jsonNode.get("time").asText();
     }
 
     @Override
@@ -106,11 +111,11 @@ public class ValidatedJsonEvent implements JsonEvent {
         }
 
         ValidatedJsonEvent that = (ValidatedJsonEvent) o;
-        return Objects.equals(jsonEvent, that.jsonEvent);
+        return Objects.equals(jsonNode, that.jsonNode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(jsonEvent);
+        return Objects.hashCode(jsonNode);
     }
 }

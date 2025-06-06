@@ -48,8 +48,7 @@ package com.teragrep.cfe_16.event;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teragrep.cfe_16.bo.DefaultHttpEventData;
-import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
+import com.teragrep.cfe_16.bo.HttpEventData;
 import java.time.Instant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,10 +73,13 @@ class EventTimeTest {
 
         final long currentEpoch = Instant.now().toEpochMilli();
 
-        final TimestampedHttpEventData httpEventDataWithHandledTime = new EventTime(
-                new TimestampedHttpEventData(),
+        final HttpEventData httpEventDataWithHandledTime = new EventTime(
+                "CHANNEL_11111",
+                "Event 1",
+                "AUTH_TOKEN_11111",
+                0,
                 null,
-                new DefaultJsonEvent(jsonNode).time()
+                new ValidatedJsonEvent(jsonNode).asTimeNode()
         ).timestampedHttpEventData(currentEpoch);
 
         Assertions
@@ -108,10 +110,13 @@ class EventTimeTest {
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final TimestampedHttpEventData httpEventDataWithHandledTime = new EventTime(
-                new TimestampedHttpEventData(),
+        final HttpEventData httpEventDataWithHandledTime = new EventTime(
+                "CHANNEL_11111",
+                "Event 1",
+                "AUTH_TOKEN_11111",
+                0,
                 null,
-                new DefaultJsonEvent(jsonNode).time()
+                new ValidatedJsonEvent(jsonNode).asTimeNode()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -143,10 +148,13 @@ class EventTimeTest {
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final TimestampedHttpEventData httpEventDataWithHandledTime = new EventTime(
-                new TimestampedHttpEventData(),
+        final HttpEventData httpEventDataWithHandledTime = new EventTime(
+                "CHANNEL_11111",
+                "Event 1",
+                "AUTH_TOKEN_11111",
+                0,
                 null,
-                new DefaultJsonEvent(jsonNode).time()
+                new ValidatedJsonEvent(jsonNode).asTimeNode()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -178,10 +186,13 @@ class EventTimeTest {
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final TimestampedHttpEventData httpEventDataWithHandledTime = new EventTime(
-                new TimestampedHttpEventData(),
+        final HttpEventData httpEventDataWithHandledTime = new EventTime(
+                "CHANNEL_11111",
+                "Event 1",
+                "AUTH_TOKEN_11111",
+                0,
                 null,
-                new DefaultJsonEvent(jsonNode).time()
+                new ValidatedJsonEvent(jsonNode).asTimeNode()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -212,10 +223,13 @@ class EventTimeTest {
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final TimestampedHttpEventData httpEventDataWithHandledTime = new EventTime(
-                new TimestampedHttpEventData(),
+        final HttpEventData httpEventDataWithHandledTime = new EventTime(
+                "CHANNEL_11111",
+                "Event 1",
+                "AUTH_TOKEN_11111",
+                0,
                 null,
-                new DefaultJsonEvent(jsonNode).time()
+                new ValidatedJsonEvent(jsonNode).asTimeNode()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -248,10 +262,13 @@ class EventTimeTest {
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final TimestampedHttpEventData httpEventDataWithHandledTime = new EventTime(
-                new TimestampedHttpEventData(),
+        final HttpEventData httpEventDataWithHandledTime = new EventTime(
+                "CHANNEL_11111",
+                "Event 1",
+                "AUTH_TOKEN_11111",
+                0,
                 null,
-                new DefaultJsonEvent(jsonNode).time()
+                new ValidatedJsonEvent(jsonNode).asTimeNode()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -285,15 +302,21 @@ class EventTimeTest {
         final JsonNode jsonNode = objectMapper.readTree(content);
 
         final EventTime eventTime1 = new EventTime(
-                new TimestampedHttpEventData(),
+                "CHANNEL_11111",
+                "Event 1",
+                "AUTH_TOKEN_11111",
+                0,
                 null,
-                new DefaultJsonEvent(jsonNode).time()
+                new ValidatedJsonEvent(jsonNode).asTimeNode()
         );
 
         final EventTime eventTime2 = new EventTime(
-                new TimestampedHttpEventData(),
+                "CHANNEL_11111",
+                "Event 1",
+                "AUTH_TOKEN_11111",
+                0,
                 null,
-                new DefaultJsonEvent(jsonNode).time()
+                new ValidatedJsonEvent(jsonNode).asTimeNode()
         );
 
         Assertions.assertEquals(eventTime1, eventTime2);
@@ -308,65 +331,23 @@ class EventTimeTest {
         final JsonNode jsonNode = objectMapper.readTree(content);
 
         final EventTime eventTime1 = new EventTime(
-                new TimestampedHttpEventData(),
+                "CHANNEL_11111",
+                "Event 1",
+                "AUTH_TOKEN_11111",
+                0,
                 null,
-                new DefaultJsonEvent(jsonNode).time()
+                new ValidatedJsonEvent(jsonNode).asTimeNode()
         );
 
         final EventTime eventTime2 = new EventTime(
-                new TimestampedHttpEventData(),
-                new TimestampedHttpEventData(),
-                new DefaultJsonEvent(jsonNode).time()
+                "CHANNEL_22222",
+                "Event 2",
+                "AUTH_TOKEN_11111",
+                0,
+                null,
+                new ValidatedJsonEvent(jsonNode).asTimeNode()
         );
 
         Assertions.assertNotEquals(eventTime1, eventTime2);
-    }
-
-    @Test
-    @DisplayName(
-        "Time is the defaultValue when previous event is constructed with the default ctor and timeObject is null"
-    )
-    void timeIsTheDefaultValueWhenPreviousEventIsConstructedWithTheDefaultCtorAndTimeObjectIsNull() {
-        final TimestampedHttpEventData previousEvent = new TimestampedHttpEventData(); // Default ctor
-
-        final TimestampedHttpEventData currentEvent = new TimestampedHttpEventData(
-                new DefaultHttpEventData(),
-                "timeSource",
-                "time",
-                123456L,
-                true
-        );
-
-        final EventTime eventTime = new EventTime(currentEvent, previousEvent, null); // TimeObject is null
-
-        final long currentEpoch = Instant.now().toEpochMilli();
-        final TimestampedHttpEventData result = eventTime.timestampedHttpEventData(currentEpoch); // Should use the defaultValue param, since previous event is default
-
-        Assertions.assertEquals(currentEpoch, result.timeAsLong());
-        Assertions.assertEquals(String.valueOf(currentEpoch), result.time());
-    }
-
-    @Test
-    @DisplayName("Time is the defaultValue when timeObject is not numerical or textual")
-    void timeIsTheDefaultValueWhenTimeObjectIsNotNumericalOrTextual() {
-        final TimestampedHttpEventData previousEvent = new TimestampedHttpEventData(); // Default ctor
-
-        final TimestampedHttpEventData currentEvent = new TimestampedHttpEventData(
-                new DefaultHttpEventData(),
-                "timeSource",
-                "time",
-                123456L,
-                true
-        );
-
-        final ObjectMapper objectMapper1 = new ObjectMapper();
-
-        final EventTime eventTime = new EventTime(currentEvent, previousEvent, objectMapper1.createArrayNode()); // TimeObject is an arrayNode
-
-        final long currentEpoch = Instant.now().toEpochMilli();
-        final TimestampedHttpEventData result = eventTime.timestampedHttpEventData(currentEpoch); // Should use the defaultValue param, since previous event is default
-
-        Assertions.assertEquals(currentEpoch, result.timeAsLong());
-        Assertions.assertEquals(String.valueOf(currentEpoch), result.time());
     }
 }

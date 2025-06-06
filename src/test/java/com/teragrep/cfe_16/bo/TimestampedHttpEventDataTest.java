@@ -55,7 +55,10 @@ class TimestampedHttpEventDataTest {
     @DisplayName("TimeSource() returns \"generated\" if time field is null")
     void timeSourceReturnsGeneratedIfTimeFieldIsNull() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
-                new DefaultHttpEventData(),
+                "channel",
+                "event",
+                "authToken",
+                1,
                 "timeSource",
                 null,
                 123L,
@@ -69,7 +72,10 @@ class TimestampedHttpEventDataTest {
     @DisplayName("TimeSource() returns the timeSource even if time is less than 10 characters long")
     void timeSourceReturnsTheTimeSourceEvenIfTimeIsLessThan10CharactersLong() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
-                new DefaultHttpEventData(),
+                "channel",
+                "event",
+                "authToken",
+                1,
                 "timeSource",
                 "123456",
                 123L,
@@ -83,7 +89,10 @@ class TimestampedHttpEventDataTest {
     @DisplayName("TimeSource() returns the timeSource even if time is more than 13 characters long")
     void timeSourceReturnsTheTimeSourceEvenIfTimeIsMoreThan13CharactersLong() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
-                new DefaultHttpEventData(),
+                "channel",
+                "event",
+                "authToken",
+                1,
                 "timeSource",
                 "12345678901234",
                 123L,
@@ -97,7 +106,10 @@ class TimestampedHttpEventDataTest {
     @DisplayName("TimeSource returns timeSource if time is between 10 and 13 characters")
     void timeSourceReturnsTimeSourceIfTimeIsBetween10And13Characters() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
-                new DefaultHttpEventData(),
+                "channel",
+                "event",
+                "authToken",
+                1,
                 "timeSource",
                 "1234567890123",
                 123L,
@@ -111,7 +123,10 @@ class TimestampedHttpEventDataTest {
     @DisplayName("Happy equals test")
     void happyEqualsTest() {
         final TimestampedHttpEventData timestampedHttpEventData1 = new TimestampedHttpEventData(
-                new DefaultHttpEventData(),
+                "channel",
+                "event",
+                "authToken",
+                1,
                 "timeSource",
                 "1234567890123",
                 123L,
@@ -119,7 +134,10 @@ class TimestampedHttpEventDataTest {
         );
 
         final TimestampedHttpEventData timestampedHttpEventData2 = new TimestampedHttpEventData(
-                new DefaultHttpEventData(),
+                "channel",
+                "event",
+                "authToken",
+                1,
                 "timeSource",
                 "1234567890123",
                 123L,
@@ -132,7 +150,10 @@ class TimestampedHttpEventDataTest {
     @DisplayName("Unhappy equals test")
     void unhappyEqualsTest() {
         final TimestampedHttpEventData timestampedHttpEventData1 = new TimestampedHttpEventData(
-                new DefaultHttpEventData(),
+                "channel",
+                "event",
+                "authToken",
+                1,
                 "timeSource",
                 "1234567890123",
                 123L,
@@ -140,7 +161,10 @@ class TimestampedHttpEventDataTest {
         );
 
         final TimestampedHttpEventData timestampedHttpEventData2 = new TimestampedHttpEventData(
-                new DefaultHttpEventData(),
+                "channel",
+                "event",
+                "authToken",
+                1,
                 "timeSourceIsNotTheSame",
                 "1234567890123",
                 123L,
@@ -151,24 +175,95 @@ class TimestampedHttpEventDataTest {
     }
 
     @Test
-    @DisplayName("isDefault() returns false if object is not default")
-    void isDefaultReturnsFalseIfObjectIsIsDefault() {
-        final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
-                new DefaultHttpEventData(),
+    @DisplayName("Event returns event")
+    void eventReturnsEvent() {
+        final TimestampedHttpEventData defaultHttpEventData = new TimestampedHttpEventData(
+                "channel",
+                "event",
+                "authToken",
+                1,
                 "timeSource",
                 "1234567890123",
                 123L,
                 true
         );
 
-        Assertions.assertFalse(timestampedHttpEventData.isDefault());
+        final String expectedResult = "event";
+
+        Assertions.assertEquals(expectedResult, defaultHttpEventData.event());
     }
 
     @Test
-    @DisplayName("isDefault() returns true if object is default")
-    void isDefaultReturnsTrueIfObjectIsDefault() {
-        final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData();
+    @DisplayName("Channel returns channel")
+    void channelReturnsChannel() {
+        final TimestampedHttpEventData defaultHttpEventData = new TimestampedHttpEventData(
+                "channel",
+                "event",
+                "authToken",
+                1,
+                "timeSource",
+                "1234567890123",
+                123L,
+                true
+        );
 
-        Assertions.assertTrue(timestampedHttpEventData.isDefault());
+        final String expectedResult = "channel";
+
+        Assertions.assertEquals(expectedResult, defaultHttpEventData.channel());
+    }
+
+    @Test
+    @DisplayName("AuthenticationToken returns authentication token")
+    void authenticationTokenReturnsAuthenticationToken() {
+        final TimestampedHttpEventData defaultHttpEventData = new TimestampedHttpEventData(
+                "channel",
+                "event",
+                "authToken",
+                1,
+                "timeSource",
+                "1234567890123",
+                123L,
+                true
+        );
+
+        final String expectedResult = "authToken";
+
+        Assertions.assertEquals(expectedResult, defaultHttpEventData.authenticationToken());
+    }
+
+    @Test
+    @DisplayName("AckID returns ackID if not null")
+    void ackIdReturnsAckIdIfNotNull() {
+        final TimestampedHttpEventData defaultHttpEventData = new TimestampedHttpEventData(
+                "channel",
+                "event",
+                "authToken",
+                123,
+                "timeSource",
+                "1234567890123",
+                123L,
+                true
+        );
+
+        final Integer expectedResult = 123;
+
+        Assertions.assertEquals(expectedResult, defaultHttpEventData.ackID());
+    }
+
+    @Test
+    @DisplayName("AckID returns null if ackID is null")
+    void ackIdReturnsNullIfAckIdIsNull() {
+        final TimestampedHttpEventData defaultHttpEventData = new TimestampedHttpEventData(
+                "channel",
+                "event",
+                "authToken",
+                null,
+                "timeSource",
+                "1234567890123",
+                123L,
+                true
+        );
+
+        Assertions.assertNull(defaultHttpEventData.ackID());
     }
 }

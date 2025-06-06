@@ -49,9 +49,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public interface JsonEvent {
 
-    JsonNode event();
+    String asEvent();
 
-    JsonNode node();
+    JsonNode asNode();
 
-    JsonNode time();
+    JsonNode asTimeNode();
+
+    String asTime();
 }

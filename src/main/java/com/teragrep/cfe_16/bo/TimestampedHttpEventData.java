@@ -49,70 +49,51 @@ import java.util.Objects;
 
 public final class TimestampedHttpEventData implements HttpEventData {
 
-    private final HttpEventData eventData;
+    private final String channel;
+    private final String event;
+    private final String authenticationToken;
+    private final Integer ackID;
     private final String timeSource;
     private final String time;
     private final long timeAsLong;
     private final boolean timeParsed;
-    private final boolean isDefault;
 
     public TimestampedHttpEventData(
-            HttpEventData eventData,
-            String timeSource,
-            String time,
-            long timeAsLong,
-            boolean timeParsed,
-            boolean isDefault
-    ) {
-        this.eventData = eventData;
-        this.timeSource = timeSource;
-        this.time = time;
-        this.timeAsLong = timeAsLong;
-        this.timeParsed = timeParsed;
-        this.isDefault = isDefault;
-    }
-
-    public TimestampedHttpEventData(
-            HttpEventData eventData,
+            String channel,
+            String event,
+            String authenticationToken,
+            Integer ackID,
             String timeSource,
             String time,
             long timeAsLong,
             boolean timeParsed
     ) {
-        this(eventData, timeSource, time, timeAsLong, timeParsed, false);
-    }
-
-    public TimestampedHttpEventData(final DefaultHttpEventData defaultHttpEventData) {
-        this(defaultHttpEventData, false);
-    }
-
-    public TimestampedHttpEventData(final DefaultHttpEventData defaultHttpEventData, boolean isDefault) {
-        this(defaultHttpEventData, "timeSource", "time", 0L, false, isDefault);
-    }
-
-    public TimestampedHttpEventData() {
-        this(new DefaultHttpEventData(), true);
-    }
-
-    public HttpEventData eventData() {
-        return eventData;
+        this.channel = channel;
+        this.event = event;
+        this.authenticationToken = authenticationToken;
+        this.ackID = ackID;
+        this.timeSource = timeSource;
+        this.time = time;
+        this.timeAsLong = timeAsLong;
+        this.timeParsed = timeParsed;
     }
 
     @Override
     public String event() {
-        return this.eventData.event();
+        return this.event;
     }
 
     @Override
     public String channel() {
-        return this.eventData.channel();
+        return this.channel;
     }
 
     @Override
     public String authenticationToken() {
-        return this.eventData.authenticationToken();
+        return this.authenticationToken;
     }
 
+    @Override
     public String timeSource() {
         if (this.time == null) {
             return "generated";
@@ -120,19 +101,22 @@ public final class TimestampedHttpEventData implements HttpEventData {
         return this.timeSource;
     }
 
+    @Override
     public String time() {
         return this.time;
     }
 
+    @Override
     public long timeAsLong() {
         return this.timeAsLong;
     }
 
     @Override
     public Integer ackID() {
-        return this.eventData.ackID();
+        return this.ackID;
     }
 
+    @Override
     public boolean timeParsed() {
         if (this.time == null) {
             return false;
@@ -140,8 +124,9 @@ public final class TimestampedHttpEventData implements HttpEventData {
         return this.timeParsed;
     }
 
-    public boolean isDefault() {
-        return this.isDefault;
+    @Override
+    public boolean isStub() {
+        return false;
     }
 
     @Override
@@ -151,13 +136,14 @@ public final class TimestampedHttpEventData implements HttpEventData {
         }
 
         TimestampedHttpEventData that = (TimestampedHttpEventData) o;
-        return timeAsLong() == that.timeAsLong() && timeParsed() == that.timeParsed() && Objects
-                .equals(eventData, that.eventData) && Objects.equals(timeSource(), that.timeSource())
-                && Objects.equals(time(), that.time());
+        return timeAsLong == that.timeAsLong && timeParsed == that.timeParsed && Objects
+                .equals(channel, that.channel) && Objects.equals(event, that.event) && Objects
+                        .equals(authenticationToken, that.authenticationToken)
+                && Objects.equals(ackID, that.ackID) && Objects.equals(timeSource, that.timeSource) && Objects.equals(time, that.time);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(eventData, timeSource, time, timeAsLong, timeParsed);
+        return Objects.hash(channel, event, authenticationToken, ackID, timeSource, time, timeAsLong, timeParsed);
     }
 }

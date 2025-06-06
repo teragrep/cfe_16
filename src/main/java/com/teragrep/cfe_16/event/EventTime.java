@@ -53,17 +53,30 @@ import java.util.Objects;
 
 public final class EventTime {
 
-    private final HttpEventData eventData;
-    private final TimestampedHttpEventData previousEvent;
+    private final String channel;
+    private final String event;
+    private final String authToken;
+    private final Integer ackID;
+    private final HttpEventData previousEvent;
     private final JsonNode timeObject;
 
-    public EventTime(HttpEventData eventData, TimestampedHttpEventData previousEvent, JsonNode timeObject) {
-        this.eventData = eventData;
+    public EventTime(
+            String channel,
+            String event,
+            String authToken,
+            Integer ackID,
+            HttpEventData previousEvent,
+            JsonNode timeObject
+    ) {
+        this.channel = channel;
+        this.event = event;
+        this.authToken = authToken;
+        this.ackID = ackID;
         this.previousEvent = previousEvent;
         this.timeObject = timeObject;
     }
 
-    public TimestampedHttpEventData timestampedHttpEventData(long defaultValue) {
+    public HttpEventData timestampedHttpEventData(long defaultValue) {
         final String timeSource;
         final String time;
         final long timeAsLong;
@@ -72,7 +85,7 @@ public final class EventTime {
         // No time provided in the event
         if (timeObject == null) {
             // Previous event does not have a proper time
-            if (previousEvent == null || previousEvent.isDefault()) {
+            if (previousEvent == null || previousEvent.isStub()) {
                 // Use default value
                 time = String.valueOf(defaultValue);
                 timeAsLong = defaultValue;
@@ -110,7 +123,7 @@ public final class EventTime {
                 timeSource = "generated";
             }
             // Previous event contains a time
-            else if (previousEvent != null && !previousEvent.isDefault()) {
+            else if (previousEvent != null && !previousEvent.isStub()) {
                 if (previousEvent.timeParsed()) {
                     time = previousEvent.time();
                     timeAsLong = previousEvent.timeAsLong();
@@ -142,7 +155,16 @@ public final class EventTime {
             timeSource = "generated";
         }
 
-        return new TimestampedHttpEventData(this.eventData, timeSource, time, timeAsLong, timeParsed);
+        return new TimestampedHttpEventData(
+                this.channel,
+                this.event,
+                this.authToken,
+                this.ackID,
+                timeSource,
+                time,
+                timeAsLong,
+                timeParsed
+        );
     }
 
     /**
@@ -164,12 +186,13 @@ public final class EventTime {
         }
 
         EventTime eventTime = (EventTime) o;
-        return Objects.equals(eventData, eventTime.eventData) && Objects.equals(previousEvent, eventTime.previousEvent)
-                && Objects.equals(timeObject, eventTime.timeObject);
+        return Objects.equals(channel, eventTime.channel) && Objects.equals(event, eventTime.event) && Objects
+                .equals(authToken, eventTime.authToken) && Objects.equals(ackID, eventTime.ackID)
+                && Objects.equals(previousEvent, eventTime.previousEvent) && Objects.equals(timeObject, eventTime.timeObject);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(eventData, previousEvent, timeObject);
+        return Objects.hash(channel, event, authToken, ackID, previousEvent, timeObject);
     }
 }

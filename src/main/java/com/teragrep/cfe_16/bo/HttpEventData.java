@@ -45,7 +45,9 @@
  */
 package com.teragrep.cfe_16.bo;
 
-public interface HttpEventData {
+import com.teragrep.cfe_16.Stubable;
+
+public interface HttpEventData extends Stubable {
 
     String event();
 
@@ -54,4 +56,12 @@ public interface HttpEventData {
     String authenticationToken();
 
     Integer ackID();
+
+    String timeSource();
+
+    String time();
+
+    long timeAsLong();
+
+    boolean timeParsed();
 }

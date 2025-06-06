@@ -47,7 +47,6 @@ package com.teragrep.cfe_16;
 
 import com.cloudbees.syslog.*;
 import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.DefaultHttpEventData;
 import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import com.teragrep.cfe_16.bo.XForwardedForStub;
 import com.teragrep.cfe_16.bo.XForwardedHostStub;
@@ -114,28 +113,36 @@ public class ConverterTests {
         supposedSeverity = Severity.INFORMATIONAL;
         supposedFacility = Facility.USER;
 
-        final DefaultHttpEventData defaultEventData1 = new DefaultHttpEventData(
+        eventData1 = new TimestampedHttpEventData(
                 "CHANNEL_11111",
                 "Event 1",
                 "AUTH_TOKEN_11111",
-                0
+                0,
+                "reported",
+                "1433188255253",
+                1433188255253L,
+                true
         );
-        final DefaultHttpEventData defaultEventData2 = new DefaultHttpEventData(
+        eventData2 = new TimestampedHttpEventData(
                 "CHANNEL_22222",
                 "Event 2",
                 "AUTH_TOKEN_22222",
-                1
+                1,
+                "generated",
+                null,
+                0L,
+                false
         );
-        final DefaultHttpEventData defaultEventData3 = new DefaultHttpEventData(
+        eventData3 = new TimestampedHttpEventData(
                 "defaultchannel",
                 "Event 3",
                 "AUTH_TOKEN_33333",
-                null
+                null,
+                "generated",
+                null,
+                0L,
+                false
         );
-
-        eventData1 = new TimestampedHttpEventData(defaultEventData1, "reported", "1433188255253", 1433188255253L, true);
-        eventData2 = new TimestampedHttpEventData(defaultEventData2, "generated", null, 0L, false);
-        eventData3 = new TimestampedHttpEventData(defaultEventData3, "generated", null, 0L, false);
 
         metadataSDE1.addSDParam("authentication_token", eventData1.authenticationToken());
         metadataSDE1.addSDParam("channel", eventData1.channel());

@@ -45,65 +45,50 @@
  */
 package com.teragrep.cfe_16.bo;
 
-import java.util.Objects;
+public final class TimestampedHttpEventDataStub implements HttpEventData {
 
-public final class DefaultHttpEventData implements HttpEventData {
-
-    private final String channel;
-    private final String event;
-    private final String authenticationToken;
-    private final Integer ackID;
-
-    public DefaultHttpEventData() {
-        this("", "", "", null);
-    }
-
-    public DefaultHttpEventData(String event) {
-        this("", event, "", null);
-    }
-
-    public DefaultHttpEventData(String channel, String event, String authenticationToken, Integer ackID) {
-        this.channel = channel;
-        this.event = event;
-        this.authenticationToken = authenticationToken;
-        this.ackID = ackID;
-    }
-
+    @Override
     public String event() {
-        return event;
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 
+    @Override
     public String channel() {
-        return channel;
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 
+    @Override
     public String authenticationToken() {
-        return authenticationToken;
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 
+    @Override
     public Integer ackID() {
-        return ackID;
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        DefaultHttpEventData that = (DefaultHttpEventData) o;
-        return Objects.equals(channel(), that.channel()) && Objects.equals(event(), that.event()) && Objects
-                .equals(authenticationToken(), that.authenticationToken()) && Objects.equals(ackID(), that.ackID());
+    public String timeSource() {
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(channel, event, authenticationToken, ackID);
+    public String time() {
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
-    public String toString() {
-        return "DefaultHttpEventData{" + "channel='" + channel + '\'' + ", event='" + event + '\''
-                + ", authenticationToken='" + authenticationToken + '\'' + '}';
+    public long timeAsLong() {
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+    }
+
+    @Override
+    public boolean timeParsed() {
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+    }
+
+    @Override
+    public boolean isStub() {
+        return true;
     }
 }
