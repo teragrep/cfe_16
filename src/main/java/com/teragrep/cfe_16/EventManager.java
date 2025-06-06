@@ -51,13 +51,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonStreamParser;
 import com.teragrep.cfe_16.bo.Ack;
-import com.teragrep.cfe_16.bo.DefaultHttpEventData;
 import com.teragrep.cfe_16.bo.HeaderInfo;
+import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.Session;
-import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
+import com.teragrep.cfe_16.bo.TimestampedHttpEventDataStub;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.event.EventString;
-import com.teragrep.cfe_16.event.DefaultJsonEvent;
 import com.teragrep.cfe_16.event.EventTime;
 import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.event.ValidatedJsonEvent;
@@ -123,7 +122,7 @@ public class EventManager {
             HeaderInfo headerInfo,
             AckManager ackManager
     ) {
-        TimestampedHttpEventData previousEvent;
+        HttpEventData previousEvent;
 
         ackManager.initializeContext(authToken, channel);
         int ackId = ackManager.getCurrentAckValue(authToken, channel);
@@ -146,7 +145,7 @@ public class EventManager {
          * After the event is handled, it is assigned as a value to previousEvent
          * variable.
          */
-        TimestampedHttpEventData eventData = new TimestampedHttpEventData();
+        HttpEventData eventData = new TimestampedHttpEventDataStub();
         Converter converter = new Converter();
         List<SyslogMessage> syslogMessages = new ArrayList<>();
         while (parser.hasNext()) {
@@ -157,18 +156,19 @@ public class EventManager {
                  * Event field cannot be missing or blank. Throws an exception if this is the
                  * case.
                  */
-                final JsonEvent jsonEvent = new ValidatedJsonEvent(
-                        new DefaultJsonEvent(new EventString(jsonObjectStr).node())
-                );
+                final JsonEvent jsonEvent = new ValidatedJsonEvent(new EventString(jsonObjectStr).node());
                 /*
                 * Construct TimestampedHttpEventData with correct time values, based on the previous event
                 *
                 * Can throw an EventFieldBlankException
                 */
                 eventData = new EventTime(
-                        new DefaultHttpEventData(jsonEvent.event().toString()),
+                        channel,
+                        jsonEvent.asEvent(),
+                        authToken,
+                        0,
                         previousEvent,
-                        jsonEvent.time()
+                        jsonEvent.asTimeNode()
                 ).timestampedHttpEventData(Instant.now().toEpochMilli());
             }
             catch (JsonProcessingException e) {
@@ -176,15 +176,7 @@ public class EventManager {
                 continue;
             }
 
-            syslogMessages
-                    .add(
-                            converter
-                                    .httpToSyslog(
-                                            new TimestampedHttpEventData(
-                                                    new DefaultHttpEventData(channel, eventData.event(), authToken, null)
-                                            ), headerInfo
-                                    )
-                    );
+            syslogMessages.add(converter.httpToSyslog(eventData, headerInfo));
         }
 
         // create a new object to avoid blocking of threads because

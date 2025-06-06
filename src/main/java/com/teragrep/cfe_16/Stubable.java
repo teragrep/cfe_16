@@ -43,67 +43,9 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.bo;
+package com.teragrep.cfe_16;
 
-import java.util.Objects;
+public interface Stubable {
 
-public final class DefaultHttpEventData implements HttpEventData {
-
-    private final String channel;
-    private final String event;
-    private final String authenticationToken;
-    private final Integer ackID;
-
-    public DefaultHttpEventData() {
-        this("", "", "", null);
-    }
-
-    public DefaultHttpEventData(String event) {
-        this("", event, "", null);
-    }
-
-    public DefaultHttpEventData(String channel, String event, String authenticationToken, Integer ackID) {
-        this.channel = channel;
-        this.event = event;
-        this.authenticationToken = authenticationToken;
-        this.ackID = ackID;
-    }
-
-    public String event() {
-        return event;
-    }
-
-    public String channel() {
-        return channel;
-    }
-
-    public String authenticationToken() {
-        return authenticationToken;
-    }
-
-    public Integer ackID() {
-        return ackID;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        DefaultHttpEventData that = (DefaultHttpEventData) o;
-        return Objects.equals(channel(), that.channel()) && Objects.equals(event(), that.event()) && Objects
-                .equals(authenticationToken(), that.authenticationToken()) && Objects.equals(ackID(), that.ackID());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(channel, event, authenticationToken, ackID);
-    }
-
-    @Override
-    public String toString() {
-        return "DefaultHttpEventData{" + "channel='" + channel + '\'' + ", event='" + event + '\''
-                + ", authenticationToken='" + authenticationToken + '\'' + '}';
-    }
+    boolean isStub();
 }

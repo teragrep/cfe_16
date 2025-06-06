@@ -43,46 +43,52 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.event;
+package com.teragrep.cfe_16.bo;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import java.util.Objects;
+public final class TimestampedHttpEventDataStub implements HttpEventData {
 
-public final class DefaultJsonEvent implements JsonEvent {
-
-    private final JsonNode jsonNode;
-
-    public DefaultJsonEvent(JsonNode jsonNode) {
-        this.jsonNode = jsonNode;
+    @Override
+    public String event() {
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
-    public JsonNode event() {
-        return this.jsonNode.get("event");
+    public String channel() {
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
-    public JsonNode node() {
-        return this.jsonNode;
+    public String authenticationToken() {
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
-    public JsonNode time() {
-        return this.jsonNode.get("time");
+    public Integer ackID() {
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        DefaultJsonEvent defaultJsonEvent = (DefaultJsonEvent) o;
-        return Objects.equals(jsonNode, defaultJsonEvent.jsonNode);
+    public String timeSource() {
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(jsonNode);
+    public String time() {
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+    }
+
+    @Override
+    public long timeAsLong() {
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+    }
+
+    @Override
+    public boolean timeParsed() {
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+    }
+
+    @Override
+    public boolean isStub() {
+        return true;
     }
 }

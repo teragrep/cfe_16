@@ -61,10 +61,10 @@ class ValidatedJsonEventTest {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().put("NotEvent", "eventData");
 
-        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(new DefaultJsonEvent(jsonNode));
+        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(jsonNode);
 
         final Exception exception = Assertions
-                .assertThrowsExactly(EventFieldMissingException.class, validatedJsonEvent::event);
+                .assertThrowsExactly(EventFieldMissingException.class, validatedJsonEvent::asEvent);
 
         Assertions.assertEquals("event field is missing", exception.getMessage());
     }
@@ -75,10 +75,10 @@ class ValidatedJsonEventTest {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().put("event", 123);
 
-        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(new DefaultJsonEvent(jsonNode));
+        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(jsonNode);
 
         final Exception exception = Assertions
-                .assertThrowsExactly(EventFieldBlankException.class, validatedJsonEvent::event);
+                .assertThrowsExactly(EventFieldBlankException.class, validatedJsonEvent::asEvent);
 
         Assertions.assertEquals("jsonEvent node's event not valid", exception.getMessage());
     }
@@ -89,10 +89,10 @@ class ValidatedJsonEventTest {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().put("event", "");
 
-        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(new DefaultJsonEvent(jsonNode));
+        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(jsonNode);
 
         final Exception exception = Assertions
-                .assertThrowsExactly(EventFieldBlankException.class, validatedJsonEvent::event);
+                .assertThrowsExactly(EventFieldBlankException.class, validatedJsonEvent::asEvent);
 
         Assertions.assertEquals("jsonEvent node's event not valid", exception.getMessage());
     }
@@ -103,22 +103,22 @@ class ValidatedJsonEventTest {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().put("event", "Valid event");
 
-        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(new DefaultJsonEvent(jsonNode));
+        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(jsonNode);
 
-        final JsonNode returnedNode = Assertions.assertDoesNotThrow(validatedJsonEvent::event);
+        final String returnedNode = Assertions.assertDoesNotThrow(validatedJsonEvent::asEvent);
 
-        final JsonNode expectedNode = mapper.convertValue("Valid event", JsonNode.class);
+        final String expectedNode = "Valid event";
 
         Assertions.assertEquals(expectedNode, returnedNode);
     }
 
     @Test
     @DisplayName("node() throws IllegalStateException if field is null")
-    void nodeThrowsIllegalStateExceptionIfFieldIsNull() {
-        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(new DefaultJsonEvent(null));
+    void asNodeThrowsIllegalStateExceptionIfFieldIsNull() {
+        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(null);
 
         final Exception exception = Assertions
-                .assertThrowsExactly(IllegalStateException.class, validatedJsonEvent::node);
+                .assertThrowsExactly(IllegalStateException.class, validatedJsonEvent::asNode);
 
         Assertions.assertEquals("jsonEvent node not valid", exception.getMessage());
     }
@@ -126,12 +126,10 @@ class ValidatedJsonEventTest {
     @Test
     @DisplayName("node() throws IllegalStateException if node is null")
     void nodeThrowsIllegalStateExceptionIfNodeIsNull() {
-        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(
-                new DefaultJsonEvent(new ObjectMapper().nullNode())
-        );
+        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(new ObjectMapper().nullNode());
 
         final Exception exception = Assertions
-                .assertThrowsExactly(IllegalStateException.class, validatedJsonEvent::node);
+                .assertThrowsExactly(IllegalStateException.class, validatedJsonEvent::asNode);
 
         Assertions.assertEquals("jsonEvent node not valid", exception.getMessage());
     }
@@ -139,12 +137,10 @@ class ValidatedJsonEventTest {
     @Test
     @DisplayName("node() throws IllegalStateException if node is not an object")
     void nodeThrowsIllegalStateExceptionIfNodeIsNotAnObject() {
-        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(
-                new DefaultJsonEvent(new ObjectMapper().createArrayNode())
-        );
+        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(new ObjectMapper().createArrayNode());
 
         final Exception exception = Assertions
-                .assertThrowsExactly(IllegalStateException.class, validatedJsonEvent::node);
+                .assertThrowsExactly(IllegalStateException.class, validatedJsonEvent::asNode);
 
         Assertions.assertEquals("jsonEvent node not valid", exception.getMessage());
     }
@@ -155,9 +151,9 @@ class ValidatedJsonEventTest {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().set("event", mapper.createObjectNode());
 
-        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(new DefaultJsonEvent(jsonNode));
+        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(jsonNode);
 
-        final JsonNode returnedNode = Assertions.assertDoesNotThrow(validatedJsonEvent::node);
+        final JsonNode returnedNode = Assertions.assertDoesNotThrow(validatedJsonEvent::asNode);
 
         Assertions.assertEquals(jsonNode, returnedNode);
     }
@@ -168,9 +164,9 @@ class ValidatedJsonEventTest {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().set("event", mapper.createObjectNode());
 
-        final ValidatedJsonEvent validatedJsonEvent1 = new ValidatedJsonEvent(new DefaultJsonEvent(jsonNode));
+        final ValidatedJsonEvent validatedJsonEvent1 = new ValidatedJsonEvent(jsonNode);
 
-        final ValidatedJsonEvent validatedJsonEvent2 = new ValidatedJsonEvent(new DefaultJsonEvent(jsonNode));
+        final ValidatedJsonEvent validatedJsonEvent2 = new ValidatedJsonEvent(jsonNode);
 
         Assertions.assertEquals(validatedJsonEvent1, validatedJsonEvent2);
     }
@@ -181,10 +177,10 @@ class ValidatedJsonEventTest {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().set("event", mapper.createObjectNode());
 
-        final ValidatedJsonEvent validatedJsonEvent1 = new ValidatedJsonEvent(new DefaultJsonEvent(jsonNode));
+        final ValidatedJsonEvent validatedJsonEvent1 = new ValidatedJsonEvent(jsonNode);
 
         final ValidatedJsonEvent validatedJsonEvent2 = new ValidatedJsonEvent(
-                new DefaultJsonEvent(mapper.createObjectNode().set("event", mapper.createObjectNode().put("data", "data")))
+                mapper.createObjectNode().set("event", mapper.createObjectNode().put("data", "data"))
         );
 
         Assertions.assertNotEquals(validatedJsonEvent1, validatedJsonEvent2);

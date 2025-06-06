@@ -50,7 +50,7 @@ import com.cloudbees.syslog.SDElement;
 import com.cloudbees.syslog.Severity;
 import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
+import com.teragrep.cfe_16.bo.HttpEventData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -72,7 +72,7 @@ public class Converter {
     private SDElement metadataSDE;
     private SDElement headerSDE;
 
-    public SyslogMessage httpToSyslog(TimestampedHttpEventData httpEventData, HeaderInfo headerInfo) {
+    public SyslogMessage httpToSyslog(HttpEventData httpEventData, HeaderInfo headerInfo) {
 
         setEventSeverity();
         setEventFacility();
@@ -135,7 +135,7 @@ public class Converter {
      * Gets the data from the HTTP Event Data and adds it to SD Element as SD
      * Parameters.
      */
-    private void setStructuredDataParams(TimestampedHttpEventData eventData) {
+    private void setStructuredDataParams(HttpEventData eventData) {
         LOGGER.debug("Setting Structured Data params");
         metadataSDE = new SDElement("cfe_16-metadata@48577");
 
