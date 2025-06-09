@@ -50,7 +50,7 @@ import com.teragrep.cfe_16.exceptionhandling.EventFieldBlankException;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
 import java.util.Objects;
 
-public class ValidatedJsonEvent implements JsonEvent {
+public final class ValidatedJsonEvent implements JsonEvent {
 
     private final JsonNode jsonNode;
 
