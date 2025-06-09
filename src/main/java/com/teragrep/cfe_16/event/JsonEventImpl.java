@@ -50,11 +50,11 @@ import com.teragrep.cfe_16.exceptionhandling.EventFieldBlankException;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
 import java.util.Objects;
 
-public final class ValidatedJsonEvent implements JsonEvent {
+public final class JsonEventImpl implements JsonEvent {
 
     private final JsonNode jsonNode;
 
-    public ValidatedJsonEvent(JsonNode jsonNode) {
+    public JsonEventImpl(JsonNode jsonNode) {
         this.jsonNode = jsonNode;
     }
 
@@ -110,7 +110,7 @@ public final class ValidatedJsonEvent implements JsonEvent {
             return false;
         }
 
-        ValidatedJsonEvent that = (ValidatedJsonEvent) o;
+        JsonEventImpl that = (JsonEventImpl) o;
         return Objects.equals(jsonNode, that.jsonNode);
     }
 

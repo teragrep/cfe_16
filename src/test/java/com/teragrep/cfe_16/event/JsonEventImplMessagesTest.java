@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class ValidatedJsonEventMessagesTest {
+class JsonEventImplMessagesTest {
 
     @Test
     @DisplayName("asEvent() throws EventFieldBlankException if message node value is not a String")
@@ -60,10 +60,10 @@ class ValidatedJsonEventMessagesTest {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().set("event", mapper.createObjectNode().put("message", 123));
 
-        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(jsonNode);
+        final JsonEventImpl jsonEventImpl = new JsonEventImpl(jsonNode);
 
         final Exception exception = Assertions
-                .assertThrowsExactly(EventFieldBlankException.class, validatedJsonEvent::asEvent);
+                .assertThrowsExactly(EventFieldBlankException.class, jsonEventImpl::asEvent);
 
         Assertions.assertEquals("jsonEvent node's event not valid", exception.getMessage());
     }
@@ -74,10 +74,10 @@ class ValidatedJsonEventMessagesTest {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().set("event", mapper.createObjectNode().put("message", ""));
 
-        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(jsonNode);
+        final JsonEventImpl jsonEventImpl = new JsonEventImpl(jsonNode);
 
         final Exception exception = Assertions
-                .assertThrowsExactly(EventFieldBlankException.class, validatedJsonEvent::asEvent);
+                .assertThrowsExactly(EventFieldBlankException.class, jsonEventImpl::asEvent);
 
         Assertions.assertEquals("jsonEvent node's event not valid", exception.getMessage());
     }
@@ -90,10 +90,10 @@ class ValidatedJsonEventMessagesTest {
                 .createObjectNode()
                 .set("event", mapper.createObjectNode().set("message", mapper.createObjectNode()));
 
-        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(jsonNode);
+        final JsonEventImpl jsonEventImpl = new JsonEventImpl(jsonNode);
 
         final Exception exception = Assertions
-                .assertThrowsExactly(EventFieldBlankException.class, validatedJsonEvent::asEvent);
+                .assertThrowsExactly(EventFieldBlankException.class, jsonEventImpl::asEvent);
 
         Assertions.assertEquals("jsonEvent node's event not valid", exception.getMessage());
     }
@@ -106,9 +106,9 @@ class ValidatedJsonEventMessagesTest {
                 .createObjectNode()
                 .set("event", mapper.createObjectNode().put("message", "Valid event"));
 
-        final ValidatedJsonEvent validatedJsonEvent = new ValidatedJsonEvent(jsonNode);
+        final JsonEventImpl jsonEventImpl = new JsonEventImpl(jsonNode);
 
-        final String returnedNode = Assertions.assertDoesNotThrow(validatedJsonEvent::asEvent);
+        final String returnedNode = Assertions.assertDoesNotThrow(jsonEventImpl::asEvent);
 
         final String expectedNode = "Valid event";
 
