@@ -167,7 +167,7 @@ public class EventManager {
                         authToken,
                         0,
                         previousEvent,
-                        jsonEvent.asTimeNode()
+                        jsonEvent.asTimeObject()
                 ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
                 // Set the previous event if the "current" event was parsed without an exception

@@ -45,7 +45,6 @@
  */
 package com.teragrep.cfe_16.event;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
 import java.math.BigDecimal;
@@ -58,7 +57,7 @@ public final class EventTime {
     private final String authToken;
     private final Integer ackID;
     private final HttpEventData previousEvent;
-    private final JsonNode timeObject;
+    private final TimeObject timeObject;
 
     public EventTime(
             String channel,
@@ -66,7 +65,7 @@ public final class EventTime {
             String authToken,
             Integer ackID,
             HttpEventData previousEvent,
-            JsonNode timeObject
+            TimeObject timeObject
     ) {
         this.channel = channel;
         this.event = event;
@@ -83,9 +82,9 @@ public final class EventTime {
         final boolean timeParsed;
 
         // No time provided in the event
-        if (timeObject == null) {
+        if (timeObject.isStub()) {
             // Previous event does not have a proper time
-            if (previousEvent == null || previousEvent.isStub()) {
+            if (previousEvent.isStub()) {
                 // Use default value
                 time = String.valueOf(defaultValue);
                 timeAsLong = defaultValue;
@@ -99,7 +98,7 @@ public final class EventTime {
         }
         // Check if time is a double and convert to long
         else if (timeObject.isDouble()) {
-            final long decimalsRemoved = this.removeDecimal(timeObject.doubleValue());
+            final long decimalsRemoved = this.removeDecimal(timeObject.asDouble());
             time = String.valueOf(decimalsRemoved);
             timeAsLong = decimalsRemoved;
             timeParsed = true;
@@ -123,7 +122,7 @@ public final class EventTime {
                 timeSource = "generated";
             }
             // Previous event contains a time
-            else if (previousEvent != null && !previousEvent.isStub()) {
+            else if (!previousEvent.isStub()) {
                 if (previousEvent.timeParsed()) {
                     time = previousEvent.time();
                     timeAsLong = previousEvent.timeAsLong();
@@ -186,13 +185,14 @@ public final class EventTime {
         }
 
         EventTime eventTime = (EventTime) o;
-        return Objects.equals(channel, eventTime.channel) && Objects.equals(event, eventTime.event) && Objects
-                .equals(authToken, eventTime.authToken) && Objects.equals(ackID, eventTime.ackID)
-                && Objects.equals(previousEvent, eventTime.previousEvent) && Objects.equals(timeObject, eventTime.timeObject);
+        return channel.equals(eventTime.channel) && event.equals(eventTime.event) && authToken
+                .equals(eventTime.authToken) && ackID.equals(eventTime.ackID)
+                && previousEvent.equals(eventTime.previousEvent) && timeObject.equals(eventTime.timeObject);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(channel, event, authToken, ackID, previousEvent, timeObject);
+
     }
 }

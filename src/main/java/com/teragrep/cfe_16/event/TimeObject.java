@@ -45,15 +45,21 @@
  */
 package com.teragrep.cfe_16.event;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.teragrep.cfe_16.Stubable;
 
-public interface JsonEvent {
+public interface TimeObject extends Stubable {
 
-    String asEvent();
+    boolean isDouble();
 
-    JsonNode asNode();
+    double asDouble();
 
-    TimeObject asTimeObject();
+    boolean canConvertToLong();
 
-    String asTime();
+    long asLong();
+
+    long asLong(long defaultValue);
+
+    boolean isTextual();
+
+    String asText();
 }
