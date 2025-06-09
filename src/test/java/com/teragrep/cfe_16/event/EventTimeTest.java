@@ -79,7 +79,7 @@ class EventTimeTest {
                 "AUTH_TOKEN_11111",
                 0,
                 null,
-                new ValidatedJsonEvent(jsonNode).asTimeNode()
+                new JsonEventImpl(jsonNode).asTimeNode()
         ).timestampedHttpEventData(currentEpoch);
 
         Assertions
@@ -116,7 +116,7 @@ class EventTimeTest {
                 "AUTH_TOKEN_11111",
                 0,
                 null,
-                new ValidatedJsonEvent(jsonNode).asTimeNode()
+                new JsonEventImpl(jsonNode).asTimeNode()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -154,7 +154,7 @@ class EventTimeTest {
                 "AUTH_TOKEN_11111",
                 0,
                 null,
-                new ValidatedJsonEvent(jsonNode).asTimeNode()
+                new JsonEventImpl(jsonNode).asTimeNode()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -192,7 +192,7 @@ class EventTimeTest {
                 "AUTH_TOKEN_11111",
                 0,
                 null,
-                new ValidatedJsonEvent(jsonNode).asTimeNode()
+                new JsonEventImpl(jsonNode).asTimeNode()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -229,7 +229,7 @@ class EventTimeTest {
                 "AUTH_TOKEN_11111",
                 0,
                 null,
-                new ValidatedJsonEvent(jsonNode).asTimeNode()
+                new JsonEventImpl(jsonNode).asTimeNode()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -268,7 +268,7 @@ class EventTimeTest {
                 "AUTH_TOKEN_11111",
                 0,
                 null,
-                new ValidatedJsonEvent(jsonNode).asTimeNode()
+                new JsonEventImpl(jsonNode).asTimeNode()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -307,7 +307,7 @@ class EventTimeTest {
                 "AUTH_TOKEN_11111",
                 0,
                 null,
-                new ValidatedJsonEvent(jsonNode).asTimeNode()
+                new JsonEventImpl(jsonNode).asTimeNode()
         );
 
         final EventTime eventTime2 = new EventTime(
@@ -316,7 +316,7 @@ class EventTimeTest {
                 "AUTH_TOKEN_11111",
                 0,
                 null,
-                new ValidatedJsonEvent(jsonNode).asTimeNode()
+                new JsonEventImpl(jsonNode).asTimeNode()
         );
 
         Assertions.assertEquals(eventTime1, eventTime2);
@@ -336,7 +336,7 @@ class EventTimeTest {
                 "AUTH_TOKEN_11111",
                 0,
                 null,
-                new ValidatedJsonEvent(jsonNode).asTimeNode()
+                new JsonEventImpl(jsonNode).asTimeNode()
         );
 
         final EventTime eventTime2 = new EventTime(
@@ -345,7 +345,7 @@ class EventTimeTest {
                 "AUTH_TOKEN_11111",
                 0,
                 null,
-                new ValidatedJsonEvent(jsonNode).asTimeNode()
+                new JsonEventImpl(jsonNode).asTimeNode()
         );
 
         Assertions.assertNotEquals(eventTime1, eventTime2);
