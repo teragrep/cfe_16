@@ -122,7 +122,7 @@ public class EventManager {
             HeaderInfo headerInfo,
             Acknowledgements acknowledgements
     ) {
-        HttpEventData previousEvent;
+        HttpEventData previousEvent = new TimestampedHttpEventDataStub();
 
         acknowledgements.initializeContext(authToken, channel);
         int ackId = acknowledgements.getCurrentAckValue(authToken, channel);
@@ -145,11 +145,10 @@ public class EventManager {
          * After the event is handled, it is assigned as a value to previousEvent
          * variable.
          */
-        HttpEventData eventData = new TimestampedHttpEventDataStub();
+        HttpEventData eventData;
         Converter converter = new Converter(headerInfo);
         List<SyslogMessage> syslogMessages = new ArrayList<>();
         while (parser.hasNext()) {
-            previousEvent = eventData;
             String jsonObjectStr = parser.next().toString();
             try {
                 /*
@@ -170,6 +169,9 @@ public class EventManager {
                         previousEvent,
                         jsonEvent.asTimeNode()
                 ).timestampedHttpEventData(Instant.now().toEpochMilli());
+
+                // Set the previous event if the "current" event was parsed without an exception
+                previousEvent = eventData;
             }
             catch (JsonProcessingException e) {
                 LOGGER.error("Problem processing JsonObjectString <{}>", jsonObjectStr);
