@@ -46,14 +46,73 @@
 package com.teragrep.cfe_16.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Objects;
 
-public interface JsonEvent {
+/**
+ * Provides access to a JsonNode, that contains a timestamp for an event. Acts as a wrapper, since there is another
+ * {@link TimeObjectStub implementation} that is used when a timestamp is not found. <br>
+ * Both of these implementations are initiated/constructed in {@link JsonEventImpl#asTimeObject()}
+ */
+public final class TimeObjectImpl implements TimeObject {
 
-    String asEvent();
+    private final JsonNode node;
 
-    JsonNode asNode();
+    public TimeObjectImpl(JsonNode node) {
+        this.node = node;
+    }
 
-    TimeObject asTimeObject();
+    @Override
+    public boolean isDouble() {
+        return this.node.isDouble();
+    }
 
-    String asTime();
+    @Override
+    public double asDouble() {
+        return this.node.asDouble();
+    }
+
+    @Override
+    public boolean canConvertToLong() {
+        return this.node.canConvertToLong();
+    }
+
+    @Override
+    public long asLong() {
+        return this.node.asLong();
+    }
+
+    @Override
+    public long asLong(long defaultValue) {
+        return this.node.asLong(defaultValue);
+    }
+
+    @Override
+    public boolean isTextual() {
+        return this.node.isTextual();
+    }
+
+    @Override
+    public String asText() {
+        return this.node.asText();
+    }
+
+    @Override
+    public boolean isStub() {
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        TimeObjectImpl that = (TimeObjectImpl) o;
+        return Objects.equals(node, that.node);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(node);
+    }
 }

@@ -49,6 +49,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.bo.HttpEventData;
+import com.teragrep.cfe_16.bo.TimestampedHttpEventDataStub;
 import java.time.Instant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,8 +79,8 @@ class EventTimeTest {
                 "Event 1",
                 "AUTH_TOKEN_11111",
                 0,
-                null,
-                new JsonEventImpl(jsonNode).asTimeNode()
+                new TimestampedHttpEventDataStub(),
+                new JsonEventImpl(jsonNode).asTimeObject()
         ).timestampedHttpEventData(currentEpoch);
 
         Assertions
@@ -115,8 +116,8 @@ class EventTimeTest {
                 "Event 1",
                 "AUTH_TOKEN_11111",
                 0,
-                null,
-                new JsonEventImpl(jsonNode).asTimeNode()
+                new TimestampedHttpEventDataStub(),
+                new JsonEventImpl(jsonNode).asTimeObject()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -153,8 +154,8 @@ class EventTimeTest {
                 "Event 1",
                 "AUTH_TOKEN_11111",
                 0,
-                null,
-                new JsonEventImpl(jsonNode).asTimeNode()
+                new TimestampedHttpEventDataStub(),
+                new JsonEventImpl(jsonNode).asTimeObject()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -191,8 +192,8 @@ class EventTimeTest {
                 "Event 1",
                 "AUTH_TOKEN_11111",
                 0,
-                null,
-                new JsonEventImpl(jsonNode).asTimeNode()
+                new TimestampedHttpEventDataStub(),
+                new JsonEventImpl(jsonNode).asTimeObject()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -228,8 +229,8 @@ class EventTimeTest {
                 "Event 1",
                 "AUTH_TOKEN_11111",
                 0,
-                null,
-                new JsonEventImpl(jsonNode).asTimeNode()
+                new TimestampedHttpEventDataStub(),
+                new JsonEventImpl(jsonNode).asTimeObject()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -267,8 +268,8 @@ class EventTimeTest {
                 "Event 1",
                 "AUTH_TOKEN_11111",
                 0,
-                null,
-                new JsonEventImpl(jsonNode).asTimeNode()
+                new TimestampedHttpEventDataStub(),
+                new JsonEventImpl(jsonNode).asTimeObject()
         ).timestampedHttpEventData(Instant.now().toEpochMilli());
 
         Assertions
@@ -306,8 +307,8 @@ class EventTimeTest {
                 "Event 1",
                 "AUTH_TOKEN_11111",
                 0,
-                null,
-                new JsonEventImpl(jsonNode).asTimeNode()
+                new TimestampedHttpEventDataStub(),
+                new JsonEventImpl(jsonNode).asTimeObject()
         );
 
         final EventTime eventTime2 = new EventTime(
@@ -315,8 +316,8 @@ class EventTimeTest {
                 "Event 1",
                 "AUTH_TOKEN_11111",
                 0,
-                null,
-                new JsonEventImpl(jsonNode).asTimeNode()
+                new TimestampedHttpEventDataStub(),
+                new JsonEventImpl(jsonNode).asTimeObject()
         );
 
         Assertions.assertEquals(eventTime1, eventTime2);
@@ -335,8 +336,8 @@ class EventTimeTest {
                 "Event 1",
                 "AUTH_TOKEN_11111",
                 0,
-                null,
-                new JsonEventImpl(jsonNode).asTimeNode()
+                new TimestampedHttpEventDataStub(),
+                new JsonEventImpl(jsonNode).asTimeObject()
         );
 
         final EventTime eventTime2 = new EventTime(
@@ -344,8 +345,8 @@ class EventTimeTest {
                 "Event 2",
                 "AUTH_TOKEN_11111",
                 0,
-                null,
-                new JsonEventImpl(jsonNode).asTimeNode()
+                new TimestampedHttpEventDataStub(),
+                new JsonEventImpl(jsonNode).asTimeObject()
         );
 
         Assertions.assertNotEquals(eventTime1, eventTime2);

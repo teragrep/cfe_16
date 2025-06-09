@@ -45,15 +45,45 @@
  */
 package com.teragrep.cfe_16.event;
 
-import com.fasterxml.jackson.databind.JsonNode;
+public final class TimeObjectStub implements TimeObject {
 
-public interface JsonEvent {
+    @Override
+    public boolean isDouble() {
+        throw new IllegalStateException("TimeObjectStub does not support this");
+    }
 
-    String asEvent();
+    @Override
+    public double asDouble() {
+        throw new IllegalStateException("TimeObjectStub does not support this");
+    }
 
-    JsonNode asNode();
+    @Override
+    public boolean canConvertToLong() {
+        throw new IllegalStateException("TimeObjectStub does not support this");
+    }
 
-    TimeObject asTimeObject();
+    @Override
+    public long asLong() {
+        throw new IllegalStateException("TimeObjectStub does not support this");
+    }
 
-    String asTime();
+    @Override
+    public long asLong(long defaultValue) {
+        throw new IllegalStateException("TimeObjectStub does not support this");
+    }
+
+    @Override
+    public boolean isTextual() {
+        throw new IllegalStateException("TimeObjectStub does not support this");
+    }
+
+    @Override
+    public String asText() {
+        throw new IllegalStateException("TimeObjectStub does not support this");
+    }
+
+    @Override
+    public boolean isStub() {
+        return true;
+    }
 }

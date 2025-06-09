@@ -91,4 +91,14 @@ public final class TimestampedHttpEventDataStub implements HttpEventData {
     public boolean isStub() {
         return true;
     }
+
+    @Override
+    public int hashCode() {
+        return 123456;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj.getClass() == TimestampedHttpEventDataStub.class;
+    }
 }
