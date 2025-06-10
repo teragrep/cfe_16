@@ -86,4 +86,14 @@ public final class TimeObjectStub implements TimeObject {
     public boolean isStub() {
         return true;
     }
+
+    @Override
+    public int hashCode() {
+        throw new IllegalStateException("TimeObjectStub does not support this");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        throw new IllegalStateException("TimeObjectStub does not support this");
+    }
 }

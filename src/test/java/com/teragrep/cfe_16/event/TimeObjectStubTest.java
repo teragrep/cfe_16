@@ -157,6 +157,36 @@ class TimeObjectStubTest {
     }
 
     @Test
+    @DisplayName("hashCode() throws an IllegalStateException if called")
+    void hashCodeThrowsAnIllegalStateExceptionIfCalled() {
+        final TimeObjectStub stub = new TimeObjectStub();
+
+        final IllegalStateException illegalStateException = Assertions
+                .assertThrowsExactly(IllegalStateException.class, stub::hashCode);
+
+        Assertions
+                .assertEquals(
+                        "TimeObjectStub does not support this", illegalStateException.getMessage(),
+                        "Exception message was not what was expected"
+                );
+    }
+
+    @Test
+    @DisplayName("equals() throws an IllegalStateException if called")
+    void equalsThrowsAnIllegalStateExceptionIfCalled() {
+        final TimeObjectStub stub = new TimeObjectStub();
+
+        final IllegalStateException illegalStateException = Assertions
+                .assertThrowsExactly(IllegalStateException.class, () -> stub.equals(new Object()));
+
+        Assertions
+                .assertEquals(
+                        "TimeObjectStub does not support this", illegalStateException.getMessage(),
+                        "Exception message was not what was expected"
+                );
+    }
+
+    @Test
     @DisplayName("isStub returns true")
     void isStubReturnsTrue() {
         final TimeObjectStub stub = new TimeObjectStub();
