@@ -68,4 +68,25 @@ class EventStubTest {
 
         Assertions.assertEquals("EventStub does not support this", exception.getMessage());
     }
+
+    @Test
+    @DisplayName("hashCode() throws IllegalStateException if called")
+    void hashCodeThrowsIllegalStateExceptionIfCalled() {
+        final EventStub eventStub = new EventStub();
+
+        final Exception exception = Assertions.assertThrowsExactly(IllegalStateException.class, eventStub::hashCode);
+
+        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("equals() throws IllegalStateException if called")
+    void equalsThrowsIllegalStateExceptionIfCalled() {
+        final EventStub eventStub = new EventStub();
+
+        final Exception exception = Assertions
+                .assertThrowsExactly(IllegalStateException.class, () -> eventStub.equals(new Object()));
+
+        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
+    }
 }

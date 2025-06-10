@@ -63,7 +63,7 @@ class JsonEventImplMessagesTest {
 
         final Event returnedEvent = jsonEventImpl.asEvent();
 
-        Assertions.assertEquals(new EventStub(), returnedEvent);
+        Assertions.assertTrue(returnedEvent::isStub);
     }
 
     @Test
@@ -76,7 +76,7 @@ class JsonEventImplMessagesTest {
 
         final Event returnedEvent = jsonEventImpl.asEvent();
 
-        Assertions.assertEquals(new EventStub(), returnedEvent);
+        Assertions.assertTrue(returnedEvent::isStub);
     }
 
     @Test
@@ -91,7 +91,7 @@ class JsonEventImplMessagesTest {
 
         final Event returnedEvent = jsonEventImpl.asEvent();
 
-        Assertions.assertEquals(new EventStub(), returnedEvent);
+        Assertions.assertTrue(returnedEvent::isStub);
     }
 
     @Test
