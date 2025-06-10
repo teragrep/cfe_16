@@ -59,11 +59,11 @@ public final class EventStub implements Event {
 
     @Override
     public int hashCode() {
-        return 123456;
+        throw new IllegalStateException("EventStub does not support this");
     }
 
     @Override
     public boolean equals(Object obj) {
-        return this.getClass() == obj.getClass();
+        throw new IllegalStateException("EventStub does not support this");
     }
 }
