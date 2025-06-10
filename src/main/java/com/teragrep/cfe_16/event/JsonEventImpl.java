@@ -46,8 +46,6 @@
 package com.teragrep.cfe_16.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.teragrep.cfe_16.exceptionhandling.EventFieldBlankException;
-import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
 import java.util.Objects;
 
 public final class JsonEventImpl implements JsonEvent {
@@ -59,10 +57,10 @@ public final class JsonEventImpl implements JsonEvent {
     }
 
     @Override
-    public String asEvent() {
+    public Event asEvent() {
         // Event field completely missing
         if (!this.asNode().has("event")) {
-            throw new EventFieldMissingException("event field is missing");
+            return new EventStub();
         }
         // Event field contains subfield "message"
         else if (this.asNode().get("event").isObject() && this.asNode().get("event").has("message")) {
@@ -70,14 +68,14 @@ public final class JsonEventImpl implements JsonEvent {
                 this.asNode().get("event").get("message").isTextual()
                         && !Objects.equals(this.asNode().get("event").get("message").asText(), "")
             ) {
-                return this.asNode().get("event").get("message").asText();
+                return new EventImpl(this.asNode().get("event").get("message").asText());
             }
         }
         // Event field has a String value
         else if (this.asNode().get("event").isTextual() && !Objects.equals(this.asNode().get("event").asText(), "")) {
-            return this.jsonNode.get("event").asText();
+            return new EventImpl(this.jsonNode.get("event").asText());
         }
-        throw new EventFieldBlankException("jsonEvent node's event not valid");
+        return new EventStub();
     }
 
     @Override

@@ -53,7 +53,7 @@ import java.util.Objects;
 public final class EventTime {
 
     private final String channel;
-    private final String event;
+    private final Event event;
     private final String authToken;
     private final Integer ackID;
     private final HttpEventData previousEvent;
@@ -61,7 +61,7 @@ public final class EventTime {
 
     public EventTime(
             String channel,
-            String event,
+            Event event,
             String authToken,
             Integer ackID,
             HttpEventData previousEvent,

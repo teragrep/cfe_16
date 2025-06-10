@@ -76,7 +76,7 @@ class EventTimeTest {
 
         final HttpEventData httpEventDataWithHandledTime = new EventTime(
                 "CHANNEL_11111",
-                "Event 1",
+                new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 new TimestampedHttpEventDataStub(),
@@ -113,7 +113,7 @@ class EventTimeTest {
 
         final HttpEventData httpEventDataWithHandledTime = new EventTime(
                 "CHANNEL_11111",
-                "Event 1",
+                new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 new TimestampedHttpEventDataStub(),
@@ -151,7 +151,7 @@ class EventTimeTest {
 
         final HttpEventData httpEventDataWithHandledTime = new EventTime(
                 "CHANNEL_11111",
-                "Event 1",
+                new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 new TimestampedHttpEventDataStub(),
@@ -189,7 +189,7 @@ class EventTimeTest {
 
         final HttpEventData httpEventDataWithHandledTime = new EventTime(
                 "CHANNEL_11111",
-                "Event 1",
+                new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 new TimestampedHttpEventDataStub(),
@@ -226,7 +226,7 @@ class EventTimeTest {
 
         final HttpEventData httpEventDataWithHandledTime = new EventTime(
                 "CHANNEL_11111",
-                "Event 1",
+                new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 new TimestampedHttpEventDataStub(),
@@ -265,7 +265,7 @@ class EventTimeTest {
 
         final HttpEventData httpEventDataWithHandledTime = new EventTime(
                 "CHANNEL_11111",
-                "Event 1",
+                new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 new TimestampedHttpEventDataStub(),
@@ -304,7 +304,7 @@ class EventTimeTest {
 
         final EventTime eventTime1 = new EventTime(
                 "CHANNEL_11111",
-                "Event 1",
+                new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 new TimestampedHttpEventDataStub(),
@@ -313,7 +313,7 @@ class EventTimeTest {
 
         final EventTime eventTime2 = new EventTime(
                 "CHANNEL_11111",
-                "Event 1",
+                new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 new TimestampedHttpEventDataStub(),
@@ -333,7 +333,7 @@ class EventTimeTest {
 
         final EventTime eventTime1 = new EventTime(
                 "CHANNEL_11111",
-                "Event 1",
+                new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 new TimestampedHttpEventDataStub(),
@@ -342,7 +342,7 @@ class EventTimeTest {
 
         final EventTime eventTime2 = new EventTime(
                 "CHANNEL_22222",
-                "Event 2",
+                new EventImpl("Event 2"),
                 "AUTH_TOKEN_11111",
                 0,
                 new TimestampedHttpEventDataStub(),

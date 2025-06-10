@@ -43,26 +43,29 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.bo;
+package com.teragrep.cfe_16.event;
 
-import com.teragrep.cfe_16.Stubable;
-import com.teragrep.cfe_16.event.Event;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-public interface HttpEventData extends Stubable {
+class EventStubTest {
 
-    Event event();
+    @Test
+    @DisplayName("isStub() returns true")
+    void isStubReturnsTrue() {
+        final EventStub eventStub = new EventStub();
 
-    String channel();
+        Assertions.assertTrue(eventStub::isStub);
+    }
 
-    String authenticationToken();
+    @Test
+    @DisplayName("asString() throws IllegalStateException if called")
+    void asStringThrowsIllegalStateExceptionIfCalled() {
+        final EventStub eventStub = new EventStub();
 
-    Integer ackID();
+        final Exception exception = Assertions.assertThrowsExactly(IllegalStateException.class, eventStub::asString);
 
-    String timeSource();
-
-    String time();
-
-    long timeAsLong();
-
-    boolean timeParsed();
+        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
+    }
 }

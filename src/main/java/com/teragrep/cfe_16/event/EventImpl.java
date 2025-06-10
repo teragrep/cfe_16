@@ -43,26 +43,40 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.bo;
+package com.teragrep.cfe_16.event;
 
-import com.teragrep.cfe_16.Stubable;
-import com.teragrep.cfe_16.event.Event;
+import java.util.Objects;
 
-public interface HttpEventData extends Stubable {
+public final class EventImpl implements Event {
 
-    Event event();
+    private final String eventAsString;
 
-    String channel();
+    public EventImpl(String eventAsString) {
+        this.eventAsString = eventAsString;
+    }
 
-    String authenticationToken();
+    @Override
+    public String asString() {
+        return this.eventAsString;
+    }
 
-    Integer ackID();
+    @Override
+    public boolean isStub() {
+        return false;
+    }
 
-    String timeSource();
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-    String time();
+        EventImpl event = (EventImpl) o;
+        return eventAsString.equals(event.eventAsString);
+    }
 
-    long timeAsLong();
-
-    boolean timeParsed();
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.eventAsString);
+    }
 }
