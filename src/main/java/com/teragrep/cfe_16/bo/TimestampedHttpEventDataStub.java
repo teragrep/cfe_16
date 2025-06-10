@@ -96,11 +96,11 @@ public final class TimestampedHttpEventDataStub implements HttpEventData {
 
     @Override
     public int hashCode() {
-        return 123456;
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj.getClass() == TimestampedHttpEventDataStub.class;
+        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 }

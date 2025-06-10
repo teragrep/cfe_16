@@ -172,6 +172,36 @@ class TimestampedHttpEventDataStubTest {
     }
 
     @Test
+    @DisplayName("hashCode() throws IllegalStateException if called")
+    void hashCodeThrowsIllegalStateExceptionIfCalled() {
+        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+
+        final IllegalStateException illegalStateException = Assertions
+                .assertThrowsExactly(IllegalStateException.class, stub::hashCode);
+
+        Assertions
+                .assertEquals(
+                        "TimestampedHttpEventDataStub does not support this", illegalStateException.getMessage(),
+                        "Exception message was not what was expected"
+                );
+    }
+
+    @Test
+    @DisplayName("equals() throws IllegalStateException if called")
+    void equalsThrowsIllegalStateExceptionIfCalled() {
+        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+
+        final IllegalStateException illegalStateException = Assertions
+                .assertThrowsExactly(IllegalStateException.class, () -> stub.equals(new Object()));
+
+        Assertions
+                .assertEquals(
+                        "TimestampedHttpEventDataStub does not support this", illegalStateException.getMessage(),
+                        "Exception message was not what was expected"
+                );
+    }
+
+    @Test
     @DisplayName("isStub() returns true")
     void isStubReturnsTrue() {
         final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
