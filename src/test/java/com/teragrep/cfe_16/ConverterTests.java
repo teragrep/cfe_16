@@ -48,6 +48,7 @@ package com.teragrep.cfe_16;
 import com.cloudbees.syslog.*;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
+import com.teragrep.cfe_16.event.EventImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -110,7 +111,7 @@ public class ConverterTests {
 
         eventData1 = new TimestampedHttpEventData(
                 "CHANNEL_11111",
-                "Event 1",
+                new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 "reported",
@@ -120,7 +121,7 @@ public class ConverterTests {
         );
         eventData2 = new TimestampedHttpEventData(
                 "CHANNEL_22222",
-                "Event 2",
+                new EventImpl("Event 2"),
                 "AUTH_TOKEN_22222",
                 1,
                 "generated",
@@ -130,7 +131,7 @@ public class ConverterTests {
         );
         eventData3 = new TimestampedHttpEventData(
                 "defaultchannel",
-                "Event 3",
+                new EventImpl("Event 3"),
                 "AUTH_TOKEN_33333",
                 null,
                 "generated",
@@ -169,7 +170,7 @@ public class ConverterTests {
                 .withHostname("cfe-16")
                 .withFacility(supposedFacility)
                 .withSDElement(metadataSDE1)
-                .withMsg(eventData1.event());
+                .withMsg(eventData1.event().asString());
 
         supposedSyslogMessage2 = new SyslogMessage()
                 .withSeverity(supposedSeverity)
@@ -177,7 +178,7 @@ public class ConverterTests {
                 .withHostname("cfe-16")
                 .withFacility(supposedFacility)
                 .withSDElement(metadataSDE2)
-                .withMsg(eventData2.event());
+                .withMsg(eventData2.event().asString());
 
         supposedSyslogMessage3 = new SyslogMessage()
                 .withSeverity(supposedSeverity)
@@ -185,7 +186,7 @@ public class ConverterTests {
                 .withHostname("cfe-16")
                 .withFacility(supposedFacility)
                 .withSDElement(metadataSDE3)
-                .withMsg(eventData3.event());
+                .withMsg(eventData3.event().asString());
         HeaderInfo headerInfo = new HeaderInfo();
 
         returnedMessage1 = converter.httpToSyslog(eventData1, headerInfo);

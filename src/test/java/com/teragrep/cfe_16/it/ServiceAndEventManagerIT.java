@@ -336,12 +336,12 @@ public class ServiceAndEventManagerIT {
     }
 
     /*
-     * Tests attempting to send a request, which has no "event"-field in it's body.
-     * When this is the case, EventFieldMissingException is expected to happen.
+     * Tests attempting to send a request, which has no "event"-field in its body.
+     * When this is the case, IllegalStateException is expected to happen.
      */
     @Test
     public void noEventFieldInRequestTest() {
-        Assertions.assertThrows(EventFieldMissingException.class, () -> {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
             String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
         });
@@ -349,11 +349,11 @@ public class ServiceAndEventManagerIT {
 
     /*
      * Tests attempting to send a request, which has a blank "event"-field. When
-     * this is the case, EventFieldBlankException is expected to happen.
+     * this is the case, IllegalStateException is expected to happen.
      */
     @Test
     public void eventFieldBlankInRequestTest() {
-        Assertions.assertThrows(EventFieldBlankException.class, () -> {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
             String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
         });

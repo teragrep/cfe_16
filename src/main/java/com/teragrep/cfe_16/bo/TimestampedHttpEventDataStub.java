@@ -45,10 +45,12 @@
  */
 package com.teragrep.cfe_16.bo;
 
+import com.teragrep.cfe_16.event.Event;
+
 public final class TimestampedHttpEventDataStub implements HttpEventData {
 
     @Override
-    public String event() {
+    public Event event() {
         throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
     }
 

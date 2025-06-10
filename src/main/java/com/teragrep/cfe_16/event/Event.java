@@ -43,26 +43,11 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.bo;
+package com.teragrep.cfe_16.event;
 
 import com.teragrep.cfe_16.Stubable;
-import com.teragrep.cfe_16.event.Event;
 
-public interface HttpEventData extends Stubable {
+public interface Event extends Stubable {
 
-    Event event();
-
-    String channel();
-
-    String authenticationToken();
-
-    Integer ackID();
-
-    String timeSource();
-
-    String time();
-
-    long timeAsLong();
-
-    boolean timeParsed();
+    String asString();
 }

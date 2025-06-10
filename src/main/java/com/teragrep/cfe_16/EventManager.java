@@ -56,7 +56,6 @@ import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.bo.TimestampedHttpEventDataStub;
 import com.teragrep.cfe_16.config.Configuration;
-import com.teragrep.cfe_16.event.EventString;
 import com.teragrep.cfe_16.event.EventTime;
 import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.event.JsonEventImpl;
@@ -155,7 +154,7 @@ public class EventManager {
                  * Event field cannot be missing or blank. Throws an exception if this is the
                  * case.
                  */
-                final JsonEvent jsonEvent = new JsonEventImpl(new EventString(jsonObjectStr).node());
+                final JsonEvent jsonEvent = new JsonEventImpl(new ObjectMapper().readTree(jsonObjectStr));
                 /*
                 * Construct TimestampedHttpEventData with correct time values, based on the previous event
                 *

@@ -45,41 +45,25 @@
  */
 package com.teragrep.cfe_16.event;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Objects;
+public final class EventStub implements Event {
 
-public final class EventString {
-
-    private final String eventAsString;
-    private final ObjectMapper objectMapper;
-
-    public EventString(String eventAsString, ObjectMapper objectMapper) {
-        this.eventAsString = eventAsString;
-        this.objectMapper = objectMapper;
-    }
-
-    public EventString(String eventAsString) {
-        this(eventAsString, new ObjectMapper());
-    }
-
-    public JsonNode node() throws JsonProcessingException {
-        return this.objectMapper.readTree(eventAsString);
+    @Override
+    public String asString() {
+        throw new IllegalStateException("EventStub does not support this");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        EventString that = (EventString) o;
-        return Objects.equals(eventAsString, that.eventAsString) && Objects.equals(objectMapper, that.objectMapper);
+    public boolean isStub() {
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(eventAsString, objectMapper);
+        return 123456;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.getClass() == obj.getClass();
     }
 }

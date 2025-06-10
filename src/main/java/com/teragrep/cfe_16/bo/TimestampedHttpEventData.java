@@ -45,12 +45,13 @@
  */
 package com.teragrep.cfe_16.bo;
 
+import com.teragrep.cfe_16.event.Event;
 import java.util.Objects;
 
 public final class TimestampedHttpEventData implements HttpEventData {
 
     private final String channel;
-    private final String event;
+    private final Event event;
     private final String authenticationToken;
     private final Integer ackID;
     private final String timeSource;
@@ -60,7 +61,7 @@ public final class TimestampedHttpEventData implements HttpEventData {
 
     public TimestampedHttpEventData(
             String channel,
-            String event,
+            Event event,
             String authenticationToken,
             Integer ackID,
             String timeSource,
@@ -79,7 +80,7 @@ public final class TimestampedHttpEventData implements HttpEventData {
     }
 
     @Override
-    public String event() {
+    public Event event() {
         return this.event;
     }
 

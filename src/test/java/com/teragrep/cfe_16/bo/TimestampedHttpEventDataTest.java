@@ -45,6 +45,8 @@
  */
 package com.teragrep.cfe_16.bo;
 
+import com.teragrep.cfe_16.event.Event;
+import com.teragrep.cfe_16.event.EventImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,7 +58,7 @@ class TimestampedHttpEventDataTest {
     void timeSourceReturnsGeneratedIfTimeFieldIsNull() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 1,
                 "timeSource",
@@ -73,7 +75,7 @@ class TimestampedHttpEventDataTest {
     void timeSourceReturnsTheTimeSourceEvenIfTimeIsLessThan10CharactersLong() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 1,
                 "timeSource",
@@ -90,7 +92,7 @@ class TimestampedHttpEventDataTest {
     void timeSourceReturnsTheTimeSourceEvenIfTimeIsMoreThan13CharactersLong() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 1,
                 "timeSource",
@@ -107,7 +109,7 @@ class TimestampedHttpEventDataTest {
     void timeSourceReturnsTimeSourceIfTimeIsBetween10And13Characters() {
         final TimestampedHttpEventData timestampedHttpEventData = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 1,
                 "timeSource",
@@ -124,7 +126,7 @@ class TimestampedHttpEventDataTest {
     void happyEqualsTest() {
         final TimestampedHttpEventData timestampedHttpEventData1 = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 1,
                 "timeSource",
@@ -135,7 +137,7 @@ class TimestampedHttpEventDataTest {
 
         final TimestampedHttpEventData timestampedHttpEventData2 = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 1,
                 "timeSource",
@@ -151,7 +153,7 @@ class TimestampedHttpEventDataTest {
     void unhappyEqualsTest() {
         final TimestampedHttpEventData timestampedHttpEventData1 = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 1,
                 "timeSource",
@@ -162,7 +164,7 @@ class TimestampedHttpEventDataTest {
 
         final TimestampedHttpEventData timestampedHttpEventData2 = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 1,
                 "timeSourceIsNotTheSame",
@@ -179,7 +181,7 @@ class TimestampedHttpEventDataTest {
     void eventReturnsEvent() {
         final TimestampedHttpEventData defaultHttpEventData = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 1,
                 "timeSource",
@@ -188,7 +190,7 @@ class TimestampedHttpEventDataTest {
                 true
         );
 
-        final String expectedResult = "event";
+        final Event expectedResult = new EventImpl("event");
 
         Assertions.assertEquals(expectedResult, defaultHttpEventData.event());
     }
@@ -198,7 +200,7 @@ class TimestampedHttpEventDataTest {
     void channelReturnsChannel() {
         final TimestampedHttpEventData defaultHttpEventData = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 1,
                 "timeSource",
@@ -217,7 +219,7 @@ class TimestampedHttpEventDataTest {
     void authenticationTokenReturnsAuthenticationToken() {
         final TimestampedHttpEventData defaultHttpEventData = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 1,
                 "timeSource",
@@ -236,7 +238,7 @@ class TimestampedHttpEventDataTest {
     void ackIdReturnsAckIdIfNotNull() {
         final TimestampedHttpEventData defaultHttpEventData = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 123,
                 "timeSource",
@@ -255,7 +257,7 @@ class TimestampedHttpEventDataTest {
     void ackIdReturnsNullIfAckIdIsNull() {
         final TimestampedHttpEventData defaultHttpEventData = new TimestampedHttpEventData(
                 "channel",
-                "event",
+                new EventImpl("event"),
                 "authToken",
                 null,
                 "timeSource",

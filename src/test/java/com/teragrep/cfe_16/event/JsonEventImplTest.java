@@ -47,8 +47,6 @@ package com.teragrep.cfe_16.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teragrep.cfe_16.exceptionhandling.EventFieldBlankException;
-import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,60 +54,57 @@ import org.junit.jupiter.api.Test;
 class JsonEventImplTest {
 
     @Test
-    @DisplayName("event() throws EventFieldMissingException if node does not have event node")
-    void eventThrowsEventFieldMissingExceptionIfNodeDoesNotHaveEventNode() {
+    @DisplayName("event() returns EventStub if node does not have event node")
+    void eventReturnsEventStubIfNodeDoesNotHaveEventNode() {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().put("NotEvent", "eventData");
 
         final JsonEventImpl jsonEventImpl = new JsonEventImpl(jsonNode);
 
-        final Exception exception = Assertions
-                .assertThrowsExactly(EventFieldMissingException.class, jsonEventImpl::asEvent);
+        final Event returnedEvent = jsonEventImpl.asEvent();
 
-        Assertions.assertEquals("event field is missing", exception.getMessage());
+        Assertions.assertEquals(new EventStub(), returnedEvent);
     }
 
     @Test
-    @DisplayName("event() throws EventFieldBlankException if event node is an integer")
-    void eventThrowsEventFieldBlankExceptionIfEventNodeIsAnInteger() {
+    @DisplayName("event() returns EventStub if event node is an integer")
+    void eventReturnsEventStubIfEventNodeIsAnInteger() {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().put("event", 123);
 
         final JsonEventImpl jsonEventImpl = new JsonEventImpl(jsonNode);
 
-        final Exception exception = Assertions
-                .assertThrowsExactly(EventFieldBlankException.class, jsonEventImpl::asEvent);
+        final Event returnedEvent = jsonEventImpl.asEvent();
 
-        Assertions.assertEquals("jsonEvent node's event not valid", exception.getMessage());
+        Assertions.assertEquals(new EventStub(), returnedEvent);
     }
 
     @Test
-    @DisplayName("event() throws EventFieldBlankException is event is an empty string")
-    void eventThrowsEventFieldBlankExceptionIsEventIsAnEmptyString() {
+    @DisplayName("event() returns EventStub is event is an empty string")
+    void eventReturnsEventStubIsEventIsAnEmptyString() {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().put("event", "");
 
         final JsonEventImpl jsonEventImpl = new JsonEventImpl(jsonNode);
 
-        final Exception exception = Assertions
-                .assertThrowsExactly(EventFieldBlankException.class, jsonEventImpl::asEvent);
+        final Event returnedEvent = jsonEventImpl.asEvent();
 
-        Assertions.assertEquals("jsonEvent node's event not valid", exception.getMessage());
+        Assertions.assertEquals(new EventStub(), returnedEvent);
     }
 
     @Test
-    @DisplayName("event() returns JsonNode if event exists and is a filled String")
-    void eventReturnsJsonNodeIfEventExistsAndIsAFilledString() {
+    @DisplayName("event() returns EventImpl if event exists and is a filled String")
+    void eventReturnsEventImplIfEventExistsAndIsAFilledString() {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = mapper.createObjectNode().put("event", "Valid event");
 
         final JsonEventImpl jsonEventImpl = new JsonEventImpl(jsonNode);
 
-        final String returnedNode = Assertions.assertDoesNotThrow(jsonEventImpl::asEvent);
+        final Event returnedEvent = jsonEventImpl.asEvent();
 
-        final String expectedNode = "Valid event";
+        final Event expectedEvent = new EventImpl("Valid event");
 
-        Assertions.assertEquals(expectedNode, returnedNode);
+        Assertions.assertEquals(expectedEvent, returnedEvent);
     }
 
     @Test
