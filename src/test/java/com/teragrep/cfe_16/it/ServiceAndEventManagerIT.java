@@ -144,7 +144,7 @@ public class ServiceAndEventManagerIT {
     }
 
     @AfterAll
-    public static void cleanup() throws InterruptedException {
+    public static void cleanup() {
         server.stop();
     }
 
