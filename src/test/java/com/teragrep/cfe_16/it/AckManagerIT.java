@@ -249,21 +249,17 @@ public class AckManagerIT {
                 );
     }
 
+    @Test
     public void getCurrentAckValueAndIncrementTest() {
-        AckManager ackManager1 = new AckManager();
-        AckManager ackManager2 = new AckManager();
+        Assertions
+                .assertEquals(0, this.ackManager.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL), "AckManager should return 0");
+        this.ackManager.incrementAckValue(this.authToken1, Session.DEFAULT_CHANNEL);
+        Assertions
+                .assertEquals(1, this.ackManager.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL), "AckManager should return 1");
 
+        this.ackManager.incrementAckValue(this.authToken1, Session.DEFAULT_CHANNEL);
         Assertions
-                .assertEquals(0, ackManager1.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL), "AckManager 1 should return 0");
-        ackManager1.incrementAckValue(this.authToken1, Session.DEFAULT_CHANNEL);
-        Assertions
-                .assertEquals(1, ackManager1.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL), "AckManager 1 should return 1");
-
-        Assertions
-                .assertEquals(0, ackManager2.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL), "AckManager 2 should return 0");
-        ackManager2.incrementAckValue(this.authToken1, Session.DEFAULT_CHANNEL);
-        Assertions
-                .assertEquals(1, ackManager2.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL), "AckManager 2 should return 1");
+                .assertEquals(2, this.ackManager.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL), "AckManager should return 2");
 
     }
 
