@@ -209,16 +209,9 @@ public class ServiceAndEventManagerIT {
 
         ackRequest = "{\"acks\": [1,3,4]}";
 
-        ackRequestNode = objectMapper.createObjectNode();
+        ackRequestNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(ackRequest));
 
         defaultChannel = Session.DEFAULT_CHANNEL;
-
-        try {
-            ackRequestNode = objectMapper.readTree(ackRequest);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /*
