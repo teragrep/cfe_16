@@ -149,25 +149,12 @@ public class ServiceAndEventManagerIT {
     }
 
     private static ServerSocket getSocket() {
-        ServerSocket socket = null;
-        try {
-            socket = new ServerSocket(1234);
-        }
-        catch (IOException e) {
-            LOGGER.warn("Could not get a server socket: ", e);
-            throw new RuntimeException(e);
-        }
-        return socket;
+        return Assertions.assertDoesNotThrow(() -> new ServerSocket(1234), "Could not get a new Server Socket");
     }
 
     @AfterAll
     public static void closeServerSocket() {
-        try {
-            serverSocket.close();
-        }
-        catch (IOException e) {
-            LOGGER.warn("Could not close server socket: ", e);
-        }
+        Assertions.assertDoesNotThrow(serverSocket::close);
     }
 
     /*
@@ -179,11 +166,6 @@ public class ServiceAndEventManagerIT {
      */
     @BeforeEach
     public void initialize() {
-        /*
-         * try { serverSocket = new ServerSocket(props.getSyslogPort()); } catch
-         * (IOException e) { e.printStackTrace(); }
-         */
-
         objectMapper = new ObjectMapper();
         request1 = new MockHttpServletRequest();
         request2 = new MockHttpServletRequest();
@@ -418,53 +400,47 @@ public class ServiceAndEventManagerIT {
         String content8 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
                 + "\"mysourcetype\", \"time\": 1433188255252321}";
 
-        JsonNode node1 = null;
-        JsonNode node2 = null;
-        JsonNode node3 = null;
-        JsonNode node4 = null;
-        JsonNode node5 = null;
-        JsonNode node6 = null;
-        JsonNode node7 = null;
-        JsonNode node8 = null;
+        final JsonNode node1 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content1));
+        final JsonNode node2 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content2));
+        final JsonNode node3 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content3));
+        final JsonNode node4 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content4));
+        final JsonNode node5 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content5));
+        final JsonNode node6 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content6));
+        final JsonNode node7 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content7));
+        final JsonNode node8 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content8));
 
-        try {
-            node1 = objectMapper.readTree(content1);
-            node2 = objectMapper.readTree(content2);
-            node3 = objectMapper.readTree(content3);
-            node4 = objectMapper.readTree(content4);
-            node5 = objectMapper.readTree(content5);
-            node6 = objectMapper.readTree(content6);
-            node7 = objectMapper.readTree(content7);
-            node8 = objectMapper.readTree(content8);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        HttpEventData testData1 = new HttpEventData();
-        HttpEventData testData2 = new HttpEventData();
-        HttpEventData testData3 = new HttpEventData();
-        HttpEventData testData4 = new HttpEventData();
-        HttpEventData testData5 = new HttpEventData();
-        HttpEventData testData6 = new HttpEventData();
-        HttpEventData testData7 = new HttpEventData();
-        HttpEventData testData8 = new HttpEventData();
-
-        // Accessing a private method handleTime() in EventManager and using the created
-        // nodes and empty HttpEventData objects as parameters
-        try {
-            testData1 = Whitebox.invokeMethod(eventManager, "handleTime", testData1, node1, null);
-            testData2 = Whitebox.invokeMethod(eventManager, "handleTime", testData2, node2, null);
-            testData3 = Whitebox.invokeMethod(eventManager, "handleTime", testData3, node3, null);
-            testData4 = Whitebox.invokeMethod(eventManager, "handleTime", testData4, node4, null);
-            testData5 = Whitebox.invokeMethod(eventManager, "handleTime", testData5, node5, null);
-            testData6 = Whitebox.invokeMethod(eventManager, "handleTime", testData6, node6, null);
-            testData7 = Whitebox.invokeMethod(eventManager, "handleTime", testData7, node7, null);
-            testData8 = Whitebox.invokeMethod(eventManager, "handleTime", testData8, node8, null);
-        }
-        catch (Exception e) {
-            LOGGER.warn("Could not invokeMethods properly: ", e);
-        }
+        HttpEventData testData1 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node1, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData2 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node2, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData3 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node3, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData4 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node4, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData5 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node5, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData6 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node6, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData7 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node7, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData8 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node8, null), "Could not invokeMethods properly"
+                );
 
         /*
          * Testing the getTimeSource(), isTimeParsed() and getTimeAsLong() methods from
