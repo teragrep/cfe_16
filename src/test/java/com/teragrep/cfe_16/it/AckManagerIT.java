@@ -110,34 +110,31 @@ public class AckManagerIT {
     }
 
     /*
-     * In initialize() we call channel 1's getCurrentAckValue 3 times, so the next
-     * time we call it, the currentAckValue() should return 3 and increase the ack
-     * value by 1, so the next time it will be 4. We have not called
+     * Call the incrementAckValue 4 times, check the return value of getCurrentAckValue. Increment the ack one more and check that getCurrentAckValue is one higher than before. We have not called
      * getCurrentAckValue() in channel2 yet, so it should be 0.
      */
     @Test
     public void getCurrentAckValueTest() {
-        int currentAckValue;
-        currentAckValue = ackManager.getCurrentAckValue(this.authToken1, this.channel1);
+        ackManager.initializeContext(this.authToken1, this.channel1);
+
+        final int currentAckValueBeforeAnything = ackManager.getCurrentAckValue(this.authToken1, this.channel1);
+        Assertions.assertEquals(0, currentAckValueBeforeAnything, "channel1 current ack value should be 0");
+
+        ackManager.incrementAckValue(this.authToken1, this.channel1);
+        ackManager.incrementAckValue(this.authToken1, this.channel1);
+        ackManager.incrementAckValue(this.authToken1, this.channel1);
         ackManager.incrementAckValue(this.authToken1, this.channel1);
 
-        currentAckValue = ackManager.getCurrentAckValue(this.authToken1, this.channel1);
+        final int currentAckValueAfterFourIncrements = ackManager.getCurrentAckValue(this.authToken1, this.channel1);
+
+        Assertions.assertEquals(4, currentAckValueAfterFourIncrements, "channel1 current ack value should be 4");
+
         ackManager.incrementAckValue(this.authToken1, this.channel1);
+        final int currentAckValueAfterOneMoreIncrement = ackManager.getCurrentAckValue(this.authToken1, this.channel1);
+        Assertions.assertEquals(5, currentAckValueAfterOneMoreIncrement, "channel1 current ack value should be 5");
 
-        currentAckValue = ackManager.getCurrentAckValue(this.authToken1, this.channel1);
-        ackManager.incrementAckValue(this.authToken1, this.channel1);
-
-        currentAckValue = ackManager.getCurrentAckValue(this.authToken1, this.channel1);
-        ackManager.incrementAckValue(this.authToken1, this.channel1);
-
-        Assertions.assertEquals(3, currentAckValue, "channel1 current ack value should be 3");
-
-        currentAckValue = ackManager.getCurrentAckValue(this.authToken1, this.channel1);
-        ackManager.incrementAckValue(this.authToken1, this.channel1);
-        Assertions.assertEquals(4, currentAckValue, "channel1 current ack value should be 4");
-
-        currentAckValue = ackManager.getCurrentAckValue(this.authToken2, this.channel2);
-        Assertions.assertEquals(0, currentAckValue, "channel2 current ack value should be 0");
+        final int currentAckValueInChannel2 = ackManager.getCurrentAckValue(this.authToken2, this.channel2);
+        Assertions.assertEquals(0, currentAckValueInChannel2, "channel2 current ack value should be 0");
     }
 
     /*
