@@ -295,7 +295,7 @@ public class AckManagerIT {
         Map<Integer, Ack> list2 = ackManager2.getAckList(this.authToken2, this.channel2);
         int list2Size = list2.size();
 
-        Assertions.assertNotSame(list1.toString(), list2.toString(), "Ack lists should not be same");
+        Assertions.assertNotEquals(list1, list2, "Ack lists should not be same");
         Assertions.assertEquals(list1Size - 1, list2Size, "list2 should be shorter by one index");
         Assertions.assertFalse(list2.containsKey(deletedAck.getId()), "list2 should not contain the deleted ack");
     }
