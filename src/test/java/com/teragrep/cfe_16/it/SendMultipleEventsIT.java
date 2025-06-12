@@ -74,7 +74,7 @@ import java.util.concurrent.*;
 @SpringBootTest
 public class SendMultipleEventsIT {
 
-    private final static int SERVER_PORT = 1236;
+    private static final int SERVER_PORT = 1236;
     private static final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
     private static final AtomicLong openCount = new AtomicLong();
     private static final AtomicLong closeCount = new AtomicLong();
