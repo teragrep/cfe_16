@@ -52,7 +52,6 @@ import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.exceptionhandling.ServerIsBusyException;
-import java.io.IOException;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -179,36 +178,24 @@ public class AckManagerIT {
         String supposedResponseAsStringAllFalse = "{\"1\":false,\"3\":false,\"4\":false}";
         ObjectMapper mapper = new ObjectMapper();
         JsonNode emptyJsonNode = mapper.createObjectNode();
-        JsonNode queryNode = mapper.createObjectNode();
-        JsonNode faultyNode = mapper.createObjectNode();
-        JsonNode notIntNode = mapper.createObjectNode();
+        JsonNode queryNode = Assertions.assertDoesNotThrow(() -> mapper.readTree(requestAsString));
+        JsonNode faultyNode = Assertions.assertDoesNotThrow(() -> mapper.readTree(faultyRequestAsString));
+        JsonNode notIntNode = Assertions.assertDoesNotThrow(() -> mapper.readTree(notIntRequestAsString));
+
         ackManager.initializeContext(this.authToken1, this.channel1);
+
         Assertions.assertTrue(ackManager.addAck(this.authToken1, this.channel1, new Ack(1, false)));
         Assertions.assertTrue(ackManager.acknowledge(this.authToken1, this.channel1, 1));
-        try {
-            queryNode = mapper.readTree(requestAsString);
-            faultyNode = mapper.readTree(faultyRequestAsString);
-            notIntNode = mapper.readTree(notIntRequestAsString);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         Assertions
                 .assertEquals(emptyJsonNode, ackManager.getRequestedAckStatuses(this.authToken1, "", null), "getRequestedAckStatuses should return null, when providing a null value as a " + "parameter");
 
-        try {
-            Assertions
-                    .assertEquals(
-                            supposedResponseAsStringOneTrue, ackManager
-                                    .getRequestedAckStatuses(this.authToken1, this.channel1, queryNode)
-                                    .toString(),
-                            "ackId 1 status should be true on channel1, others should be false."
-                    );
-        }
-        catch (Throwable e1) {
-            // TODO Auto-generated catch block
-            LOGGER.warn("Failed to handle ack request: ", e1);
-        }
+        Assertions
+                .assertEquals(
+                        supposedResponseAsStringOneTrue, ackManager
+                                .getRequestedAckStatuses(this.authToken1, this.channel1, queryNode)
+                                .toString(),
+                        "ackId 1 status should be true on channel1, others should be false."
+                );
 
         Assertions
                 .assertEquals(
