@@ -79,7 +79,6 @@ import org.springframework.test.context.TestPropertySource;
         "max.ack.age=20000",
         "max.session.age=30000",
         "poll.time=30000",
-        "poll.time=30000",
         "server.print.times=true"
 })
 public class AckManagerIT {
