@@ -52,152 +52,152 @@ import org.junit.jupiter.api.Test;
 class TimestampedHttpEventDataStubTest {
 
     @Test
-    @DisplayName("event() throws IllegalStateException if called")
-    void eventThrowsIllegalStateExceptionIfCalled() {
+    @DisplayName("event() throws UnsupportedOperationException if called")
+    void eventThrowsUnsupportedOperationExceptionIfCalled() {
         final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::event);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::event);
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this", illegalStateException.getMessage(),
-                        "Exception message was not what was expected"
+                        "TimestampedHttpEventDataStub does not support this",
+                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("channel() throws IllegalStateException if called")
-    void channelThrowsIllegalStateExceptionIfCalled() {
+    @DisplayName("channel() throws UnsupportedOperationException if called")
+    void channelThrowsUnsupportedOperationExceptionIfCalled() {
         final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::channel);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::channel);
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this", illegalStateException.getMessage(),
-                        "Exception message was not what was expected"
+                        "TimestampedHttpEventDataStub does not support this",
+                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("authenticationToken() throws IllegalStateException if called")
-    void authenticationTokenThrowsIllegalStateExceptionIfCalled() {
+    @DisplayName("authenticationToken() throws UnsupportedOperationException if called")
+    void authenticationTokenThrowsUnsupportedOperationExceptionIfCalled() {
         final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::authenticationToken);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::authenticationToken);
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this", illegalStateException.getMessage(),
-                        "Exception message was not what was expected"
+                        "TimestampedHttpEventDataStub does not support this",
+                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("ackID() throws IllegalStateException if called")
-    void ackIDThrowsIllegalStateExceptionIfCalled() {
+    @DisplayName("ackID() throws UnsupportedOperationException if called")
+    void ackIDThrowsUnsupportedOperationExceptionIfCalled() {
         final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::ackID);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::ackID);
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this", illegalStateException.getMessage(),
-                        "Exception message was not what was expected"
+                        "TimestampedHttpEventDataStub does not support this",
+                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("timeSource() throws IllegalStateException if called")
-    void timeSourceThrowsIllegalStateExceptionIfCalled() {
+    @DisplayName("timeSource() throws UnsupportedOperationException if called")
+    void timeSourceThrowsUnsupportedOperationExceptionIfCalled() {
         final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::timeSource);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::timeSource);
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this", illegalStateException.getMessage(),
-                        "Exception message was not what was expected"
+                        "TimestampedHttpEventDataStub does not support this",
+                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("time() throws IllegalStateException if called")
-    void timeThrowsIllegalStateExceptionIfCalled() {
+    @DisplayName("time() throws UnsupportedOperationException if called")
+    void timeThrowsUnsupportedOperationExceptionIfCalled() {
         final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::time);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::time);
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this", illegalStateException.getMessage(),
-                        "Exception message was not what was expected"
+                        "TimestampedHttpEventDataStub does not support this",
+                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("timeAsLong() throws IllegalStateException if called")
-    void timeAsLongThrowsIllegalStateExceptionIfCalled() {
+    @DisplayName("timeAsLong() throws UnsupportedOperationException if called")
+    void timeAsLongThrowsUnsupportedOperationExceptionIfCalled() {
         final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::timeAsLong);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::timeAsLong);
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this", illegalStateException.getMessage(),
-                        "Exception message was not what was expected"
+                        "TimestampedHttpEventDataStub does not support this",
+                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("timeParsed() throws IllegalStateException if called")
-    void timeParsedThrowsIllegalStateExceptionIfCalled() {
+    @DisplayName("timeParsed() throws UnsupportedOperationException if called")
+    void timeParsedThrowsUnsupportedOperationExceptionIfCalled() {
         final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::timeParsed);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::timeParsed);
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this", illegalStateException.getMessage(),
-                        "Exception message was not what was expected"
+                        "TimestampedHttpEventDataStub does not support this",
+                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("hashCode() throws IllegalStateException if called")
-    void hashCodeThrowsIllegalStateExceptionIfCalled() {
+    @DisplayName("hashCode() throws UnsupportedOperationException if called")
+    void hashCodeThrowsUnsupportedOperationExceptionIfCalled() {
         final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::hashCode);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::hashCode);
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this", illegalStateException.getMessage(),
-                        "Exception message was not what was expected"
+                        "TimestampedHttpEventDataStub does not support this",
+                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("equals() throws IllegalStateException if called")
-    void equalsThrowsIllegalStateExceptionIfCalled() {
+    @DisplayName("equals() throws UnsupportedOperationException if called")
+    void equalsThrowsUnsupportedOperationExceptionIfCalled() {
         final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, () -> stub.equals(new Object()));
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, () -> stub.equals(new Object()));
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this", illegalStateException.getMessage(),
-                        "Exception message was not what was expected"
+                        "TimestampedHttpEventDataStub does not support this",
+                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
                 );
     }
 

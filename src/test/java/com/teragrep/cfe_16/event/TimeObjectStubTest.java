@@ -52,136 +52,136 @@ import org.junit.jupiter.api.Test;
 class TimeObjectStubTest {
 
     @Test
-    @DisplayName("isDouble() throws an IllegalStateException if called")
-    void isDoubleThrowsAnIllegalStateExceptionIfCalled() {
+    @DisplayName("isDouble() throws an UnsupportedOperationException if called")
+    void isDoubleThrowsAnUnsupportedOperationExceptionIfCalled() {
         final TimeObjectStub stub = new TimeObjectStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::isDouble);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::isDouble);
 
         Assertions
                 .assertEquals(
-                        "TimeObjectStub does not support this", illegalStateException.getMessage(),
+                        "TimeObjectStub does not support this", unsupportedOperationException.getMessage(),
                         "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("asDouble() throws an IllegalStateException if called")
-    void asDoubleThrowsAnIllegalStateExceptionIfCalled() {
+    @DisplayName("asDouble() throws an UnsupportedOperationException if called")
+    void asDoubleThrowsAnUnsupportedOperationExceptionIfCalled() {
         final TimeObjectStub stub = new TimeObjectStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::asDouble);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::asDouble);
 
         Assertions
                 .assertEquals(
-                        "TimeObjectStub does not support this", illegalStateException.getMessage(),
+                        "TimeObjectStub does not support this", unsupportedOperationException.getMessage(),
                         "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("canConvertToLong() throws an IllegalStateException if called")
-    void canConvertToLongThrowsAnIllegalStateExceptionIfCalled() {
+    @DisplayName("canConvertToLong() throws an UnsupportedOperationException if called")
+    void canConvertToLongThrowsAnUnsupportedOperationExceptionIfCalled() {
         final TimeObjectStub stub = new TimeObjectStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::canConvertToLong);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::canConvertToLong);
 
         Assertions
                 .assertEquals(
-                        "TimeObjectStub does not support this", illegalStateException.getMessage(),
+                        "TimeObjectStub does not support this", unsupportedOperationException.getMessage(),
                         "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("asLong() throws an IllegalStateException if called")
-    void asLongThrowsAnIllegalStateExceptionIfCalled() {
+    @DisplayName("asLong() throws an UnsupportedOperationException if called")
+    void asLongThrowsAnUnsupportedOperationExceptionIfCalled() {
         final TimeObjectStub stub = new TimeObjectStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::asLong);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::asLong);
 
         Assertions
                 .assertEquals(
-                        "TimeObjectStub does not support this", illegalStateException.getMessage(),
+                        "TimeObjectStub does not support this", unsupportedOperationException.getMessage(),
                         "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("asLong(defaultValue) throws an IllegalStateException if called")
-    void asLongWithDefaultValueThrowsAnIllegalStateExceptionIfCalled() {
+    @DisplayName("asLong(defaultValue) throws an UnsupportedOperationException if called")
+    void asLongWithDefaultValueThrowsAnUnsupportedOperationExceptionIfCalled() {
         final TimeObjectStub stub = new TimeObjectStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, () -> stub.asLong(0L));
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, () -> stub.asLong(0L));
 
         Assertions
                 .assertEquals(
-                        "TimeObjectStub does not support this", illegalStateException.getMessage(),
+                        "TimeObjectStub does not support this", unsupportedOperationException.getMessage(),
                         "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("isTextual() throws an IllegalStateException if called")
-    void isTextualThrowsAnIllegalStateExceptionIfCalled() {
+    @DisplayName("isTextual() throws an UnsupportedOperationException if called")
+    void isTextualThrowsAnUnsupportedOperationExceptionIfCalled() {
         final TimeObjectStub stub = new TimeObjectStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::isTextual);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::isTextual);
 
         Assertions
                 .assertEquals(
-                        "TimeObjectStub does not support this", illegalStateException.getMessage(),
+                        "TimeObjectStub does not support this", unsupportedOperationException.getMessage(),
                         "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("asText() throws an IllegalStateException if called")
-    void asTextThrowsAnIllegalStateExceptionIfCalled() {
+    @DisplayName("asText() throws an UnsupportedOperationException if called")
+    void asTextThrowsAnUnsupportedOperationExceptionIfCalled() {
         final TimeObjectStub stub = new TimeObjectStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::asText);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::asText);
 
         Assertions
                 .assertEquals(
-                        "TimeObjectStub does not support this", illegalStateException.getMessage(),
+                        "TimeObjectStub does not support this", unsupportedOperationException.getMessage(),
                         "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("hashCode() throws an IllegalStateException if called")
-    void hashCodeThrowsAnIllegalStateExceptionIfCalled() {
+    @DisplayName("hashCode() throws an UnsupportedOperationException if called")
+    void hashCodeThrowsAnUnsupportedOperationExceptionIfCalled() {
         final TimeObjectStub stub = new TimeObjectStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, stub::hashCode);
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, stub::hashCode);
 
         Assertions
                 .assertEquals(
-                        "TimeObjectStub does not support this", illegalStateException.getMessage(),
+                        "TimeObjectStub does not support this", unsupportedOperationException.getMessage(),
                         "Exception message was not what was expected"
                 );
     }
 
     @Test
-    @DisplayName("equals() throws an IllegalStateException if called")
-    void equalsThrowsAnIllegalStateExceptionIfCalled() {
+    @DisplayName("equals() throws an UnsupportedOperationException if called")
+    void equalsThrowsAnUnsupportedOperationExceptionIfCalled() {
         final TimeObjectStub stub = new TimeObjectStub();
 
-        final IllegalStateException illegalStateException = Assertions
-                .assertThrowsExactly(IllegalStateException.class, () -> stub.equals(new Object()));
+        final UnsupportedOperationException unsupportedOperationException = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, () -> stub.equals(new Object()));
 
         Assertions
                 .assertEquals(
-                        "TimeObjectStub does not support this", illegalStateException.getMessage(),
+                        "TimeObjectStub does not support this", unsupportedOperationException.getMessage(),
                         "Exception message was not what was expected"
                 );
     }

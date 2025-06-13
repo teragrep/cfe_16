@@ -49,7 +49,7 @@ public final class EventStub implements Event {
 
     @Override
     public String asString() {
-        throw new IllegalStateException("EventStub does not support this");
+        throw new UnsupportedOperationException("EventStub does not support this");
     }
 
     @Override
@@ -59,11 +59,11 @@ public final class EventStub implements Event {
 
     @Override
     public int hashCode() {
-        throw new IllegalStateException("EventStub does not support this");
+        throw new UnsupportedOperationException("EventStub does not support this");
     }
 
     @Override
     public boolean equals(Object obj) {
-        throw new IllegalStateException("EventStub does not support this");
+        throw new UnsupportedOperationException("EventStub does not support this");
     }
 }

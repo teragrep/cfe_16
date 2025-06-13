@@ -49,37 +49,37 @@ public final class TimeObjectStub implements TimeObject {
 
     @Override
     public boolean isDouble() {
-        throw new IllegalStateException("TimeObjectStub does not support this");
+        throw new UnsupportedOperationException("TimeObjectStub does not support this");
     }
 
     @Override
     public double asDouble() {
-        throw new IllegalStateException("TimeObjectStub does not support this");
+        throw new UnsupportedOperationException("TimeObjectStub does not support this");
     }
 
     @Override
     public boolean canConvertToLong() {
-        throw new IllegalStateException("TimeObjectStub does not support this");
+        throw new UnsupportedOperationException("TimeObjectStub does not support this");
     }
 
     @Override
     public long asLong() {
-        throw new IllegalStateException("TimeObjectStub does not support this");
+        throw new UnsupportedOperationException("TimeObjectStub does not support this");
     }
 
     @Override
     public long asLong(long defaultValue) {
-        throw new IllegalStateException("TimeObjectStub does not support this");
+        throw new UnsupportedOperationException("TimeObjectStub does not support this");
     }
 
     @Override
     public boolean isTextual() {
-        throw new IllegalStateException("TimeObjectStub does not support this");
+        throw new UnsupportedOperationException("TimeObjectStub does not support this");
     }
 
     @Override
     public String asText() {
-        throw new IllegalStateException("TimeObjectStub does not support this");
+        throw new UnsupportedOperationException("TimeObjectStub does not support this");
     }
 
     @Override
@@ -89,11 +89,11 @@ public final class TimeObjectStub implements TimeObject {
 
     @Override
     public int hashCode() {
-        throw new IllegalStateException("TimeObjectStub does not support this");
+        throw new UnsupportedOperationException("TimeObjectStub does not support this");
     }
 
     @Override
     public boolean equals(Object obj) {
-        throw new IllegalStateException("TimeObjectStub does not support this");
+        throw new UnsupportedOperationException("TimeObjectStub does not support this");
     }
 }

@@ -51,42 +51,42 @@ public final class TimestampedHttpEventDataStub implements HttpEventData {
 
     @Override
     public Event event() {
-        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
     public String channel() {
-        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
     public String authenticationToken() {
-        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
     public Integer ackID() {
-        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
     public String timeSource() {
-        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
     public String time() {
-        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
     public long timeAsLong() {
-        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
     public boolean timeParsed() {
-        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
@@ -96,11 +96,11 @@ public final class TimestampedHttpEventDataStub implements HttpEventData {
 
     @Override
     public int hashCode() {
-        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
     public boolean equals(Object obj) {
-        throw new IllegalStateException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 }
