@@ -49,6 +49,7 @@ import com.cloudbees.syslog.SyslogMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonStreamParser;
 import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.HeaderInfo;
@@ -63,6 +64,7 @@ import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
 import com.teragrep.cfe_16.connection.AbstractConnection;
 import com.teragrep.cfe_16.connection.ConnectionFactory;
 import java.time.Instant;
+import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,12 +146,14 @@ public class EventManager {
          * After the event is handled, it is assigned as a value to previousEvent
          * variable.
          */
-        HttpEventData eventData;
+
+        // Init the HttpEventData as a Stub incase fails
+        HttpEventData eventData = new TimestampedHttpEventDataStub();
         Converter converter = new Converter(headerInfo);
         List<SyslogMessage> syslogMessages = new ArrayList<>();
         while (parser.hasNext()) {
-            String jsonObjectStr = parser.next().toString();
             try {
+                String jsonObjectStr = parser.next().toString();
                 /*
                  * Event field cannot be missing or blank. Throws an exception if this is the
                  * case.
@@ -172,9 +176,8 @@ public class EventManager {
                 // Set the previous event if the "current" event was parsed without an exception
                 previousEvent = eventData;
             }
-            catch (JsonProcessingException e) {
-                LOGGER.error("Problem processing JsonObjectString <{}>", jsonObjectStr);
-                continue;
+            catch (JsonProcessingException | JsonParseException | NoSuchElementException e) {
+                LOGGER.error("Problem processing allEventsInJson <{}>", allEventsInJson);
             }
 
             syslogMessages

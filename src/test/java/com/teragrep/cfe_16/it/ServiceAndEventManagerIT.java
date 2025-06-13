@@ -318,6 +318,42 @@ public class ServiceAndEventManagerIT {
         assertEquals("Should get a JSON with fields text, code and ackID", supposedResponse, response);
     }
 
+    /**
+     * Tests for JsonSyntaxException
+     */
+    @Test
+    public void convertDataUsesAStubIfParsingFailsWithMalformedJSONTest() {
+        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": {{{{}}}}";
+        String supposedResponse = "TimestampedHttpEventDataStub does not support this";
+        Exception exception = Assertions
+                .assertThrowsExactly(
+                        UnsupportedOperationException.class,
+                        () -> eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
+                );
+        Assertions
+                .assertEquals(
+                        supposedResponse, exception.getMessage(), "Exception message was not what it was supposed to be"
+                );
+    }
+
+    /**
+     * Tests for EventStub existence, since the Event should not be valid
+     */
+    @Test
+    public void convertDataUsesAStubIfParsingFailsWithEmptyJSONTest() {
+        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": null}";
+        String supposedResponse = "EventStub does not support this";
+        Exception exception = Assertions
+                .assertThrowsExactly(
+                        UnsupportedOperationException.class,
+                        () -> eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
+                );
+        Assertions
+                .assertEquals(
+                        supposedResponse, exception.getMessage(), "Exception message was not what it was supposed to be"
+                );
+    }
+
     /*
      * Tests the EventManager's convertDataWithDefaultChannel() method which is
      * called when a channel is not provided in a request. First we create a Json
