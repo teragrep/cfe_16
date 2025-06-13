@@ -341,11 +341,11 @@ public class ServiceAndEventManagerIT {
 
     /*
      * Tests attempting to send a request, which has no "event"-field in its body.
-     * When this is the case, IllegalStateException is expected to happen.
+     * When this is the case, UnsupportedOperationException is expected to happen.
      */
     @Test
     public void noEventFieldInRequestTest() {
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
             String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements);
         });
@@ -353,11 +353,11 @@ public class ServiceAndEventManagerIT {
 
     /*
      * Tests attempting to send a request, which has a blank "event"-field. When
-     * this is the case, IllegalStateException is expected to happen.
+     * this is the case, UnsupportedOperationException is expected to happen.
      */
     @Test
     public void eventFieldBlankInRequestTest() {
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
             String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements);
         });

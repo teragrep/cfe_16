@@ -60,32 +60,34 @@ class EventStubTest {
     }
 
     @Test
-    @DisplayName("asString() throws IllegalStateException if called")
-    void asStringThrowsIllegalStateExceptionIfCalled() {
-        final EventStub eventStub = new EventStub();
-
-        final Exception exception = Assertions.assertThrowsExactly(IllegalStateException.class, eventStub::asString);
-
-        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("hashCode() throws IllegalStateException if called")
-    void hashCodeThrowsIllegalStateExceptionIfCalled() {
-        final EventStub eventStub = new EventStub();
-
-        final Exception exception = Assertions.assertThrowsExactly(IllegalStateException.class, eventStub::hashCode);
-
-        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("equals() throws IllegalStateException if called")
-    void equalsThrowsIllegalStateExceptionIfCalled() {
+    @DisplayName("asString() throws UnsupportedOperationException if called")
+    void asStringThrowsUnsupportedOperationExceptionIfCalled() {
         final EventStub eventStub = new EventStub();
 
         final Exception exception = Assertions
-                .assertThrowsExactly(IllegalStateException.class, () -> eventStub.equals(new Object()));
+                .assertThrowsExactly(UnsupportedOperationException.class, eventStub::asString);
+
+        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("hashCode() throws UnsupportedOperationException if called")
+    void hashCodeThrowsUnsupportedOperationExceptionIfCalled() {
+        final EventStub eventStub = new EventStub();
+
+        final Exception exception = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, eventStub::hashCode);
+
+        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("equals() throws UnsupportedOperationException if called")
+    void equalsThrowsUnsupportedOperationExceptionIfCalled() {
+        final EventStub eventStub = new EventStub();
+
+        final Exception exception = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, () -> eventStub.equals(new Object()));
 
         Assertions.assertEquals("EventStub does not support this", exception.getMessage());
     }
