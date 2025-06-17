@@ -72,7 +72,6 @@ public class ConfigurationIT {
     private Configuration configuration;
 
     private static Server server;
-    private static final String hostname = "localhost";
     private static Integer port = 1235;
 
     @BeforeAll
@@ -90,7 +89,7 @@ public class ConfigurationIT {
     }
 
     @AfterAll
-    public static void cleanup() throws InterruptedException {
+    public static void cleanup() {
         server.stop();
     }
 

@@ -46,10 +46,9 @@
 package com.teragrep.cfe_16;
 
 import com.teragrep.cfe_16.bo.Session;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.Assert.*;
 
 /*
  * Tests the functionality of SessionManager
@@ -79,35 +78,25 @@ public class SessionManagerTests {
 
         Session session1 = sessionManager.createSession(authToken1);
         Session session2 = sessionManager.createSession(authToken2);
-        assertSame(
-                "Same session should be returned with the same authentication token", session1,
-                sessionManager.getSession(authToken1)
-        );
-        assertSame(
-                "Same session should be returned with the same authentication token", session2,
-                sessionManager.getSession(authToken2)
-        );
-        assertNotSame(
-                "Different session should be returned with a different authentication token", session1,
-                sessionManager.getSession(authToken2)
-        );
-        assertNotSame(
-                "Different session should be returned with a different authentication token", session2,
-                sessionManager.getSession(authToken1)
-        );
-        assertNull(
-                "Getting a session with an unused authentication token should return null",
-                sessionManager.getSession(authToken3)
-        );
+        Assertions
+                .assertSame(session1, sessionManager.getSession(authToken1), "Same session should be returned with the same authentication token");
+        Assertions
+                .assertSame(session2, sessionManager.getSession(authToken2), "Same session should be returned with the same authentication token");
+        Assertions
+                .assertNotSame(session1, sessionManager.getSession(authToken2), "Different session should be returned with a different authentication token");
+        Assertions
+                .assertNotSame(session2, sessionManager.getSession(authToken1), "Different session should be returned with a different authentication token");
+        Assertions
+                .assertNull(sessionManager.getSession(authToken3), "Getting a session with an unused authentication token should return null");
     }
 
     @Test
-    public void sessionCreaationAndDeletionTests() {
+    public void sessionCreationAndDeletionTests() {
         Session session = sessionManager.createSession("AUTH");
-        assertTrue(session.addChannel(Session.DEFAULT_CHANNEL));
-        assertFalse(session.addChannel(Session.DEFAULT_CHANNEL));
-        assertTrue(session.doesChannelExist(Session.DEFAULT_CHANNEL));
-        assertTrue(session.removeChannel(Session.DEFAULT_CHANNEL));
-        assertTrue(!session.doesChannelExist(Session.DEFAULT_CHANNEL));
+        Assertions.assertTrue(session.addChannel(Session.DEFAULT_CHANNEL));
+        Assertions.assertFalse(session.addChannel(Session.DEFAULT_CHANNEL));
+        Assertions.assertTrue(session.doesChannelExist(Session.DEFAULT_CHANNEL));
+        Assertions.assertTrue(session.removeChannel(Session.DEFAULT_CHANNEL));
+        Assertions.assertFalse(session.doesChannelExist(Session.DEFAULT_CHANNEL));
     }
 }

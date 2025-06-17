@@ -52,14 +52,26 @@ import com.teragrep.cfe_16.EventManager;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.Session;
-import com.teragrep.cfe_16.exceptionhandling.*;
+import com.teragrep.cfe_16.exceptionhandling.AuthenticationTokenMissingException;
+import com.teragrep.cfe_16.exceptionhandling.ChannelNotFoundException;
+import com.teragrep.cfe_16.exceptionhandling.ChannelNotProvidedException;
+import com.teragrep.cfe_16.exceptionhandling.EventFieldBlankException;
+import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
+import com.teragrep.cfe_16.exceptionhandling.SessionNotFoundException;
 import com.teragrep.cfe_16.service.HECService;
 import com.teragrep.rlp_03.Server;
 import com.teragrep.rlp_03.ServerFactory;
 import com.teragrep.rlp_03.config.Config;
 import com.teragrep.rlp_03.delegate.DefaultFrameDelegate;
 import com.teragrep.rlp_03.delegate.FrameDelegate;
-import org.junit.jupiter.api.*;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.function.Supplier;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,12 +79,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.function.Supplier;
-
-import static org.junit.Assert.*;
 
 /*
  * Tests the functionality of HECServiceImpl
@@ -88,14 +94,40 @@ import static org.junit.Assert.*;
         "max.ack.age=20000",
         "max.session.age=30000",
         "poll.time=30000",
+        "poll.time=30000",
         "server.print.times=true"
 })
 public class ServiceAndEventManagerIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceAndEventManagerIT.class);
-    private static Server server;
     private static final String hostname = "localhost";
-    private static Integer port = 1601;
+    private static final ServerSocket serverSocket = getSocket();
+    private static final Integer port = 1601;
+    private static Server server;
+    private final HeaderInfo headerInfo = new HeaderInfo();
+    @Autowired
+    private HECService service;
+    @Autowired
+    private AckManager ackManager;
+    private MockHttpServletRequest request1;
+    private MockHttpServletRequest request2;
+    private MockHttpServletRequest request3;
+    private MockHttpServletRequest request4;
+    private MockHttpServletRequest request5;
+    private String eventInJson;
+    private String channel1;
+    private String channel2;
+    private String channel3;
+    private String defaultChannel;
+    private String authToken1;
+    private String authToken2;
+    private String authToken3;
+    private String authToken4;
+    private String ackRequest;
+    private ObjectMapper objectMapper;
+    private JsonNode ackRequestNode;
+    @Autowired
+    private EventManager eventManager;
 
     @BeforeAll
     public static void init_x() throws IOException, InterruptedException {
@@ -112,61 +144,17 @@ public class ServiceAndEventManagerIT {
     }
 
     @AfterAll
-    public static void cleanup() throws InterruptedException {
+    public static void cleanup() {
         server.stop();
     }
 
-    @Autowired
-    private HECService service;
-    @Autowired
-    private AckManager ackManager;
-    private static final ServerSocket serverSocket = getSocket();
-
-    private MockHttpServletRequest request1;
-    private MockHttpServletRequest request2;
-    private MockHttpServletRequest request3;
-    private MockHttpServletRequest request4;
-    private MockHttpServletRequest request5;
-
-    private String eventInJson;
-    private String channel1;
-    private String channel2;
-    private String channel3;
-    private String defaultChannel;
-    private String authToken1;
-    private String authToken2;
-    private String authToken3;
-    private String authToken4;
-
-    private String ackRequest;
-    private ObjectMapper objectMapper;
-    private JsonNode ackRequestNode;
-
-    @Autowired
-    private EventManager eventManager;
-
-    private HeaderInfo headerInfo = new HeaderInfo();
-
     private static ServerSocket getSocket() {
-        ServerSocket socket = null;
-        try {
-            socket = new ServerSocket(1234);
-        }
-        catch (IOException e) {
-            LOGGER.warn("Could not get a server socket: ", e);
-            throw new RuntimeException(e);
-        }
-        return socket;
+        return Assertions.assertDoesNotThrow(() -> new ServerSocket(1234), "Could not get a new Server Socket");
     }
 
     @AfterAll
     public static void closeServerSocket() {
-        try {
-            serverSocket.close();
-        }
-        catch (IOException e) {
-            LOGGER.warn("Could not close server socket: ", e);
-        }
+        Assertions.assertDoesNotThrow(serverSocket::close);
     }
 
     /*
@@ -178,11 +166,6 @@ public class ServiceAndEventManagerIT {
      */
     @BeforeEach
     public void initialize() {
-        /*
-         * try { serverSocket = new ServerSocket(props.getSyslogPort()); } catch
-         * (IOException e) { e.printStackTrace(); }
-         */
-
         objectMapper = new ObjectMapper();
         request1 = new MockHttpServletRequest();
         request2 = new MockHttpServletRequest();
@@ -208,16 +191,9 @@ public class ServiceAndEventManagerIT {
 
         ackRequest = "{\"acks\": [1,3,4]}";
 
-        ackRequestNode = objectMapper.createObjectNode();
+        ackRequestNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(ackRequest));
 
         defaultChannel = Session.DEFAULT_CHANNEL;
-
-        try {
-            ackRequestNode = objectMapper.readTree(ackRequest);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /*
@@ -228,33 +204,23 @@ public class ServiceAndEventManagerIT {
         String supposedResponse;
 
         supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
-        assertEquals(
-                "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 0)",
-                supposedResponse, service.sendEvents(request1, channel3, eventInJson).toString()
-        );
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request1, channel3, eventInJson).toString(), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID " + "should be 0)");
 
         supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":1}";
-        assertEquals(
-                "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 1)",
-                supposedResponse, service.sendEvents(request1, channel3, eventInJson).toString()
-        );
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request1, channel3, eventInJson).toString(), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID " + "should be 1)");
 
         supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
-        assertEquals(
-                "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 0)",
-                supposedResponse, service.sendEvents(request1, channel2, eventInJson).toString()
-        );
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request1, channel2, eventInJson).toString(), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID " + "should be 0)");
 
-        assertEquals(
-                "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 0)",
-                supposedResponse, service.sendEvents(request3, channel3, eventInJson).toString()
-        );
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request3, channel3, eventInJson).toString(), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID " + "should be 0)");
 
         supposedResponse = "{\"acks\":{\"1\":true,\"3\":false,\"4\":false}}";
-        assertEquals(
-                "JSON object should be returned with ack statuses.", supposedResponse,
-                service.getAcks(request1, channel3, ackRequestNode).toString()
-        );
+        Assertions
+                .assertEquals(supposedResponse, service.getAcks(request1, channel3, ackRequestNode).toString(), "JSON object should be returned with ack statuses.");
     }
 
     /*
@@ -276,7 +242,10 @@ public class ServiceAndEventManagerIT {
     public void sendEventsWithoutChannelTest() {
         String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
         String response = service.sendEvents(request1, null, eventInJson).toString();
-        assertEquals("Service should return JSON object with fields 'text' and 'code'", supposedResponse, response);
+        Assertions
+                .assertEquals(
+                        supposedResponse, response, "Service should return JSON object with fields 'text' and 'code'"
+                );
     }
 
     /*
@@ -335,12 +304,13 @@ public class ServiceAndEventManagerIT {
     @Test
     public void convertDataTest() {
         /*AckManager ackManager = new AckManager();*/
-        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, "
+                + "world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": " + "\"myindex\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":2}";
         String response = eventManager
                 .convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
                 .toString();
-        assertEquals("Should get a JSON with fields text, code and ackID", supposedResponse, response);
+        Assertions.assertEquals(supposedResponse, response, "Should get a JSON with fields text, code and ackID");
     }
 
     /*
@@ -354,13 +324,17 @@ public class ServiceAndEventManagerIT {
     @Test
     public void convertDataTestWithDefaultChannel() {
         /* AckManager ackManager = new AckManager(); */
-        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, "
+                + "world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": " + "\"myindex\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
 
-        assertEquals(
-                "Should get a JSON with fields text and code.", supposedResponse,
-                eventManager.convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager).toString()
-        );
+        Assertions
+                .assertEquals(
+                        supposedResponse, eventManager
+                                .convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager)
+                                .toString(),
+                        "Should get a JSON with fields text and code."
+                );
 
     }
 
@@ -372,7 +346,8 @@ public class ServiceAndEventManagerIT {
     public void noEventFieldInRequestTest() {
         Assertions.assertThrows(EventFieldMissingException.class, () -> {
             /*AckManager ackManager = new AckManager();*/
-            String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+            String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\","
+                    + " \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
         });
     }
@@ -385,7 +360,8 @@ public class ServiceAndEventManagerIT {
     public void eventFieldBlankInRequestTest() {
         Assertions.assertThrows(EventFieldBlankException.class, () -> {
             /*AckManager ackManager = new AckManager();*/
-            String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+            String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", "
+                    + "\"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
         });
     }
@@ -400,151 +376,196 @@ public class ServiceAndEventManagerIT {
         // are read into a JsonNode object.
 
         // content1: time is in epoch seconds (10 digits)
-        String content1 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1277464192}";
+        String content1 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
+                + "\"mysourcetype\", \"time\": 1277464192}";
         // content2: "time"-field is not given
-        String content2 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\"}";
+        String content2 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": " + "\"mysourcetype\"}";
         // content3: time is given in epoch seconds and a decimal giving the epoch
         // milliseconds
-        String content3 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1433188255.253}";
+        String content3 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
+                + "\"mysourcetype\", \"time\": 1433188255.253}";
         // content4: time is given inepoch milliseconds (13 digits)
-        String content4 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1433188255253}";
+        String content4 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
+                + "\"mysourcetype\", \"time\": 1433188255253}";
         // content5: time is given as a string
-        String content5 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": \"1433188255253\"}";
+        String content5 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
+                + "\"mysourcetype\", \"time\": \"1433188255253\"}";
         // content6: time is given with too small amount of digits
-        String content6 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 143318}";
+        String content6 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
+                + "\"mysourcetype\", \"time\": 143318}";
         // content7: time is given in epoch centiseconds
-        String content7 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 143318825525}";
+        String content7 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
+                + "\"mysourcetype\", \"time\": 143318825525}";
         // content8: time is given with too many digits
-        String content8 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1433188255252321}";
+        String content8 = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
+                + "\"mysourcetype\", \"time\": 1433188255252321}";
 
-        JsonNode node1 = null;
-        JsonNode node2 = null;
-        JsonNode node3 = null;
-        JsonNode node4 = null;
-        JsonNode node5 = null;
-        JsonNode node6 = null;
-        JsonNode node7 = null;
-        JsonNode node8 = null;
+        final JsonNode node1 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content1));
+        final JsonNode node2 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content2));
+        final JsonNode node3 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content3));
+        final JsonNode node4 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content4));
+        final JsonNode node5 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content5));
+        final JsonNode node6 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content6));
+        final JsonNode node7 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content7));
+        final JsonNode node8 = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(content8));
 
-        try {
-            node1 = objectMapper.readTree(content1);
-            node2 = objectMapper.readTree(content2);
-            node3 = objectMapper.readTree(content3);
-            node4 = objectMapper.readTree(content4);
-            node5 = objectMapper.readTree(content5);
-            node6 = objectMapper.readTree(content6);
-            node7 = objectMapper.readTree(content7);
-            node8 = objectMapper.readTree(content8);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        HttpEventData testData1 = new HttpEventData();
-        HttpEventData testData2 = new HttpEventData();
-        HttpEventData testData3 = new HttpEventData();
-        HttpEventData testData4 = new HttpEventData();
-        HttpEventData testData5 = new HttpEventData();
-        HttpEventData testData6 = new HttpEventData();
-        HttpEventData testData7 = new HttpEventData();
-        HttpEventData testData8 = new HttpEventData();
-
-        // Accessing a private method handleTime() in EventManager and using the created
-        // nodes and empty HttpEventData objects as parameters
-        try {
-            testData1 = Whitebox.invokeMethod(eventManager, "handleTime", testData1, node1, null);
-            testData2 = Whitebox.invokeMethod(eventManager, "handleTime", testData2, node2, null);
-            testData3 = Whitebox.invokeMethod(eventManager, "handleTime", testData3, node3, null);
-            testData4 = Whitebox.invokeMethod(eventManager, "handleTime", testData4, node4, null);
-            testData5 = Whitebox.invokeMethod(eventManager, "handleTime", testData5, node5, null);
-            testData6 = Whitebox.invokeMethod(eventManager, "handleTime", testData6, node6, null);
-            testData7 = Whitebox.invokeMethod(eventManager, "handleTime", testData7, node7, null);
-            testData8 = Whitebox.invokeMethod(eventManager, "handleTime", testData8, node8, null);
-        }
-        catch (Exception e) {
-            LOGGER.warn("Could not invokeMethods properly: ", e);
-        }
+        HttpEventData testData1 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node1, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData2 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node2, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData3 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node3, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData4 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node4, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData5 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node5, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData6 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node6, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData7 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node7, null), "Could not invokeMethods properly"
+                );
+        HttpEventData testData8 = Assertions
+                .assertDoesNotThrow(
+                        () -> Whitebox.invokeMethod(eventManager, "handleTime", new HttpEventData(), node8, null), "Could not invokeMethods properly"
+                );
 
         /*
          * Testing the getTimeSource(), isTimeParsed() and getTimeAsLong() methods from
          * the HttpEventData objects that were returned from EventManager's handleTime()
          * method.
          */
-        assertEquals(
-                "Time source should be 'reported' when the time is specified in a request", "reported",
-                testData1.getTimeSource()
-        );
-        assertTrue("timeParsed should be true when the time is specified in a request", testData1.isTimeParsed());
-        assertEquals(
-                "Time should have been converted to epoch milliseconds", 1277464192000L, testData1.getTimeAsLong()
-        );
+        Assertions
+                .assertEquals(
+                        "reported", testData1.getTimeSource(),
+                        "Time source should be 'reported' when the time is specified in a request"
+                );
+        Assertions
+                .assertTrue(
+                        testData1.isTimeParsed(), "timeParsed should be true when the time is specified in a request"
+                );
+        Assertions
+                .assertEquals(
+                        1277464192000L, testData1.getTimeAsLong(),
+                        "Time should have been converted to epoch milliseconds"
+                );
 
-        assertEquals(
-                "Time source should be 'generated' when it's not specified in a request", "generated",
-                testData2.getTimeSource()
-        );
-        assertFalse("timeParsed should be false when time is not specified in a request", testData2.isTimeParsed());
-        assertEquals("Time as long should be 0 when time is not specified in a request", 0, testData2.getTimeAsLong());
+        Assertions
+                .assertEquals(
+                        "generated", testData2.getTimeSource(),
+                        "Time source should be 'generated' when it's not specified in a request"
+                );
+        Assertions
+                .assertFalse(
+                        testData2.isTimeParsed(), "timeParsed should be false when time is not specified in a request"
+                );
+        Assertions
+                .assertEquals(
+                        0, testData2.getTimeAsLong(), "Time as long should be 0 when time is not specified in a request"
+                );
 
-        assertEquals(
-                "Time source should be 'reported' when the time is specified in a request", "reported",
-                testData3.getTimeSource()
-        );
-        assertTrue("timeParsed should be true when time is specified in a request.", testData3.isTimeParsed());
-        assertEquals(
-                "Time should be converted to epoch milliseconds when it's provided in a request in epoch seconds with decimals.",
-                1433188255253L, testData3.getTimeAsLong()
-        );
+        Assertions
+                .assertEquals(
+                        "reported", testData3.getTimeSource(),
+                        "Time source should be 'reported' when the time is specified in a request"
+                );
+        Assertions
+                .assertTrue(testData3.isTimeParsed(), "timeParsed should be true when time is specified in a request.");
+        Assertions
+                .assertEquals(
+                        1433188255253L, testData3.getTimeAsLong(),
+                        "Time should be converted to epoch milliseconds when it's provided in a request in "
+                                + "epoch seconds with decimals."
+                );
 
-        assertEquals(
-                "Time source should be 'reported' when the time is specified in a request", "reported",
-                testData4.getTimeSource()
-        );
-        assertTrue("timeParsed should be true when time is specified in a request.", testData4.isTimeParsed());
-        assertEquals(
-                "Time should be in epoch milliseconds when it is provided as epoch milliseconds in the request",
-                1433188255253L, testData4.getTimeAsLong()
-        );
+        Assertions
+                .assertEquals(
+                        "reported", testData4.getTimeSource(),
+                        "Time source should be 'reported' when the time is specified in a request"
+                );
+        Assertions
+                .assertTrue(testData4.isTimeParsed(), "timeParsed should be true when time is specified in a request.");
+        Assertions
+                .assertEquals(
+                        1433188255253L, testData4.getTimeAsLong(),
+                        "Time should be in epoch milliseconds when it is provided as epoch milliseconds in "
+                                + "the request"
+                );
 
-        assertEquals(
-                "Time source should be 'generated' when time is given as a string in a request", "generated",
-                testData5.getTimeSource()
-        );
-        assertFalse("timeParsed should be false when time is given as a string in a request", testData5.isTimeParsed());
-        assertEquals("Time should be 0 when time is given as a string in a request", 0, testData5.getTimeAsLong());
+        Assertions
+                .assertEquals(
+                        "generated", testData5.getTimeSource(),
+                        "Time source should be 'generated' when time is given as a string in a request"
+                );
+        Assertions
+                .assertFalse(
+                        testData5.isTimeParsed(),
+                        "timeParsed should be false when time is given as a string in a request"
+                );
+        Assertions
+                .assertEquals(
+                        0, testData5.getTimeAsLong(), "Time should be 0 when time is given as a string in a request"
+                );
 
-        assertEquals(
-                "Time source should be 'generated' when time is given as an integer with less than 10 digits",
-                "generated", testData6.getTimeSource()
-        );
-        assertFalse(
-                "timeParsed should be false when time is given as an integer with less than 10 digits",
-                testData6.isTimeParsed()
-        );
-        assertEquals("Time as long should be as provided in the request.", 143318, testData6.getTimeAsLong());
+        Assertions
+                .assertEquals(
+                        "generated", testData6.getTimeSource(),
+                        "Time source should be 'generated' when time is given as an integer with less than 10"
+                                + " digits"
+                );
+        Assertions
+                .assertFalse(
+                        testData6.isTimeParsed(),
+                        "timeParsed should be false when time is given as an integer with less than 10 digits"
+                );
+        Assertions
+                .assertEquals(143318, testData6.getTimeAsLong(), "Time as long should be as provided in the request.");
 
-        assertEquals(
-                "Time source should be 'reported' when the time is specified in a request with 10-13 digits",
-                "reported", testData7.getTimeSource()
-        );
-        assertTrue(
-                "timeParsed should be true when time is specified in a request with 10-13 digits",
-                testData7.isTimeParsed()
-        );
-        assertEquals(
-                "Time should be converted to epoch milliseconds when provided in a request with 10-13 digits",
-                1433188255250L, testData7.getTimeAsLong()
-        );
+        Assertions
+                .assertEquals(
+                        "reported", testData7.getTimeSource(),
+                        "Time source should be 'reported' when the time is specified in a request with 10-13 "
+                                + "digits"
+                );
+        Assertions
+                .assertTrue(
+                        testData7.isTimeParsed(),
+                        "timeParsed should be true when time is specified in a request with 10-13 digits"
+                );
+        Assertions
+                .assertEquals(
+                        1433188255250L, testData7.getTimeAsLong(),
+                        "Time should be converted to epoch milliseconds when provided in a request with 10-13"
+                                + " digits"
+                );
 
-        assertEquals(
-                "Time source should be 'generated' when time is given as an integer with more than 13 digits",
-                "generated", testData8.getTimeSource()
-        );
-        assertFalse(
-                "timeParsed should be false when time is given as an integer with more than 13 digits",
-                testData8.isTimeParsed()
-        );
-        assertEquals("Time should be as it's provided in a request.", 1433188255252321L, testData8.getTimeAsLong());
+        Assertions
+                .assertEquals(
+                        "generated", testData8.getTimeSource(),
+                        "Time source should be 'generated' when time is given as an integer with more than 13"
+                                + " digits"
+                );
+        Assertions
+                .assertFalse(
+                        testData8.isTimeParsed(),
+                        "timeParsed should be false when time is given as an integer with more than 13 digits"
+                );
+        Assertions
+                .assertEquals(
+                        1433188255252321L, testData8.getTimeAsLong(), "Time should be as it's provided in a request."
+                );
     }
 
     /*
@@ -553,12 +574,18 @@ public class ServiceAndEventManagerIT {
      */
     public void sendingMultipleEventsTest() {
         AckManager ackManager = new AckManager();
-        String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
+        String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
+                + "\"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the "
+                + "barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": "
+                + "\"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
-        assertEquals(
-                "Should get a JSON with fields text, code and ackID", supposedResponse,
-                eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager).toString()
-        );
+        Assertions
+                .assertEquals(
+                        supposedResponse, eventManager
+                                .convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
+                                .toString(),
+                        "Should get a JSON with fields text, code and ackID"
+                );
 
     }
 
@@ -568,11 +595,17 @@ public class ServiceAndEventManagerIT {
      */
     public void sendingMultipleEventsWithDefaultChannelTest() {
         AckManager ackManager = new AckManager();
-        String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
+        String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
+                + "\"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the "
+                + "barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": "
+                + "\"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
-        assertEquals(
-                "Should get a JSON with fields text, code and ackID", supposedResponse,
-                eventManager.convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager).toString()
-        );
+        Assertions
+                .assertEquals(
+                        supposedResponse, eventManager
+                                .convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager)
+                                .toString(),
+                        "Should get a JSON with fields text, code and ackID"
+                );
     }
 }
