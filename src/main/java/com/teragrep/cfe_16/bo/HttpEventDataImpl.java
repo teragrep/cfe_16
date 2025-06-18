@@ -48,7 +48,7 @@ package com.teragrep.cfe_16.bo;
 import com.teragrep.cfe_16.event.Event;
 import java.util.Objects;
 
-public final class TimestampedHttpEventData implements HttpEventData {
+public final class HttpEventDataImpl implements HttpEventData {
 
     private final String channel;
     private final Event event;
@@ -59,7 +59,7 @@ public final class TimestampedHttpEventData implements HttpEventData {
     private final long timeAsLong;
     private final boolean timeParsed;
 
-    public TimestampedHttpEventData(
+    public HttpEventDataImpl(
             String channel,
             Event event,
             String authenticationToken,
@@ -136,7 +136,7 @@ public final class TimestampedHttpEventData implements HttpEventData {
             return false;
         }
 
-        TimestampedHttpEventData that = (TimestampedHttpEventData) o;
+        HttpEventDataImpl that = (HttpEventDataImpl) o;
         return timeAsLong == that.timeAsLong && timeParsed == that.timeParsed && Objects
                 .equals(channel, that.channel) && Objects.equals(event, that.event) && Objects
                         .equals(authenticationToken, that.authenticationToken)

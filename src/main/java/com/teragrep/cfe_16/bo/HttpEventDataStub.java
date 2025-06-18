@@ -47,7 +47,7 @@ package com.teragrep.cfe_16.bo;
 
 import com.teragrep.cfe_16.event.Event;
 
-public final class TimestampedHttpEventDataStub implements HttpEventData {
+public final class HttpEventDataStub implements HttpEventData {
 
     @Override
     public Event event() {

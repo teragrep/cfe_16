@@ -46,7 +46,7 @@
 package com.teragrep.cfe_16.event;
 
 import com.teragrep.cfe_16.bo.HttpEventData;
-import com.teragrep.cfe_16.bo.TimestampedHttpEventData;
+import com.teragrep.cfe_16.bo.HttpEventDataImpl;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -154,7 +154,7 @@ public final class EventTime {
             timeSource = "generated";
         }
 
-        return new TimestampedHttpEventData(
+        return new HttpEventDataImpl(
                 this.channel,
                 this.event,
                 this.authToken,
