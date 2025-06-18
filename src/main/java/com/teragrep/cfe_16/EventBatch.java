@@ -61,8 +61,8 @@ import com.teragrep.cfe_16.event.EventTime;
 import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.event.JsonEventImpl;
 import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
-import com.teragrep.cfe_16.sender.AbstractSender;
-import com.teragrep.cfe_16.sender.SenderFactory;
+import com.teragrep.cfe_16.connection.AbstractConnection;
+import com.teragrep.cfe_16.connection.SenderFactory;
 import java.time.Instant;
 import java.util.NoSuchElementException;
 import org.slf4j.Logger;
@@ -84,7 +84,7 @@ public class EventBatch {
     @Autowired
     private Configuration configuration;
 
-    private AbstractSender sender;
+    private AbstractConnection sender;
 
     public EventBatch() {
         this.objectMapper = new ObjectMapper();
