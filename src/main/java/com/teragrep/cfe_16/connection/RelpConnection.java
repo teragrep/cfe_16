@@ -56,7 +56,7 @@ import java.util.concurrent.TimeoutException;
 
 public class RelpConnection extends AbstractConnection {
 
-    private final com.teragrep.rlp_01.RelpConnection sender;
+    private final com.teragrep.rlp_01.RelpConnection connection;
     private static final Logger LOGGER = LoggerFactory.getLogger(RelpConnection.class);
     //settings for timeouts, if they are 0 that we skip them
     //default are 0
@@ -67,10 +67,10 @@ public class RelpConnection extends AbstractConnection {
 
     public RelpConnection(String hostname, int port) {
         super(hostname, port);
-        this.sender = new com.teragrep.rlp_01.RelpConnection();
-        this.sender.setConnectionTimeout(connectionTimeout);
-        this.sender.setReadTimeout(this.readTimeout);
-        this.sender.setWriteTimeout(this.writeTimeout);
+        this.connection = new com.teragrep.rlp_01.RelpConnection();
+        this.connection.setConnectionTimeout(connectionTimeout);
+        this.connection.setReadTimeout(this.readTimeout);
+        this.connection.setWriteTimeout(this.writeTimeout);
         connect();
     }
 
@@ -80,7 +80,7 @@ public class RelpConnection extends AbstractConnection {
             boolean connected = false;
             try {
                 LOGGER.debug("Connecting to RELP server");
-                connected = this.sender.connect(this.hostname, this.port);
+                connected = this.connection.connect(this.hostname, this.port);
             }
             catch (Exception e) {
                 LOGGER.warn("Failed to connect to RELP Server: ", e);
@@ -102,13 +102,13 @@ public class RelpConnection extends AbstractConnection {
 
     synchronized private void tearDown() {
         LOGGER.debug("Tearing down connection");
-        this.sender.tearDown();
+        this.connection.tearDown();
     }
 
     synchronized private void disconnect() {
         try {
             LOGGER.debug("Disconnecting from RELP server");
-            this.sender.disconnect();
+            this.connection.disconnect();
         }
         catch (IllegalStateException | IOException | TimeoutException e) {
             LOGGER.warn("Failed to disconnect from RELP Server: ", e);
@@ -145,7 +145,7 @@ public class RelpConnection extends AbstractConnection {
         while (notSent) {
             try {
                 LOGGER.debug("Committing a RELP batch");
-                this.sender.commit(relpBatch);
+                this.connection.commit(relpBatch);
             }
             catch (IllegalStateException | IOException | TimeoutException e) {
                 LOGGER.warn("Failed to commit batch: ", e);

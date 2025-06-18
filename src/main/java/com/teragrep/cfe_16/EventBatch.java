@@ -84,24 +84,24 @@ public class EventBatch {
     @Autowired
     private Configuration configuration;
 
-    private AbstractConnection sender;
+    private AbstractConnection connection;
 
     public EventBatch() {
         this.objectMapper = new ObjectMapper();
     }
 
     @PostConstruct
-    public void setupSender() {
-        LOGGER.debug("Setting up sender");
+    public void setupConnection() {
+        LOGGER.debug("Setting up connection");
         try {
-            this.sender = ConnectionFactory
-                    .createSender(
+            this.connection = ConnectionFactory
+                    .createConnection(
                             this.configuration.getSysLogProtocol(), this.configuration.getSyslogHost(),
                             this.configuration.getSyslogPort()
                     );
         }
         catch (IOException e) {
-            LOGGER.error("Error creating sender", e);
+            LOGGER.error("Error creating connection", e);
             throw new InternalServerErrorException();
         }
     }
@@ -183,7 +183,7 @@ public class EventBatch {
         // the SyslogMessageSender.sendMessage() is synchronized
         try {
             SyslogMessage[] messages = syslogMessages.toArray(new SyslogMessage[syslogMessages.size()]);
-            this.sender.sendMessages(messages);
+            this.connection.sendMessages(messages);
         }
         catch (IOException e) {
             throw new InternalServerErrorException(e);

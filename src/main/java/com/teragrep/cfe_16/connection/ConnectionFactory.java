@@ -54,8 +54,8 @@ public class ConnectionFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionFactory.class);
 
-    public static AbstractConnection createSender(String type, String hostname, int port) throws IOException {
-        LOGGER.debug("Creating sender for type <[{}]> to <[{}]>:<[{}]>", type, hostname, port);
+    public static AbstractConnection createConnection(String type, String hostname, int port) throws IOException {
+        LOGGER.debug("Creating connection for type <[{}]> to <[{}]>:<[{}]>", type, hostname, port);
         if (type.equalsIgnoreCase("UDP")) {
             return new UdpConnection(hostname, port);
         }
@@ -66,7 +66,7 @@ public class ConnectionFactory {
             return new RelpConnection(hostname, port);
         }
         else {
-            throw new IOException("Invalid sender type: " + type);
+            throw new IOException("Invalid connection type: " + type);
         }
     }
 }
