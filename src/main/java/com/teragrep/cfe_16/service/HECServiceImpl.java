@@ -90,7 +90,7 @@ public class HECServiceImpl implements HECService {
     private TokenManager tokenManager;
 
     @Autowired
-    private EventManager eventManager;
+    private EventBatch eventBatch;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
