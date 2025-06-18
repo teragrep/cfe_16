@@ -131,7 +131,7 @@ public class SendSingleEventIT {
     }
 
     @Test
-    public void send1EventTest() throws IOException, InterruptedException {
+    public void send1EventTest() {
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":" + 0 + "}";
         Assertions
                 .assertEquals(supposedResponse, service.sendEvents(request1, channel1, eventInJson).toString(), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID " + "should be " + 0 + ")");

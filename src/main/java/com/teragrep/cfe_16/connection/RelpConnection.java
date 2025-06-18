@@ -124,7 +124,7 @@ public class RelpConnection extends AbstractConnection {
     }
 
     @Override
-    synchronized public void sendMessages(SyslogMessage[] syslogMessages) throws IOException {
+    synchronized public void sendMessages(SyslogMessage[] syslogMessages) {
         final RelpBatch relpBatch = new RelpBatch();
         for (SyslogMessage syslogMessage : syslogMessages) {
             relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
@@ -133,7 +133,7 @@ public class RelpConnection extends AbstractConnection {
     }
 
     @Override
-    synchronized public void sendMessage(SyslogMessage syslogMessage) throws IOException {
+    synchronized public void sendMessage(SyslogMessage syslogMessage) {
         final RelpBatch relpBatch = new RelpBatch();
         relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
         doSend(relpBatch);

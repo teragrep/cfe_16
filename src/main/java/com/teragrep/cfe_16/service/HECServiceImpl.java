@@ -45,17 +45,25 @@
  */
 package com.teragrep.cfe_16.service;
 
+import com.cloudbees.syslog.SyslogMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.teragrep.cfe_16.*;
-import com.teragrep.cfe_16.bo.HeaderInfo;
+import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.Session;
+import com.teragrep.cfe_16.config.Configuration;
+import com.teragrep.cfe_16.connection.AbstractConnection;
+import com.teragrep.cfe_16.connection.ConnectionFactory;
 import com.teragrep.cfe_16.exceptionhandling.AuthenticationTokenMissingException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotFoundException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotProvidedException;
+import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
 import com.teragrep.cfe_16.exceptionhandling.SessionNotFoundException;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,12 +89,30 @@ public class HECServiceImpl implements HECService {
     private TokenManager tokenManager;
 
     @Autowired
-    private EventBatch eventBatch;
-
-    @Autowired
     private RequestHandler requestHandler;
 
+    @Autowired
+    private Configuration configuration;
+
+    private AbstractConnection connection;
+
     public HECServiceImpl() {
+    }
+
+    @PostConstruct
+    void init() {
+        LOGGER.debug("Setting up connection");
+        try {
+            this.connection = ConnectionFactory
+                    .createConnection(
+                            this.configuration.getSysLogProtocol(), this.configuration.getSyslogHost(),
+                            this.configuration.getSyslogPort()
+                    );
+        }
+        catch (IOException e) {
+            LOGGER.error("Error creating connection", e);
+            throw new InternalServerErrorException();
+        }
     }
 
     @Override
@@ -100,7 +126,6 @@ public class HECServiceImpl implements HECService {
         // AspectLoggerWrapper.logMetricDuration(null, "new_metric",
         // MetricDurationOptionsImpl.MetricDuration.P10S);
         String authHeader = request.getHeader("Authorization");
-        HeaderInfo headerInfo = requestHandler.createHeaderInfoObject(request);
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {
@@ -126,11 +151,55 @@ public class HECServiceImpl implements HECService {
             session.addChannel(channel);
         }
 
-        // TODO: find a nice way of not passing AckManager instance
-        ObjectNode ackNode = this.eventBatch
-                .convertData(authToken, channel, eventInJson, headerInfo, this.acknowledgements);
+        acknowledgements.initializeContext(authToken, channel);
+        int ackId = acknowledgements.getCurrentAckValue(authToken, channel);
+        boolean incremented = acknowledgements.incrementAckValue(authToken, channel);
+        if (!incremented) {
+            throw new InternalServerErrorException("Ack value couldn't be incremented.");
+        }
+        Ack ack = new Ack(ackId, false);
+        boolean addedAck = acknowledgements.addAck(authToken, channel, ack);
+        if (!addedAck) {
+            throw new InternalServerErrorException("Ack ID " + ackId + " couldn't be added to the Ack set.");
+        }
 
-        return ackNode;
+        List<SyslogMessage> syslogMessages = new SyslogBatch(
+                new EventBatch(
+                        authToken,
+                        channel,
+                        eventInJson
+
+                ).asHttpEventDataList(),
+                requestHandler.createHeaderInfoObject(request)
+        ).asSyslogMessages();
+
+        try {
+            // create a new object to avoid blocking of threads because
+            // the SyslogMessageSender.sendMessage() is synchronized
+            this.connection.sendMessages(syslogMessages.toArray(new SyslogMessage[syslogMessages.size()]));
+        }
+        catch (IOException e) {
+            throw new InternalServerErrorException(e);
+        }
+
+        boolean shouldAck = !channel.equals(Session.DEFAULT_CHANNEL);
+
+        if (shouldAck) {
+            boolean acked = acknowledgements.acknowledge(authToken, channel, ackId);
+            if (!acked) {
+                throw new InternalServerErrorException("Ack ID " + ackId + " not Acked.");
+            }
+        }
+
+        ObjectNode responseNode = this.objectMapper.createObjectNode();
+
+        responseNode.put("text", "Success");
+        responseNode.put("code", 0);
+        if (shouldAck) {
+            responseNode.put("ackID", ackId);
+        }
+
+        return responseNode;
     }
 
     // @LogAnnotation(type = LogType.RESPONSE)

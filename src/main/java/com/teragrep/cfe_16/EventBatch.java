@@ -45,65 +45,34 @@
  */
 package com.teragrep.cfe_16;
 
-import com.cloudbees.syslog.SyslogMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonStreamParser;
-import com.teragrep.cfe_16.bo.Ack;
-import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
-import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.bo.HttpEventDataStub;
-import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.event.EventTime;
 import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.event.JsonEventImpl;
-import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
-import com.teragrep.cfe_16.connection.AbstractConnection;
-import com.teragrep.cfe_16.connection.ConnectionFactory;
 import java.time.Instant;
 import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class EventBatch {
+public final class EventBatch {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventBatch.class);
-    private final ObjectMapper objectMapper;
+    private final String authToken;
+    private final String channel;
+    private final String allEventInJSON;
 
-    @Autowired
-    private Configuration configuration;
-
-    private AbstractConnection connection;
-
-    public EventBatch() {
-        this.objectMapper = new ObjectMapper();
-    }
-
-    @PostConstruct
-    public void setupConnection() {
-        LOGGER.debug("Setting up connection");
-        try {
-            this.connection = ConnectionFactory
-                    .createConnection(
-                            this.configuration.getSysLogProtocol(), this.configuration.getSyslogHost(),
-                            this.configuration.getSyslogPort()
-                    );
-        }
-        catch (IOException e) {
-            LOGGER.error("Error creating connection", e);
-            throw new InternalServerErrorException();
-        }
+    public EventBatch(String authToken, String channel, String allEventInJSON) {
+        this.authToken = authToken;
+        this.channel = channel;
+        this.allEventInJSON = allEventInJSON;
     }
 
     /*
@@ -112,27 +81,10 @@ public class EventBatch {
      * the channel name as string parameters. Returns a JSON node with ack id if
      * everything is successful. Example: {"text":"Success","code":0,"ackID":0}
      */
-    public ObjectNode convertData(
-            String authToken,
-            String channel,
-            String allEventsInJson,
-            HeaderInfo headerInfo,
-            Acknowledgements acknowledgements
-    ) {
+    public List<HttpEventData> asHttpEventDataList() {
         HttpEventData previousEvent = new HttpEventDataStub();
 
-        acknowledgements.initializeContext(authToken, channel);
-        int ackId = acknowledgements.getCurrentAckValue(authToken, channel);
-        boolean incremented = acknowledgements.incrementAckValue(authToken, channel);
-        if (!incremented) {
-            throw new InternalServerErrorException("Ack value couldn't be incremented.");
-        }
-        Ack ack = new Ack(ackId, false);
-        boolean addedAck = acknowledgements.addAck(authToken, channel, ack);
-        if (!addedAck) {
-            throw new InternalServerErrorException("Ack ID " + ackId + " couldn't be added to the Ack set.");
-        }
-        JsonStreamParser parser = new JsonStreamParser(allEventsInJson);
+        JsonStreamParser parser = new JsonStreamParser(this.allEventInJSON);
 
         /*
          * There can be multiple events in one request. Here they are handled one by
@@ -145,8 +97,7 @@ public class EventBatch {
 
         // Init the HttpEventData as a Stub incase fails
         HttpEventData eventData = new HttpEventDataStub();
-        Converter converter = new Converter();
-        List<SyslogMessage> syslogMessages = new ArrayList<>();
+        List<HttpEventData> syslogMessages = new ArrayList<>();
         while (parser.hasNext()) {
             try {
                 String jsonObjectStr = parser.next().toString();
@@ -161,9 +112,9 @@ public class EventBatch {
                 * Can throw an EventFieldBlankException
                 */
                 eventData = new EventTime(
-                        channel,
+                        this.channel,
                         jsonEvent.asEvent(),
-                        authToken,
+                        this.authToken,
                         0,
                         previousEvent,
                         jsonEvent.asTimeObject()
@@ -173,39 +124,12 @@ public class EventBatch {
                 previousEvent = eventData;
             }
             catch (JsonProcessingException | JsonParseException | NoSuchElementException e) {
-                LOGGER.error("Problem processing allEventsInJson <{}>", allEventsInJson);
+                LOGGER.error("Problem processing allEventsInJson <{}>", this.allEventInJSON);
             }
 
-            syslogMessages.add(converter.httpToSyslog(eventData, headerInfo));
+            syslogMessages.add(eventData);
         }
 
-        // create a new object to avoid blocking of threads because
-        // the SyslogMessageSender.sendMessage() is synchronized
-        try {
-            SyslogMessage[] messages = syslogMessages.toArray(new SyslogMessage[syslogMessages.size()]);
-            this.connection.sendMessages(messages);
-        }
-        catch (IOException e) {
-            throw new InternalServerErrorException(e);
-        }
-
-        boolean shouldAck = channel != null && !channel.equals(Session.DEFAULT_CHANNEL);
-
-        if (shouldAck) {
-            boolean acked = acknowledgements.acknowledge(authToken, channel, ackId);
-            if (!acked) {
-                throw new InternalServerErrorException("Ack ID " + ackId + " not Acked.");
-            }
-        }
-
-        ObjectNode responseNode = this.objectMapper.createObjectNode();
-
-        responseNode.put("text", "Success");
-        responseNode.put("code", 0);
-        if (shouldAck) {
-            responseNode.put("ackID", ackId);
-        }
-
-        return responseNode;
+        return syslogMessages;
     }
 }
