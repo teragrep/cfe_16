@@ -91,11 +91,11 @@ public class EventBatch {
     }
 
     @PostConstruct
-    public void setupSender() {
+    public void setupConnection() {
         LOGGER.debug("Setting up connection");
         try {
             this.connection = ConnectionFactory
-                    .createSender(
+                    .createConnection(
                             this.configuration.getSysLogProtocol(), this.configuration.getSyslogHost(),
                             this.configuration.getSyslogPort()
                     );
