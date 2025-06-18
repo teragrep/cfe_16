@@ -55,7 +55,7 @@ import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.Session;
-import com.teragrep.cfe_16.bo.TimestampedHttpEventDataStub;
+import com.teragrep.cfe_16.bo.HttpEventDataStub;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.event.EventTime;
 import com.teragrep.cfe_16.event.JsonEvent;
@@ -119,7 +119,7 @@ public class EventBatch {
             HeaderInfo headerInfo,
             Acknowledgements acknowledgements
     ) {
-        HttpEventData previousEvent = new TimestampedHttpEventDataStub();
+        HttpEventData previousEvent = new HttpEventDataStub();
 
         acknowledgements.initializeContext(authToken, channel);
         int ackId = acknowledgements.getCurrentAckValue(authToken, channel);
@@ -144,7 +144,7 @@ public class EventBatch {
          */
 
         // Init the HttpEventData as a Stub incase fails
-        HttpEventData eventData = new TimestampedHttpEventDataStub();
+        HttpEventData eventData = new HttpEventDataStub();
         Converter converter = new Converter();
         List<SyslogMessage> syslogMessages = new ArrayList<>();
         while (parser.hasNext()) {

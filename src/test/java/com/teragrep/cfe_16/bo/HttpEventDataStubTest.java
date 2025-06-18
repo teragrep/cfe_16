@@ -49,12 +49,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class TimestampedHttpEventDataStubTest {
+class HttpEventDataStubTest {
 
     @Test
     @DisplayName("event() throws UnsupportedOperationException if called")
     void eventThrowsUnsupportedOperationExceptionIfCalled() {
-        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+        final HttpEventDataStub stub = new HttpEventDataStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::event);
@@ -69,7 +69,7 @@ class TimestampedHttpEventDataStubTest {
     @Test
     @DisplayName("channel() throws UnsupportedOperationException if called")
     void channelThrowsUnsupportedOperationExceptionIfCalled() {
-        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+        final HttpEventDataStub stub = new HttpEventDataStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::channel);
@@ -84,7 +84,7 @@ class TimestampedHttpEventDataStubTest {
     @Test
     @DisplayName("authenticationToken() throws UnsupportedOperationException if called")
     void authenticationTokenThrowsUnsupportedOperationExceptionIfCalled() {
-        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+        final HttpEventDataStub stub = new HttpEventDataStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::authenticationToken);
@@ -99,7 +99,7 @@ class TimestampedHttpEventDataStubTest {
     @Test
     @DisplayName("ackID() throws UnsupportedOperationException if called")
     void ackIDThrowsUnsupportedOperationExceptionIfCalled() {
-        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+        final HttpEventDataStub stub = new HttpEventDataStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::ackID);
@@ -114,7 +114,7 @@ class TimestampedHttpEventDataStubTest {
     @Test
     @DisplayName("timeSource() throws UnsupportedOperationException if called")
     void timeSourceThrowsUnsupportedOperationExceptionIfCalled() {
-        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+        final HttpEventDataStub stub = new HttpEventDataStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::timeSource);
@@ -129,7 +129,7 @@ class TimestampedHttpEventDataStubTest {
     @Test
     @DisplayName("time() throws UnsupportedOperationException if called")
     void timeThrowsUnsupportedOperationExceptionIfCalled() {
-        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+        final HttpEventDataStub stub = new HttpEventDataStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::time);
@@ -144,7 +144,7 @@ class TimestampedHttpEventDataStubTest {
     @Test
     @DisplayName("timeAsLong() throws UnsupportedOperationException if called")
     void timeAsLongThrowsUnsupportedOperationExceptionIfCalled() {
-        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+        final HttpEventDataStub stub = new HttpEventDataStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::timeAsLong);
@@ -159,7 +159,7 @@ class TimestampedHttpEventDataStubTest {
     @Test
     @DisplayName("timeParsed() throws UnsupportedOperationException if called")
     void timeParsedThrowsUnsupportedOperationExceptionIfCalled() {
-        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+        final HttpEventDataStub stub = new HttpEventDataStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::timeParsed);
@@ -174,7 +174,7 @@ class TimestampedHttpEventDataStubTest {
     @Test
     @DisplayName("hashCode() throws UnsupportedOperationException if called")
     void hashCodeThrowsUnsupportedOperationExceptionIfCalled() {
-        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+        final HttpEventDataStub stub = new HttpEventDataStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::hashCode);
@@ -189,7 +189,7 @@ class TimestampedHttpEventDataStubTest {
     @Test
     @DisplayName("equals() throws UnsupportedOperationException if called")
     void equalsThrowsUnsupportedOperationExceptionIfCalled() {
-        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+        final HttpEventDataStub stub = new HttpEventDataStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, () -> stub.equals(new Object()));
@@ -204,7 +204,7 @@ class TimestampedHttpEventDataStubTest {
     @Test
     @DisplayName("isStub() returns true")
     void isStubReturnsTrue() {
-        final TimestampedHttpEventDataStub stub = new TimestampedHttpEventDataStub();
+        final HttpEventDataStub stub = new HttpEventDataStub();
         Assertions.assertTrue(stub::isStub, "isStub() did not return true");
     }
 }
