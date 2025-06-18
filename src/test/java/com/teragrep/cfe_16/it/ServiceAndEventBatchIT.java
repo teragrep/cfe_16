@@ -47,7 +47,7 @@ package com.teragrep.cfe_16.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teragrep.cfe_16.AckManager;
+import com.teragrep.cfe_16.Acknowledgements;
 import com.teragrep.cfe_16.EventBatch;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.Session;
@@ -97,7 +97,7 @@ public class ServiceAndEventBatchIT {
     @Autowired
     private HECService service;
     @Autowired
-    private AckManager ackManager;
+    private Acknowledgements acknowledgements;
     private MockHttpServletRequest request1;
     private MockHttpServletRequest request2;
     private MockHttpServletRequest request3;
@@ -310,7 +310,7 @@ public class ServiceAndEventBatchIT {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
         String response = eventBatch
-                .convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
+                .convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements)
                 .toString();
         assertEquals("Should get a JSON with fields text, code and ackID", supposedResponse, response);
     }
@@ -324,8 +324,8 @@ public class ServiceAndEventBatchIT {
         String supposedResponse = "TimestampedHttpEventDataStub does not support this";
         Exception exception = Assertions
                 .assertThrowsExactly(
-                        UnsupportedOperationException.class,
-                        () -> eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
+                        UnsupportedOperationException.class, () -> eventBatch
+                                .convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements)
                 );
         Assertions
                 .assertEquals(
@@ -342,8 +342,8 @@ public class ServiceAndEventBatchIT {
         String supposedResponse = "EventStub does not support this";
         Exception exception = Assertions
                 .assertThrowsExactly(
-                        UnsupportedOperationException.class,
-                        () -> eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
+                        UnsupportedOperationException.class, () -> eventBatch
+                                .convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements)
                 );
         Assertions
                 .assertEquals(
@@ -365,8 +365,9 @@ public class ServiceAndEventBatchIT {
         String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
 
         assertEquals(
-                "Should get a JSON with fields text and code.", supposedResponse,
-                eventBatch.convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager).toString()
+                "Should get a JSON with fields text and code.", supposedResponse, eventBatch
+                        .convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, acknowledgements)
+                        .toString()
         );
 
     }
@@ -379,7 +380,7 @@ public class ServiceAndEventBatchIT {
     public void noEventFieldInRequestTest() {
         Assertions.assertThrows(UnsupportedOperationException.class, () -> {
             String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-            eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
+            eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements);
         });
     }
 
@@ -391,7 +392,7 @@ public class ServiceAndEventBatchIT {
     public void eventFieldBlankInRequestTest() {
         Assertions.assertThrows(UnsupportedOperationException.class, () -> {
             String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-            eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
+            eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements);
         });
     }
 
@@ -405,7 +406,7 @@ public class ServiceAndEventBatchIT {
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
         assertEquals(
                 "Should get a JSON with fields text, code and ackID", supposedResponse,
-                eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager).toString()
+                eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements).toString()
         );
 
     }
@@ -419,8 +420,9 @@ public class ServiceAndEventBatchIT {
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
         assertEquals(
-                "Should get a JSON with fields text, code and ackID", supposedResponse,
-                eventBatch.convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager).toString()
+                "Should get a JSON with fields text, code and ackID", supposedResponse, eventBatch
+                        .convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, acknowledgements)
+                        .toString()
         );
     }
 }

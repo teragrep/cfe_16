@@ -72,7 +72,7 @@ public class HECServiceImpl implements HECService {
     private static final Logger LOGGER = LoggerFactory.getLogger(HECServiceImpl.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
-    private AckManager ackManager;
+    private Acknowledgements acknowledgements;
 
     @Autowired
     private SessionManager sessionManager;
@@ -127,7 +127,8 @@ public class HECServiceImpl implements HECService {
         }
 
         // TODO: find a nice way of not passing AckManager instance
-        ObjectNode ackNode = this.eventBatch.convertData(authToken, channel, eventInJson, headerInfo, this.ackManager);
+        ObjectNode ackNode = this.eventBatch
+                .convertData(authToken, channel, eventInJson, headerInfo, this.acknowledgements);
 
         return ackNode;
     }
@@ -173,7 +174,7 @@ public class HECServiceImpl implements HECService {
         session.touch();
 
         ObjectNode responseNode = objectMapper.createObjectNode();
-        JsonNode requestedAckStatuses = this.ackManager
+        JsonNode requestedAckStatuses = this.acknowledgements
                 .getRequestedAckStatuses(authToken, channel, requestedAcksInJson);
         responseNode.put("acks", requestedAckStatuses);
         return responseNode;

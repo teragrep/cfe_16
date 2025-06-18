@@ -70,9 +70,9 @@ import java.util.Map;
  *
  */
 @Component
-public class AckManager implements Runnable, LifeCycle {
+public final class Acknowledgements implements Runnable, LifeCycle {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AckManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Acknowledgements.class);
 
     /**
      * A class that encapsulates state of individual channels regarding to ACKs.
@@ -137,7 +137,7 @@ public class AckManager implements Runnable, LifeCycle {
     /**
      * An empty constructor for Spring @Autowired annotation.
      */
-    public AckManager() {
+    public Acknowledgements() {
         this.objectMapper = new ObjectMapper();
         this.ackStates = Collections.synchronizedMap(new HashMap<String, State>());
     }
