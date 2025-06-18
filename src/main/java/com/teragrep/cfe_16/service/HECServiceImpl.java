@@ -81,7 +81,7 @@ public class HECServiceImpl implements HECService {
     private TokenManager tokenManager;
 
     @Autowired
-    private EventManager eventManager;
+    private EventBatch eventBatch;
 
     @Autowired
     private RequestHandler requestHandler;
@@ -127,8 +127,7 @@ public class HECServiceImpl implements HECService {
         }
 
         // TODO: find a nice way of not passing AckManager instance
-        ObjectNode ackNode = this.eventManager
-                .convertData(authToken, channel, eventInJson, headerInfo, this.ackManager);
+        ObjectNode ackNode = this.eventBatch.convertData(authToken, channel, eventInJson, headerInfo, this.ackManager);
 
         return ackNode;
     }

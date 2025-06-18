@@ -48,7 +48,7 @@ package com.teragrep.cfe_16.it;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.AckManager;
-import com.teragrep.cfe_16.EventManager;
+import com.teragrep.cfe_16.EventBatch;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.exceptionhandling.*;
@@ -86,7 +86,7 @@ import static org.junit.Assert.*;
         "server.print.times=true"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class ServiceAndEventManagerIT {
+public class ServiceAndEventBatchIT {
 
     private static final Integer port = 1601;
     private static final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
@@ -116,7 +116,7 @@ public class ServiceAndEventManagerIT {
     private ObjectMapper objectMapper;
     private JsonNode ackRequestNode;
     @Autowired
-    private EventManager eventManager;
+    private EventBatch eventBatch;
 
     @BeforeAll
     public static void init() {
@@ -309,7 +309,7 @@ public class ServiceAndEventManagerIT {
     public void convertDataTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
-        String response = eventManager
+        String response = eventBatch
                 .convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
                 .toString();
         assertEquals("Should get a JSON with fields text, code and ackID", supposedResponse, response);
@@ -325,7 +325,7 @@ public class ServiceAndEventManagerIT {
         Exception exception = Assertions
                 .assertThrowsExactly(
                         UnsupportedOperationException.class,
-                        () -> eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
+                        () -> eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
                 );
         Assertions
                 .assertEquals(
@@ -343,7 +343,7 @@ public class ServiceAndEventManagerIT {
         Exception exception = Assertions
                 .assertThrowsExactly(
                         UnsupportedOperationException.class,
-                        () -> eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
+                        () -> eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
                 );
         Assertions
                 .assertEquals(
@@ -366,7 +366,7 @@ public class ServiceAndEventManagerIT {
 
         assertEquals(
                 "Should get a JSON with fields text and code.", supposedResponse,
-                eventManager.convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager).toString()
+                eventBatch.convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager).toString()
         );
 
     }
@@ -379,7 +379,7 @@ public class ServiceAndEventManagerIT {
     public void noEventFieldInRequestTest() {
         Assertions.assertThrows(UnsupportedOperationException.class, () -> {
             String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-            eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
+            eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
         });
     }
 
@@ -391,7 +391,7 @@ public class ServiceAndEventManagerIT {
     public void eventFieldBlankInRequestTest() {
         Assertions.assertThrows(UnsupportedOperationException.class, () -> {
             String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-            eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
+            eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
         });
     }
 
@@ -405,7 +405,7 @@ public class ServiceAndEventManagerIT {
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
         assertEquals(
                 "Should get a JSON with fields text, code and ackID", supposedResponse,
-                eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager).toString()
+                eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager).toString()
         );
 
     }
@@ -420,7 +420,7 @@ public class ServiceAndEventManagerIT {
         String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
         assertEquals(
                 "Should get a JSON with fields text, code and ackID", supposedResponse,
-                eventManager.convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager).toString()
+                eventBatch.convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager).toString()
         );
     }
 }

@@ -75,14 +75,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * Manager that handles the event sent in a request.
- *
- */
 @Component
-public class EventManager {
+public class EventBatch {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventBatch.class);
     private final ObjectMapper objectMapper;
 
     @Autowired
@@ -90,7 +86,7 @@ public class EventManager {
 
     private AbstractSender sender;
 
-    public EventManager() {
+    public EventBatch() {
         this.objectMapper = new ObjectMapper();
     }
 
