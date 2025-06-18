@@ -50,9 +50,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class SenderFactory {
+public class ConnectionFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SenderFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionFactory.class);
 
     public static AbstractConnection createSender(String type, String hostname, int port) throws IOException {
         LOGGER.debug("Creating sender for type <[{}]> to <[{}]>:<[{}]>", type, hostname, port);

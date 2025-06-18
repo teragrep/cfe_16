@@ -62,7 +62,7 @@ import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.event.JsonEventImpl;
 import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
 import com.teragrep.cfe_16.connection.AbstractConnection;
-import com.teragrep.cfe_16.connection.SenderFactory;
+import com.teragrep.cfe_16.connection.ConnectionFactory;
 import java.time.Instant;
 import java.util.NoSuchElementException;
 import org.slf4j.Logger;
@@ -94,7 +94,7 @@ public class EventBatch {
     public void setupSender() {
         LOGGER.debug("Setting up sender");
         try {
-            this.sender = SenderFactory
+            this.sender = ConnectionFactory
                     .createSender(
                             this.configuration.getSysLogProtocol(), this.configuration.getSyslogHost(),
                             this.configuration.getSyslogPort()
