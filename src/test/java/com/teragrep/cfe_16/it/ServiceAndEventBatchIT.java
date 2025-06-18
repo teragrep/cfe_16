@@ -96,11 +96,8 @@ public class ServiceAndEventBatchIT {
     private static final AtomicLong openCount = new AtomicLong();
     private static final AtomicLong closeCount = new AtomicLong();
     private static TestServer server;
-    private final HeaderInfo headerInfo = new HeaderInfo();
     @Autowired
     private HECService service;
-    @Autowired
-    private Acknowledgements acknowledgements;
     private MockHttpServletRequest request1;
     private MockHttpServletRequest request2;
     private MockHttpServletRequest request3;
@@ -110,7 +107,6 @@ public class ServiceAndEventBatchIT {
     private String channel1;
     private String channel2;
     private String channel3;
-    private String defaultChannel;
     private String authToken1;
     private String authToken2;
     private String authToken3;
@@ -118,8 +114,6 @@ public class ServiceAndEventBatchIT {
     private String ackRequest;
     private ObjectMapper objectMapper;
     private JsonNode ackRequestNode;
-    @Autowired
-    private EventBatch eventBatch;
 
     @BeforeAll
     public static void init() {
@@ -185,9 +179,6 @@ public class ServiceAndEventBatchIT {
         ackRequest = "{\"acks\": [1,3,4]}";
 
         ackRequestNode = objectMapper.createObjectNode();
-
-        defaultChannel = Session.DEFAULT_CHANNEL;
-
         try {
             ackRequestNode = objectMapper.readTree(ackRequest);
         }
@@ -302,104 +293,6 @@ public class ServiceAndEventBatchIT {
     }
 
     /*
-     * Tests the EventManager's convertData() method. First we create a Json node as
-     * string, that we give as a parameter for convertData(). We also create a
-     * supposed response Json node as string. convertData() returns an ObjectNode
-     * object, which we convert to string here, so we can easily compare it to our
-     * supposed response.
-     */
-    @Test
-    public void convertDataTest() {
-        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-        String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
-        String response = eventBatch
-                .convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements)
-                .toString();
-        assertEquals("Should get a JSON with fields text, code and ackID", supposedResponse, response);
-    }
-
-    /**
-     * Tests for JsonSyntaxException
-     */
-    @Test
-    public void convertDataUsesAStubIfParsingFailsWithMalformedJSONTest() {
-        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": {{{{}}}}";
-        String supposedResponse = "TimestampedHttpEventDataStub does not support this";
-        Exception exception = Assertions
-                .assertThrowsExactly(
-                        UnsupportedOperationException.class, () -> eventBatch
-                                .convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements)
-                );
-        Assertions
-                .assertEquals(
-                        supposedResponse, exception.getMessage(), "Exception message was not what it was supposed to be"
-                );
-    }
-
-    /**
-     * Tests for EventStub existence, since the Event should not be valid
-     */
-    @Test
-    public void convertDataUsesAStubIfParsingFailsWithEmptyJSONTest() {
-        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": null}";
-        String supposedResponse = "EventStub does not support this";
-        Exception exception = Assertions
-                .assertThrowsExactly(
-                        UnsupportedOperationException.class, () -> eventBatch
-                                .convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements)
-                );
-        Assertions
-                .assertEquals(
-                        supposedResponse, exception.getMessage(), "Exception message was not what it was supposed to be"
-                );
-    }
-
-    /*
-     * Tests the EventManager's convertDataWithDefaultChannel() method which is
-     * called when a channel is not provided in a request. First we create a Json
-     * node as string, that we give as a parameter for convertData(). We also create
-     * a supposed response Json node as string. convertData() returns an ObjectNode
-     * object, which we convert to string here, so we can easily compare it to our
-     * supposed response.
-     */
-    @Test
-    public void convertDataTestWithDefaultChannel() {
-        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-        String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
-
-        assertEquals(
-                "Should get a JSON with fields text and code.", supposedResponse, eventBatch
-                        .convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, acknowledgements)
-                        .toString()
-        );
-
-    }
-
-    /*
-     * Tests attempting to send a request, which has no "event"-field in its body.
-     * When this is the case, UnsupportedOperationException is expected to happen.
-     */
-    @Test
-    public void noEventFieldInRequestTest() {
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
-            String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-            eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements);
-        });
-    }
-
-    /*
-     * Tests attempting to send a request, which has a blank "event"-field. When
-     * this is the case, UnsupportedOperationException is expected to happen.
-     */
-    @Test
-    public void eventFieldBlankInRequestTest() {
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
-            String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-            eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements);
-        });
-    }
-
-    /*
      * Testing using EventManager's convertData() method by sending multiple events
      * at once.
      */
@@ -410,7 +303,7 @@ public class ServiceAndEventBatchIT {
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
         assertEquals(
                 "Should get a JSON with fields text, code and ackID", supposedResponse,
-                eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements).toString()
+                service.sendEvents(request1, channel1, allEventsInJson).toString()
         );
 
     }
@@ -425,9 +318,8 @@ public class ServiceAndEventBatchIT {
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
         assertEquals(
-                "Should get a JSON with fields text, code and ackID", supposedResponse, eventBatch
-                        .convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, acknowledgements)
-                        .toString()
+                "Should get a JSON with fields text, code and ackID", supposedResponse,
+                service.sendEvents(request1, null, allEventsInJson).toString()
         );
     }
 }
