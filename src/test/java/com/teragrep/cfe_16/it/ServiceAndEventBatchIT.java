@@ -327,8 +327,8 @@ public class ServiceAndEventBatchIT {
         String supposedResponse = "TimestampedHttpEventDataStub does not support this";
         Exception exception = Assertions
                 .assertThrowsExactly(
-                        UnsupportedOperationException.class,
-                        () -> eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
+                        UnsupportedOperationException.class, () -> eventBatch
+                                .convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements)
                 );
         Assertions
                 .assertEquals(
@@ -345,8 +345,8 @@ public class ServiceAndEventBatchIT {
         String supposedResponse = "EventStub does not support this";
         Exception exception = Assertions
                 .assertThrowsExactly(
-                        UnsupportedOperationException.class,
-                        () -> eventBatch.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
+                        UnsupportedOperationException.class, () -> eventBatch
+                                .convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements)
                 );
         Assertions
                 .assertEquals(

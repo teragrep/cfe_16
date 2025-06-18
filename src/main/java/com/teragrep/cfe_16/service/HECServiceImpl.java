@@ -178,7 +178,7 @@ public class HECServiceImpl implements HECService {
         }
 
         // TODO: find a nice way of not passing Acknowledgements
-        ObjectNode ackNode = this.eventManager
+        ObjectNode ackNode = this.eventBatch
                 .convertData(authToken, channel, eventInJson, headerInfo, this.acknowledgements);
 
         return ackNode;
