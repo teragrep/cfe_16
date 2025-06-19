@@ -48,9 +48,10 @@ package com.teragrep.cfe_16.event;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.HttpEventDataImpl;
 import com.teragrep.cfe_16.bo.HttpEventDataStub;
+import com.teragrep.cfe_16.event.time.Time;
+import com.teragrep.cfe_16.event.time.SpecifiedTime;
 import java.time.Instant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,30 +76,24 @@ class EventTimeTest {
 
         final long currentEpoch = Instant.now().toEpochMilli();
 
-        final HttpEventData httpEventDataWithHandledTime = new EventTime(
-                "CHANNEL_11111",
-                new EventImpl("Event 1"),
-                "AUTH_TOKEN_11111",
-                0,
-                new HttpEventDataStub(),
-                new JsonEventImpl(jsonNode).asTimeObject()
-        ).timestampedHttpEventData(currentEpoch);
+        final Time time = new EventTime(new HttpEventDataStub(), new JsonEventImpl(jsonNode).asTimeObject())
+                .asTime(currentEpoch);
 
         Assertions
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "generated", httpEventDataWithHandledTime.timeSource(),
+                                        "generated", time.source(),
                                         "Time source should be 'generated' when it's not specified in a request"
                                 ),
                         () -> Assertions
                                 .assertFalse(
-                                        httpEventDataWithHandledTime.timeParsed(),
+                                        time.parsed(),
                                         "timeParsed should be false when time is not specified in a request"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        currentEpoch, httpEventDataWithHandledTime.timeAsLong(),
+                                        currentEpoch, time.asLong(),
                                         "Time as long should be the defaultValue provided when time is not specified in a request"
                                 )
                 );
@@ -112,30 +107,23 @@ class EventTimeTest {
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final HttpEventData httpEventDataWithHandledTime = new EventTime(
-                "CHANNEL_11111",
-                new EventImpl("Event 1"),
-                "AUTH_TOKEN_11111",
-                0,
-                new HttpEventDataStub(),
-                new JsonEventImpl(jsonNode).asTimeObject()
-        ).timestampedHttpEventData(Instant.now().toEpochMilli());
+        final Time time = new EventTime(new HttpEventDataStub(), new JsonEventImpl(jsonNode).asTimeObject())
+                .asTime(Instant.now().toEpochMilli());
 
         Assertions
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "reported", httpEventDataWithHandledTime.timeSource(),
+                                        "reported", time.source(),
                                         "Time source should be 'reported' when the time is specified in a request"
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        httpEventDataWithHandledTime.timeParsed(),
-                                        "timeParsed should be true when time is specified in a request"
+                                        time.parsed(), "timeParsed should be true when time is specified in a request"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        1433188255253L, httpEventDataWithHandledTime.timeAsLong(),
+                                        1433188255253L, time.asLong(),
                                         "Time should be converted to epoch milliseconds when it's provided in a request in "
                                                 + "epoch seconds with decimals"
                                 )
@@ -150,30 +138,23 @@ class EventTimeTest {
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final HttpEventData httpEventDataWithHandledTime = new EventTime(
-                "CHANNEL_11111",
-                new EventImpl("Event 1"),
-                "AUTH_TOKEN_11111",
-                0,
-                new HttpEventDataStub(),
-                new JsonEventImpl(jsonNode).asTimeObject()
-        ).timestampedHttpEventData(Instant.now().toEpochMilli());
+        final Time time = new EventTime(new HttpEventDataStub(), new JsonEventImpl(jsonNode).asTimeObject())
+                .asTime(Instant.now().toEpochMilli());
 
         Assertions
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "reported", httpEventDataWithHandledTime.timeSource(),
+                                        "reported", time.source(),
                                         "Time source should be 'reported' when the time is specified in a request"
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        httpEventDataWithHandledTime.timeParsed(),
-                                        "timeParsed should be true when time is specified in a request"
+                                        time.parsed(), "timeParsed should be true when time is specified in a request"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        1433188255253L, httpEventDataWithHandledTime.timeAsLong(),
+                                        1433188255253L, time.asLong(),
                                         "Time should be converted to epoch milliseconds when it's provided in a request in "
                                                 + "epoch seconds with decimals"
                                 )
@@ -188,30 +169,24 @@ class EventTimeTest {
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final HttpEventData httpEventDataWithHandledTime = new EventTime(
-                "CHANNEL_11111",
-                new EventImpl("Event 1"),
-                "AUTH_TOKEN_11111",
-                0,
-                new HttpEventDataStub(),
-                new JsonEventImpl(jsonNode).asTimeObject()
-        ).timestampedHttpEventData(Instant.now().toEpochMilli());
+        final Time time = new EventTime(new HttpEventDataStub(), new JsonEventImpl(jsonNode).asTimeObject())
+                .asTime(Instant.now().toEpochMilli());
 
         Assertions
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "generated", httpEventDataWithHandledTime.timeSource(),
+                                        "generated", time.source(),
                                         "Time source should be 'generated' when time is given as a string in a request"
                                 ),
                         () -> Assertions
                                 .assertFalse(
-                                        httpEventDataWithHandledTime.timeParsed(),
+                                        time.parsed(),
                                         "timeParsed should be false when time is given as a string in a request"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        1433188255253L, httpEventDataWithHandledTime.timeAsLong(),
+                                        1433188255253L, time.asLong(),
                                         "Time should be converted to long when time is given as a string in a request"
                                 )
                 );
@@ -225,33 +200,26 @@ class EventTimeTest {
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final HttpEventData httpEventDataWithHandledTime = new EventTime(
-                "CHANNEL_11111",
-                new EventImpl("Event 1"),
-                "AUTH_TOKEN_11111",
-                0,
-                new HttpEventDataStub(),
-                new JsonEventImpl(jsonNode).asTimeObject()
-        ).timestampedHttpEventData(Instant.now().toEpochMilli());
+        final Time time = new EventTime(new HttpEventDataStub(), new JsonEventImpl(jsonNode).asTimeObject())
+                .asTime(Instant.now().toEpochMilli());
 
         Assertions
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "reported", httpEventDataWithHandledTime.timeSource(),
+                                        "reported", time.source(),
                                         "Time source should be 'reported' when time is given as an integer with less "
                                                 + "than 10" + " digits"
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        httpEventDataWithHandledTime.timeParsed(),
+                                        time.parsed(),
                                         "timeParsed should be false when time is given as an integer with less than 10 "
                                                 + "digits"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        143318L, httpEventDataWithHandledTime.timeAsLong(),
-                                        "Time as long should be as provided in the request"
+                                        143318L, time.asLong(), "Time as long should be as provided in the request"
                                 )
                 );
     }
@@ -264,33 +232,26 @@ class EventTimeTest {
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final HttpEventData httpEventDataWithHandledTime = new EventTime(
-                "CHANNEL_11111",
-                new EventImpl("Event 1"),
-                "AUTH_TOKEN_11111",
-                0,
-                new HttpEventDataStub(),
-                new JsonEventImpl(jsonNode).asTimeObject()
-        ).timestampedHttpEventData(Instant.now().toEpochMilli());
+        final Time time = new EventTime(new HttpEventDataStub(), new JsonEventImpl(jsonNode).asTimeObject())
+                .asTime(Instant.now().toEpochMilli());
 
         Assertions
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "reported", httpEventDataWithHandledTime.timeSource(),
+                                        "reported", time.source(),
                                         "Time source should be 'reported' when time is given as an integer with more "
                                                 + "than 13 digits"
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        httpEventDataWithHandledTime.timeParsed(),
+                                        time.parsed(),
                                         "timeParsed should be false when time is given as an integer with more than 13 "
                                                 + "digits"
                                 ),
                         () -> Assertions
                                 .assertEquals(
-                                        14331882552523L, httpEventDataWithHandledTime.timeAsLong(),
-                                        "Time should be as it's provided in a request."
+                                        14331882552523L, time.asLong(), "Time should be as it's provided in a request."
                                 )
                 );
     }
@@ -304,19 +265,11 @@ class EventTimeTest {
         final JsonNode jsonNode = objectMapper.readTree(content);
 
         final EventTime eventTime1 = new EventTime(
-                "CHANNEL_11111",
-                new EventImpl("Event 1"),
-                "AUTH_TOKEN_11111",
-                0,
-                new HttpEventDataImpl("Channel 1", new EventImpl("Event 1"), "AuthToken 1", 0, "timeSource", "time", 1234567890, true), new JsonEventImpl(jsonNode).asTimeObject()
+                new HttpEventDataImpl("Channel 1", new EventImpl("Event 1"), "AuthToken 1", 0, new SpecifiedTime(123L, "1234567890123", true, "timeSource")), new JsonEventImpl(jsonNode).asTimeObject()
         );
 
         final EventTime eventTime2 = new EventTime(
-                "CHANNEL_11111",
-                new EventImpl("Event 1"),
-                "AUTH_TOKEN_11111",
-                0,
-                new HttpEventDataImpl("Channel 1", new EventImpl("Event 1"), "AuthToken 1", 0, "timeSource", "time", 1234567890, true), new JsonEventImpl(jsonNode).asTimeObject()
+                new HttpEventDataImpl("Channel 1", new EventImpl("Event 1"), "AuthToken 1", 0, new SpecifiedTime(123L, "1234567890123", true, "timeSource")), new JsonEventImpl(jsonNode).asTimeObject()
         );
 
         Assertions.assertEquals(eventTime1, eventTime2);
@@ -331,19 +284,11 @@ class EventTimeTest {
         final JsonNode jsonNode = objectMapper.readTree(content);
 
         final EventTime eventTime1 = new EventTime(
-                "CHANNEL_11111",
-                new EventImpl("Event 1"),
-                "AUTH_TOKEN_11111",
-                0,
-                new HttpEventDataImpl("Channel 1", new EventImpl("Event 1"), "AuthToken 1", 0, "timeSource", "time", 1234567890, true), new JsonEventImpl(jsonNode).asTimeObject()
+                new HttpEventDataImpl("Channel 1", new EventImpl("Event 1"), "AuthToken 1", 0, new SpecifiedTime(123L, "1234567890123", true, "timeSource")), new JsonEventImpl(jsonNode).asTimeObject()
         );
 
         final EventTime eventTime2 = new EventTime(
-                "CHANNEL_22222",
-                new EventImpl("Event 2"),
-                "AUTH_TOKEN_11111",
-                0,
-                new HttpEventDataImpl("Channel 1", new EventImpl("Event 1"), "AuthToken 1", 0, "timeSource", "time", 1234567890, true), new JsonEventImpl(jsonNode).asTimeObject()
+                new HttpEventDataImpl("Channel 2", new EventImpl("Event 1"), "AuthToken 1", 0, new SpecifiedTime(123L, "1234567890123", true, "timeSource")), new JsonEventImpl(jsonNode).asTimeObject()
         );
 
         Assertions.assertNotEquals(eventTime1, eventTime2);

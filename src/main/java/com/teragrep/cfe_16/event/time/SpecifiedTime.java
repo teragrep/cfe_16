@@ -43,47 +43,45 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.event;
+package com.teragrep.cfe_16.event.time;
 
-import com.teragrep.cfe_16.bo.HttpEventData;
-import com.teragrep.cfe_16.event.time.DoubleTime;
-import com.teragrep.cfe_16.event.time.GeneratedTime;
-import com.teragrep.cfe_16.event.time.NumericalTime;
-import com.teragrep.cfe_16.event.time.TextualTime;
-import com.teragrep.cfe_16.event.time.Time;
 import java.util.Objects;
 
-public final class EventTime {
+public final class SpecifiedTime implements Time {
 
-    private final HttpEventData previousEvent;
-    private final TimeObject timeObject;
+    private final long timeAsLong;
+    private final String timeString;
+    private final boolean parsed;
+    private final String timeSource;
 
-    public EventTime(HttpEventData previousEvent, TimeObject timeObject) {
-        this.previousEvent = previousEvent;
-        this.timeObject = timeObject;
+    public SpecifiedTime(long timeAsLong, String timeString, boolean parsed, String timeSource) {
+        this.timeAsLong = timeAsLong;
+        this.timeString = timeString;
+        this.parsed = parsed;
+        this.timeSource = timeSource;
     }
 
-    public Time asTime(long defaultValue) {
-        // No time provided in the event
-        if (timeObject.isStub()) {
-            return new GeneratedTime(previousEvent, defaultValue);
+    @Override
+    public long asLong() {
+        return this.timeAsLong;
+    }
+
+    @Override
+    public String asString() {
+        return this.timeString;
+    }
+
+    @Override
+    public boolean parsed() {
+        return this.parsed;
+    }
+
+    @Override
+    public String source() {
+        if (this.timeString == null || this.timeString.isEmpty()) {
+            return "generated";
         }
-        // Check if time is a double
-        else if (timeObject.isDouble()) {
-            return new DoubleTime(timeObject);
-        }
-        // Time is a number, no calculations required
-        else if (timeObject.canConvertToLong()) {
-            return new NumericalTime(timeObject);
-        }
-        // Time is a String
-        else if (timeObject.isTextual()) {
-            return new TextualTime(previousEvent, timeObject);
-        }
-        // Unknown format
-        else {
-            return new GeneratedTime(previousEvent, defaultValue);
-        }
+        return this.timeSource;
     }
 
     @Override
@@ -92,13 +90,13 @@ public final class EventTime {
             return false;
         }
 
-        EventTime eventTime = (EventTime) o;
-        return previousEvent.equals(eventTime.previousEvent) && timeObject.equals(eventTime.timeObject);
+        SpecifiedTime time = (SpecifiedTime) o;
+        return Objects.equals(timeAsLong, time.timeAsLong) && Objects.equals(parsed, time.parsed)
+                && Objects.equals(timeString, time.timeString) && Objects.equals(timeSource, time.timeSource);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(previousEvent, timeObject);
-
+        return Objects.hash(timeAsLong, timeString, parsed, timeSource);
     }
 }

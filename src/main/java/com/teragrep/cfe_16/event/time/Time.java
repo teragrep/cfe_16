@@ -43,62 +43,15 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.event;
+package com.teragrep.cfe_16.event.time;
 
-import com.teragrep.cfe_16.bo.HttpEventData;
-import com.teragrep.cfe_16.event.time.DoubleTime;
-import com.teragrep.cfe_16.event.time.GeneratedTime;
-import com.teragrep.cfe_16.event.time.NumericalTime;
-import com.teragrep.cfe_16.event.time.TextualTime;
-import com.teragrep.cfe_16.event.time.Time;
-import java.util.Objects;
+public interface Time {
 
-public final class EventTime {
+    long asLong();
 
-    private final HttpEventData previousEvent;
-    private final TimeObject timeObject;
+    String asString();
 
-    public EventTime(HttpEventData previousEvent, TimeObject timeObject) {
-        this.previousEvent = previousEvent;
-        this.timeObject = timeObject;
-    }
+    boolean parsed();
 
-    public Time asTime(long defaultValue) {
-        // No time provided in the event
-        if (timeObject.isStub()) {
-            return new GeneratedTime(previousEvent, defaultValue);
-        }
-        // Check if time is a double
-        else if (timeObject.isDouble()) {
-            return new DoubleTime(timeObject);
-        }
-        // Time is a number, no calculations required
-        else if (timeObject.canConvertToLong()) {
-            return new NumericalTime(timeObject);
-        }
-        // Time is a String
-        else if (timeObject.isTextual()) {
-            return new TextualTime(previousEvent, timeObject);
-        }
-        // Unknown format
-        else {
-            return new GeneratedTime(previousEvent, defaultValue);
-        }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        EventTime eventTime = (EventTime) o;
-        return previousEvent.equals(eventTime.previousEvent) && timeObject.equals(eventTime.timeObject);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(previousEvent, timeObject);
-
-    }
+    String source();
 }

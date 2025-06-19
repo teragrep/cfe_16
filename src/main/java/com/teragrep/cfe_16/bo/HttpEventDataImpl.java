@@ -46,6 +46,7 @@
 package com.teragrep.cfe_16.bo;
 
 import com.teragrep.cfe_16.event.Event;
+import com.teragrep.cfe_16.event.time.Time;
 import java.util.Objects;
 
 public final class HttpEventDataImpl implements HttpEventData {
@@ -54,29 +55,14 @@ public final class HttpEventDataImpl implements HttpEventData {
     private final Event event;
     private final String authenticationToken;
     private final Integer ackID;
-    private final String timeSource;
-    private final String time;
-    private final long timeAsLong;
-    private final boolean timeParsed;
+    private final Time time;
 
-    public HttpEventDataImpl(
-            String channel,
-            Event event,
-            String authenticationToken,
-            Integer ackID,
-            String timeSource,
-            String time,
-            long timeAsLong,
-            boolean timeParsed
-    ) {
+    public HttpEventDataImpl(String channel, Event event, String authenticationToken, Integer ackID, Time time) {
         this.channel = channel;
         this.event = event;
         this.authenticationToken = authenticationToken;
         this.ackID = ackID;
-        this.timeSource = timeSource;
         this.time = time;
-        this.timeAsLong = timeAsLong;
-        this.timeParsed = timeParsed;
     }
 
     @Override
@@ -95,34 +81,13 @@ public final class HttpEventDataImpl implements HttpEventData {
     }
 
     @Override
-    public String timeSource() {
-        if (this.time == null) {
-            return "generated";
-        }
-        return this.timeSource;
-    }
-
-    @Override
-    public String time() {
+    public Time time() {
         return this.time;
-    }
-
-    @Override
-    public long timeAsLong() {
-        return this.timeAsLong;
     }
 
     @Override
     public Integer ackID() {
         return this.ackID;
-    }
-
-    @Override
-    public boolean timeParsed() {
-        if (this.time == null) {
-            return false;
-        }
-        return this.timeParsed;
     }
 
     @Override
@@ -137,14 +102,13 @@ public final class HttpEventDataImpl implements HttpEventData {
         }
 
         HttpEventDataImpl that = (HttpEventDataImpl) o;
-        return timeAsLong == that.timeAsLong && timeParsed == that.timeParsed && Objects
-                .equals(channel, that.channel) && Objects.equals(event, that.event) && Objects
-                        .equals(authenticationToken, that.authenticationToken)
-                && Objects.equals(ackID, that.ackID) && Objects.equals(timeSource, that.timeSource) && Objects.equals(time, that.time);
+        return Objects.equals(channel, that.channel) && Objects.equals(event, that.event) && Objects
+                .equals(authenticationToken, that.authenticationToken) && Objects.equals(ackID, that.ackID)
+                && Objects.equals(time, that.time);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(channel, event, authenticationToken, ackID, timeSource, time, timeAsLong, timeParsed);
+        return Objects.hash(channel, event, authenticationToken, ackID, time);
     }
 }

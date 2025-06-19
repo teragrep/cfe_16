@@ -46,6 +46,7 @@
 package com.teragrep.cfe_16.bo;
 
 import com.teragrep.cfe_16.event.Event;
+import com.teragrep.cfe_16.event.time.Time;
 
 public final class HttpEventDataStub implements HttpEventData {
 
@@ -70,22 +71,7 @@ public final class HttpEventDataStub implements HttpEventData {
     }
 
     @Override
-    public String timeSource() {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
-    }
-
-    @Override
-    public String time() {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
-    }
-
-    @Override
-    public long timeAsLong() {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
-    }
-
-    @Override
-    public boolean timeParsed() {
+    public Time time() {
         throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 

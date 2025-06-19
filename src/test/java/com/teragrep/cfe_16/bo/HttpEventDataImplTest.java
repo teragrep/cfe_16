@@ -47,6 +47,7 @@ package com.teragrep.cfe_16.bo;
 
 import com.teragrep.cfe_16.event.Event;
 import com.teragrep.cfe_16.event.EventImpl;
+import com.teragrep.cfe_16.event.time.SpecifiedTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,13 +62,10 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                "timeSource",
-                null,
-                123L,
-                true
+                new SpecifiedTime(123L, null, true, "timeSource")
         );
 
-        Assertions.assertEquals("generated", httpEventDataImpl.timeSource());
+        Assertions.assertEquals("generated", httpEventDataImpl.time().source());
     }
 
     @Test
@@ -78,13 +76,10 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                "timeSource",
-                "123456",
-                123L,
-                true
+                new SpecifiedTime(123L, "123456", true, "timeSource")
         );
 
-        Assertions.assertEquals("timeSource", httpEventDataImpl.timeSource());
+        Assertions.assertEquals("timeSource", httpEventDataImpl.time().source());
     }
 
     @Test
@@ -95,13 +90,10 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                "timeSource",
-                "12345678901234",
-                123L,
-                true
+                new SpecifiedTime(123L, "12345678901234", true, "timeSource")
         );
 
-        Assertions.assertEquals("timeSource", httpEventDataImpl.timeSource());
+        Assertions.assertEquals("timeSource", httpEventDataImpl.time().source());
     }
 
     @Test
@@ -112,13 +104,10 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                "timeSource",
-                "1234567890123",
-                123L,
-                true
+                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
         );
 
-        Assertions.assertEquals("timeSource", httpEventDataImpl.timeSource());
+        Assertions.assertEquals("timeSource", httpEventDataImpl.time().source());
     }
 
     @Test
@@ -129,10 +118,7 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                "timeSource",
-                "1234567890123",
-                123L,
-                true
+                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
         );
 
         final HttpEventDataImpl httpEventDataImpl2 = new HttpEventDataImpl(
@@ -140,10 +126,7 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                "timeSource",
-                "1234567890123",
-                123L,
-                true
+                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
         );
         Assertions.assertEquals(httpEventDataImpl1, httpEventDataImpl2);
     }
@@ -156,10 +139,7 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                "timeSource",
-                "1234567890123",
-                123L,
-                true
+                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
         );
 
         final HttpEventDataImpl httpEventDataImpl2 = new HttpEventDataImpl(
@@ -167,10 +147,7 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                "timeSourceIsNotTheSame",
-                "1234567890123",
-                123L,
-                true
+                new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")
         );
 
         Assertions.assertNotEquals(httpEventDataImpl1, httpEventDataImpl2);
@@ -184,10 +161,7 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                "timeSource",
-                "1234567890123",
-                123L,
-                true
+                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
         );
 
         final Event expectedResult = new EventImpl("event");
@@ -203,10 +177,7 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                "timeSource",
-                "1234567890123",
-                123L,
-                true
+                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
         );
 
         final String expectedResult = "channel";
@@ -222,10 +193,7 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                "timeSource",
-                "1234567890123",
-                123L,
-                true
+                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
         );
 
         final String expectedResult = "authToken";
@@ -241,10 +209,7 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 123,
-                "timeSource",
-                "1234567890123",
-                123L,
-                true
+                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
         );
 
         final Integer expectedResult = 123;
@@ -260,10 +225,7 @@ class HttpEventDataImplTest {
                 new EventImpl("event"),
                 "authToken",
                 null,
-                "timeSource",
-                "1234567890123",
-                123L,
-                true
+                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
         );
 
         Assertions.assertNull(defaultHttpEventData.ackID());

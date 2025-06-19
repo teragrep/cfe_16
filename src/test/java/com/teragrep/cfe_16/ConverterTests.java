@@ -49,6 +49,7 @@ import com.cloudbees.syslog.*;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventDataImpl;
 import com.teragrep.cfe_16.event.EventImpl;
+import com.teragrep.cfe_16.event.time.SpecifiedTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -114,57 +115,54 @@ public class ConverterTests {
                 new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
-                "reported",
-                "1433188255253",
-                1433188255253L,
-                true
+                new SpecifiedTime(1433188255253L, "1433188255253", true, "reported")
         );
         eventData2 = new HttpEventDataImpl(
                 "CHANNEL_22222",
                 new EventImpl("Event 2"),
                 "AUTH_TOKEN_22222",
                 1,
-                "generated",
-                null,
-                0L,
-                false
+                new SpecifiedTime(0L, null, false, "generated")
         );
         eventData3 = new HttpEventDataImpl(
                 "defaultchannel",
                 new EventImpl("Event 3"),
                 "AUTH_TOKEN_33333",
                 null,
-                "generated",
-                null,
-                0L,
-                false
+                new SpecifiedTime(
+
+                        0L,
+                        null,
+                        false,
+                        "generated"
+                )
         );
 
         metadataSDE1.addSDParam("authentication_token", eventData1.authenticationToken());
         metadataSDE1.addSDParam("channel", eventData1.channel());
         metadataSDE1.addSDParam("ack_id", String.valueOf(eventData1.ackID()));
-        metadataSDE1.addSDParam("time_source", eventData1.timeSource());
+        metadataSDE1.addSDParam("time_source", eventData1.time().source());
         metadataSDE1.addSDParam("time_parsed", "true");
-        metadataSDE1.addSDParam("time", eventData1.time());
+        metadataSDE1.addSDParam("time", eventData1.time().asString());
         metadataSDE1.addSDParam("generated", "false");
 
         metadataSDE2.addSDParam("authentication_token", eventData2.authenticationToken());
         metadataSDE2.addSDParam("channel", eventData2.channel());
         metadataSDE2.addSDParam("ack_id", String.valueOf(eventData2.ackID()));
-        metadataSDE2.addSDParam("time_source", eventData2.timeSource());
+        metadataSDE2.addSDParam("time_source", eventData2.time().source());
         metadataSDE2.addSDParam("time_parsed", "false");
-        metadataSDE2.addSDParam("time", eventData2.time());
+        metadataSDE2.addSDParam("time", eventData2.time().asString());
         metadataSDE2.addSDParam("generated", "true");
 
         metadataSDE3.addSDParam("authentication_token", eventData3.authenticationToken());
         metadataSDE3.addSDParam("channel", eventData3.channel());
-        metadataSDE3.addSDParam("time_source", eventData3.timeSource());
+        metadataSDE3.addSDParam("time_source", eventData3.time().source());
         metadataSDE3.addSDParam("time_parsed", "false");
-        metadataSDE3.addSDParam("time", eventData3.time());
+        metadataSDE3.addSDParam("time", eventData3.time().asString());
         metadataSDE3.addSDParam("generated", "true");
 
         supposedSyslogMessage1 = new SyslogMessage()
-                .withTimestamp(eventData1.timeAsLong())
+                .withTimestamp(eventData1.time().asLong())
                 .withSeverity(supposedSeverity)
                 .withAppName("capsulated")
                 .withHostname("cfe-16")
