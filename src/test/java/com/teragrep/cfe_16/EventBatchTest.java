@@ -45,10 +45,13 @@
  */
 package com.teragrep.cfe_16;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonSyntaxException;
 import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.HttpEventDataImpl;
 import com.teragrep.cfe_16.event.EventImpl;
+import com.teragrep.cfe_16.event.TimeObjectImpl;
+import com.teragrep.cfe_16.event.time.NumericalTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -67,10 +70,7 @@ class EventBatchTest {
                 new EventImpl("Hello, world!"),
                 authToken1,
                 0,
-                "reported",
-                "123456",
-                123456L,
-                true
+                new NumericalTime(new TimeObjectImpl(new ObjectMapper().createObjectNode().numberNode(123456)))
         );
         final List<HttpEventData> supposedList = new ArrayList<>();
         supposedList.add(supposedResponse);

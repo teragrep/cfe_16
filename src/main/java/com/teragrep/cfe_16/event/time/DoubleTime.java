@@ -43,47 +43,50 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.event;
+package com.teragrep.cfe_16.event.time;
 
-import com.teragrep.cfe_16.bo.HttpEventData;
-import com.teragrep.cfe_16.event.time.DoubleTime;
-import com.teragrep.cfe_16.event.time.GeneratedTime;
-import com.teragrep.cfe_16.event.time.NumericalTime;
-import com.teragrep.cfe_16.event.time.TextualTime;
-import com.teragrep.cfe_16.event.time.Time;
+import com.teragrep.cfe_16.event.TimeObject;
+import java.math.BigDecimal;
 import java.util.Objects;
 
-public final class EventTime {
+public final class DoubleTime implements Time {
 
-    private final HttpEventData previousEvent;
     private final TimeObject timeObject;
 
-    public EventTime(HttpEventData previousEvent, TimeObject timeObject) {
-        this.previousEvent = previousEvent;
+    public DoubleTime(TimeObject timeObject) {
         this.timeObject = timeObject;
     }
 
-    public Time asTime(long defaultValue) {
-        // No time provided in the event
-        if (timeObject.isStub()) {
-            return new GeneratedTime(previousEvent, defaultValue);
-        }
-        // Check if time is a double
-        else if (timeObject.isDouble()) {
-            return new DoubleTime(timeObject);
-        }
-        // Time is a number, no calculations required
-        else if (timeObject.canConvertToLong()) {
-            return new NumericalTime(timeObject);
-        }
-        // Time is a String
-        else if (timeObject.isTextual()) {
-            return new TextualTime(previousEvent, timeObject);
-        }
-        // Unknown format
-        else {
-            return new GeneratedTime(previousEvent, defaultValue);
-        }
+    @Override
+    public long asLong() {
+        return this.removeDecimal(timeObject.asDouble());
+    }
+
+    @Override
+    public String asString() {
+        return String.valueOf(this.removeDecimal(timeObject.asDouble()));
+    }
+
+    @Override
+    public boolean parsed() {
+        return true;
+    }
+
+    @Override
+    public String source() {
+        return "reported";
+    }
+
+    /**
+     * Takes a double value as a parameter, removes the decimal point from that value and returns the number as a long
+     * value.
+     */
+    private long removeDecimal(double doubleValue) {
+        final BigDecimal doubleValueWithDecimal = BigDecimal.valueOf(doubleValue);
+        final String stringValue = doubleValueWithDecimal.toString();
+        final String stringValueWithoutDecimal = stringValue.replace(".", "");
+
+        return Long.parseLong(stringValueWithoutDecimal);
     }
 
     @Override
@@ -92,13 +95,12 @@ public final class EventTime {
             return false;
         }
 
-        EventTime eventTime = (EventTime) o;
-        return previousEvent.equals(eventTime.previousEvent) && timeObject.equals(eventTime.timeObject);
+        DoubleTime that = (DoubleTime) o;
+        return Objects.equals(timeObject, that.timeObject);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(previousEvent, timeObject);
-
+        return Objects.hashCode(timeObject);
     }
 }

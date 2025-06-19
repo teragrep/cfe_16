@@ -112,57 +112,12 @@ class HttpEventDataStubTest {
     }
 
     @Test
-    @DisplayName("timeSource() throws UnsupportedOperationException if called")
-    void timeSourceThrowsUnsupportedOperationExceptionIfCalled() {
-        final HttpEventDataStub stub = new HttpEventDataStub();
-
-        final UnsupportedOperationException unsupportedOperationException = Assertions
-                .assertThrowsExactly(UnsupportedOperationException.class, stub::timeSource);
-
-        Assertions
-                .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this",
-                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
-                );
-    }
-
-    @Test
     @DisplayName("time() throws UnsupportedOperationException if called")
     void timeThrowsUnsupportedOperationExceptionIfCalled() {
         final HttpEventDataStub stub = new HttpEventDataStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::time);
-
-        Assertions
-                .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this",
-                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
-                );
-    }
-
-    @Test
-    @DisplayName("timeAsLong() throws UnsupportedOperationException if called")
-    void timeAsLongThrowsUnsupportedOperationExceptionIfCalled() {
-        final HttpEventDataStub stub = new HttpEventDataStub();
-
-        final UnsupportedOperationException unsupportedOperationException = Assertions
-                .assertThrowsExactly(UnsupportedOperationException.class, stub::timeAsLong);
-
-        Assertions
-                .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this",
-                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
-                );
-    }
-
-    @Test
-    @DisplayName("timeParsed() throws UnsupportedOperationException if called")
-    void timeParsedThrowsUnsupportedOperationExceptionIfCalled() {
-        final HttpEventDataStub stub = new HttpEventDataStub();
-
-        final UnsupportedOperationException unsupportedOperationException = Assertions
-                .assertThrowsExactly(UnsupportedOperationException.class, stub::timeParsed);
 
         Assertions
                 .assertEquals(

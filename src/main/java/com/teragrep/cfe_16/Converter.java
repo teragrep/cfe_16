@@ -83,14 +83,14 @@ public final class Converter {
         setStructuredDataParams(httpEventData);
 
         SyslogMessage syslogMessage;
-        if (httpEventData.timeParsed()) {
+        if (httpEventData.time().parsed()) {
 
             /*
              * Creates a Syslogmessage with a time stamp
              */
             LOGGER.debug("Creating new syslog message with timestamp");
             syslogMessage = new SyslogMessage()
-                    .withTimestamp(httpEventData.timeAsLong())
+                    .withTimestamp(httpEventData.time().asLong())
                     .withSeverity(severity)
                     .withAppName("capsulated")
                     .withHostname(hostName)
@@ -156,15 +156,15 @@ public final class Converter {
             metadataSDE.addSDParam("ack_id", String.valueOf(eventData.ackID()));
         }
 
-        if (eventData.timeSource() != null) {
+        if (eventData.time().source() != null) {
             LOGGER.debug("Setting time source");
-            metadataSDE.addSDParam("time_source", eventData.timeSource());
+            metadataSDE.addSDParam("time_source", eventData.time().source());
         }
 
         LOGGER.debug("Setting time_parsed and time");
-        metadataSDE.addSDParam("time_parsed", String.valueOf(eventData.timeParsed()));
-        metadataSDE.addSDParam("time", eventData.time());
-        if (eventData.timeParsed()) {
+        metadataSDE.addSDParam("time_parsed", String.valueOf(eventData.time().parsed()));
+        metadataSDE.addSDParam("time", eventData.time().asString());
+        if (eventData.time().parsed()) {
             LOGGER.debug("TimeParsed was true");
             metadataSDE.addSDParam("generated", "false");
         }

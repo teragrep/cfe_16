@@ -50,6 +50,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonStreamParser;
 import com.teragrep.cfe_16.bo.HttpEventData;
+import com.teragrep.cfe_16.bo.HttpEventDataImpl;
 import com.teragrep.cfe_16.bo.HttpEventDataStub;
 import com.teragrep.cfe_16.event.EventTime;
 import com.teragrep.cfe_16.event.JsonEvent;
@@ -111,15 +112,13 @@ public final class EventBatch {
                 *
                 * Can throw an EventFieldBlankException
                 */
-                eventData = new EventTime(
+                eventData = new HttpEventDataImpl(
                         this.channel,
                         jsonEvent.asEvent(),
                         this.authToken,
                         0,
-                        previousEvent,
-                        jsonEvent.asTimeObject()
-                ).timestampedHttpEventData(Instant.now().toEpochMilli());
-
+                        new EventTime(previousEvent, jsonEvent.asTimeObject()).asTime(Instant.now().toEpochMilli())
+                );
                 // Set the previous event if the "current" event was parsed without an exception
                 previousEvent = eventData;
             }

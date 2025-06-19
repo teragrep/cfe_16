@@ -79,7 +79,7 @@ import static org.junit.Assert.*;
 @SpringBootTest
 @TestPropertySource(properties = {
         "syslog.server.host=127.0.0.1",
-        "syslog.server.port=1601",
+        "syslog.server.port=1603",
         "syslog.server.protocol=RELP",
         "max.channels=1000000",
         "max.ack.value=1000000",
@@ -91,7 +91,7 @@ import static org.junit.Assert.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ServiceAndEventBatchIT {
 
-    private static final Integer port = 1601;
+    private static final Integer port = 1603;
     private static final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
     private static final AtomicLong openCount = new AtomicLong();
     private static final AtomicLong closeCount = new AtomicLong();
