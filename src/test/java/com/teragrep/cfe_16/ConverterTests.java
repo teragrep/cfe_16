@@ -47,7 +47,7 @@ package com.teragrep.cfe_16;
 
 import com.cloudbees.syslog.*;
 import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.HttpEventDataImpl;
+import com.teragrep.cfe_16.bo.HECRecordImpl;
 import com.teragrep.cfe_16.event.EventImpl;
 import com.teragrep.cfe_16.event.time.SpecifiedTime;
 import org.junit.jupiter.api.Assertions;
@@ -67,9 +67,9 @@ import static org.junit.Assert.*;
 public class ConverterTests {
 
     private Converter converter;
-    private HttpEventDataImpl eventData1;
-    private HttpEventDataImpl eventData2;
-    private HttpEventDataImpl eventData3;
+    private HECRecordImpl eventData1;
+    private HECRecordImpl eventData2;
+    private HECRecordImpl eventData3;
     private Severity supposedSeverity;
     private Facility supposedFacility;
     private SyslogMessage supposedSyslogMessage1;
@@ -110,21 +110,21 @@ public class ConverterTests {
         supposedSeverity = Severity.INFORMATIONAL;
         supposedFacility = Facility.USER;
 
-        eventData1 = new HttpEventDataImpl(
+        eventData1 = new HECRecordImpl(
                 "CHANNEL_11111",
                 new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 new SpecifiedTime(1433188255253L, "1433188255253", true, "reported")
         );
-        eventData2 = new HttpEventDataImpl(
+        eventData2 = new HECRecordImpl(
                 "CHANNEL_22222",
                 new EventImpl("Event 2"),
                 "AUTH_TOKEN_22222",
                 1,
                 new SpecifiedTime(0L, null, false, "generated")
         );
-        eventData3 = new HttpEventDataImpl(
+        eventData3 = new HECRecordImpl(
                 "defaultchannel",
                 new EventImpl("Event 3"),
                 "AUTH_TOKEN_33333",

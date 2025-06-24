@@ -50,7 +50,7 @@ import com.cloudbees.syslog.SDElement;
 import com.cloudbees.syslog.Severity;
 import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.HttpEventData;
+import com.teragrep.cfe_16.bo.HECRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -72,30 +72,30 @@ public class Converter {
     private SDElement metadataSDE;
     private SDElement headerSDE;
 
-    public SyslogMessage httpToSyslog(HttpEventData httpEventData, HeaderInfo headerInfo) {
+    public SyslogMessage httpToSyslog(HECRecord HECRecord, HeaderInfo headerInfo) {
 
         setEventSeverity();
         setEventFacility();
 
-        setStructuredDataParams(httpEventData);
+        setStructuredDataParams(HECRecord);
         setHeaderSDE(headerInfo);
 
         SyslogMessage syslogMessage;
-        if (httpEventData.time().parsed()) {
+        if (HECRecord.time().parsed()) {
 
             /*
              * Creates a Syslogmessage with a time stamp
              */
             LOGGER.debug("Creating new syslog message with timestamp");
             syslogMessage = new SyslogMessage()
-                    .withTimestamp(httpEventData.time().asLong())
+                    .withTimestamp(HECRecord.time().asLong())
                     .withSeverity(severity)
                     .withAppName("capsulated")
                     .withHostname(hostName)
                     .withFacility(facility)
                     .withSDElement(metadataSDE)
                     .withSDElement(headerSDE)
-                    .withMsg(httpEventData.event().asString());
+                    .withMsg(HECRecord.event().asString());
 
         }
         else {
@@ -111,7 +111,7 @@ public class Converter {
                     .withFacility(facility)
                     .withSDElement(metadataSDE)
                     .withSDElement(headerSDE)
-                    .withMsg(httpEventData.event().asString());
+                    .withMsg(HECRecord.event().asString());
         }
 
         return syslogMessage;
@@ -135,7 +135,7 @@ public class Converter {
      * Gets the data from the HTTP Event Data and adds it to SD Element as SD
      * Parameters.
      */
-    private void setStructuredDataParams(HttpEventData eventData) {
+    private void setStructuredDataParams(HECRecord eventData) {
         LOGGER.debug("Setting Structured Data params");
         metadataSDE = new SDElement("cfe_16-metadata@48577");
 

@@ -48,7 +48,7 @@ package com.teragrep.cfe_16.bo;
 import com.teragrep.cfe_16.event.Event;
 import com.teragrep.cfe_16.event.time.Time;
 
-public final class HttpEventDataStub implements HttpEventData {
+public final class HECRecordStub implements HECRecord {
 
     @Override
     public Event event() {

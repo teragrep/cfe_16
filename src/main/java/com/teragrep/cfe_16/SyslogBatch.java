@@ -47,16 +47,16 @@ package com.teragrep.cfe_16;
 
 import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.HttpEventData;
+import com.teragrep.cfe_16.bo.HECRecord;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class SyslogBatch {
 
-    private final List<HttpEventData> eventData;
+    private final List<HECRecord> eventData;
     private final HeaderInfo headerInfo;
 
-    public SyslogBatch(List<HttpEventData> eventData, HeaderInfo headerInfo) {
+    public SyslogBatch(List<HECRecord> eventData, HeaderInfo headerInfo) {
         this.eventData = eventData;
         this.headerInfo = headerInfo;
     }
@@ -65,8 +65,8 @@ public final class SyslogBatch {
         final List<SyslogMessage> syslogMessages = new ArrayList<>();
         final Converter converter = new Converter();
 
-        for (final HttpEventData httpEventData : this.eventData) {
-            syslogMessages.add(converter.httpToSyslog(httpEventData, headerInfo));
+        for (final HECRecord HECRecord : this.eventData) {
+            syslogMessages.add(converter.httpToSyslog(HECRecord, headerInfo));
         }
 
         return syslogMessages;

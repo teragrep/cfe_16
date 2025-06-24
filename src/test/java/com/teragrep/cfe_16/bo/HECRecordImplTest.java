@@ -52,12 +52,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HttpEventDataImplTest {
+class HECRecordImplTest {
 
     @Test
     @DisplayName("TimeSource() returns \"generated\" if time field is null")
     void timeSourceReturnsGeneratedIfTimeFieldIsNull() {
-        final HttpEventDataImpl httpEventDataImpl = new HttpEventDataImpl(
+        final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
@@ -71,7 +71,7 @@ class HttpEventDataImplTest {
     @Test
     @DisplayName("TimeSource() returns the timeSource even if time is less than 10 characters long")
     void timeSourceReturnsTheTimeSourceEvenIfTimeIsLessThan10CharactersLong() {
-        final HttpEventDataImpl httpEventDataImpl = new HttpEventDataImpl(
+        final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
@@ -85,7 +85,7 @@ class HttpEventDataImplTest {
     @Test
     @DisplayName("TimeSource() returns the timeSource even if time is more than 13 characters long")
     void timeSourceReturnsTheTimeSourceEvenIfTimeIsMoreThan13CharactersLong() {
-        final HttpEventDataImpl httpEventDataImpl = new HttpEventDataImpl(
+        final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
@@ -99,7 +99,7 @@ class HttpEventDataImplTest {
     @Test
     @DisplayName("TimeSource returns timeSource if time is between 10 and 13 characters")
     void timeSourceReturnsTimeSourceIfTimeIsBetween10And13Characters() {
-        final HttpEventDataImpl httpEventDataImpl = new HttpEventDataImpl(
+        final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
@@ -113,7 +113,7 @@ class HttpEventDataImplTest {
     @Test
     @DisplayName("Happy equals test")
     void happyEqualsTest() {
-        final HttpEventDataImpl httpEventDataImpl1 = new HttpEventDataImpl(
+        final HECRecordImpl httpEventDataImpl1 = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
@@ -121,7 +121,7 @@ class HttpEventDataImplTest {
                 new SpecifiedTime(123L, "1234567890123", true, "timeSource")
         );
 
-        final HttpEventDataImpl httpEventDataImpl2 = new HttpEventDataImpl(
+        final HECRecordImpl httpEventDataImpl2 = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
@@ -134,7 +134,7 @@ class HttpEventDataImplTest {
     @Test
     @DisplayName("Unhappy equals test")
     void unhappyEqualsTest() {
-        final HttpEventDataImpl httpEventDataImpl1 = new HttpEventDataImpl(
+        final HECRecordImpl httpEventDataImpl1 = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
@@ -142,7 +142,7 @@ class HttpEventDataImplTest {
                 new SpecifiedTime(123L, "1234567890123", true, "timeSource")
         );
 
-        final HttpEventDataImpl httpEventDataImpl2 = new HttpEventDataImpl(
+        final HECRecordImpl httpEventDataImpl2 = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
@@ -156,7 +156,7 @@ class HttpEventDataImplTest {
     @Test
     @DisplayName("Event returns event")
     void eventReturnsEvent() {
-        final HttpEventDataImpl defaultHttpEventData = new HttpEventDataImpl(
+        final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
@@ -172,7 +172,7 @@ class HttpEventDataImplTest {
     @Test
     @DisplayName("Channel returns channel")
     void channelReturnsChannel() {
-        final HttpEventDataImpl defaultHttpEventData = new HttpEventDataImpl(
+        final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
@@ -188,7 +188,7 @@ class HttpEventDataImplTest {
     @Test
     @DisplayName("AuthenticationToken returns authentication token")
     void authenticationTokenReturnsAuthenticationToken() {
-        final HttpEventDataImpl defaultHttpEventData = new HttpEventDataImpl(
+        final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
@@ -204,7 +204,7 @@ class HttpEventDataImplTest {
     @Test
     @DisplayName("AckID returns ackID if not null")
     void ackIdReturnsAckIdIfNotNull() {
-        final HttpEventDataImpl defaultHttpEventData = new HttpEventDataImpl(
+        final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
@@ -220,7 +220,7 @@ class HttpEventDataImplTest {
     @Test
     @DisplayName("AckID returns null if ackID is null")
     void ackIdReturnsNullIfAckIdIsNull() {
-        final HttpEventDataImpl defaultHttpEventData = new HttpEventDataImpl(
+        final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",

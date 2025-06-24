@@ -45,15 +45,15 @@
  */
 package com.teragrep.cfe_16.event.time;
 
-import com.teragrep.cfe_16.bo.HttpEventData;
+import com.teragrep.cfe_16.bo.HECRecord;
 import java.util.Objects;
 
 public final class GeneratedTime implements Time {
 
-    private final HttpEventData previousEvent;
+    private final HECRecord previousEvent;
     private final long defaultValue;
 
-    public GeneratedTime(HttpEventData previousEvent, long defaultValue) {
+    public GeneratedTime(HECRecord previousEvent, long defaultValue) {
         this.previousEvent = previousEvent;
         this.defaultValue = defaultValue;
     }

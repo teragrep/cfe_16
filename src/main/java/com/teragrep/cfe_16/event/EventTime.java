@@ -45,7 +45,7 @@
  */
 package com.teragrep.cfe_16.event;
 
-import com.teragrep.cfe_16.bo.HttpEventData;
+import com.teragrep.cfe_16.bo.HECRecord;
 import com.teragrep.cfe_16.event.time.DoubleTime;
 import com.teragrep.cfe_16.event.time.GeneratedTime;
 import com.teragrep.cfe_16.event.time.NumericalTime;
@@ -55,10 +55,10 @@ import java.util.Objects;
 
 public final class EventTime {
 
-    private final HttpEventData previousEvent;
+    private final HECRecord previousEvent;
     private final TimeObject timeObject;
 
-    public EventTime(HttpEventData previousEvent, TimeObject timeObject) {
+    public EventTime(HECRecord previousEvent, TimeObject timeObject) {
         this.previousEvent = previousEvent;
         this.timeObject = timeObject;
     }

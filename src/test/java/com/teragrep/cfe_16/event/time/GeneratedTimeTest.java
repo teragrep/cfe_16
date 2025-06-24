@@ -45,7 +45,7 @@
  */
 package com.teragrep.cfe_16.event.time;
 
-import com.teragrep.cfe_16.bo.HttpEventDataImpl;
+import com.teragrep.cfe_16.bo.HECRecordImpl;
 import com.teragrep.cfe_16.event.EventImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -57,10 +57,10 @@ class GeneratedTimeTest {
     @DisplayName("happy equals test")
     void happyEqualsTest() {
         final GeneratedTime specifiedTime1 = new GeneratedTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
         );
         final GeneratedTime specifiedTime2 = new GeneratedTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
         );
 
         Assertions.assertEquals(specifiedTime1, specifiedTime2);
@@ -70,10 +70,10 @@ class GeneratedTimeTest {
     @DisplayName("unhappy equals test")
     void unhappyEqualsTest() {
         final GeneratedTime specifiedTime1 = new GeneratedTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
         );
         final GeneratedTime specifiedTime2 = new GeneratedTime(
-                new HttpEventDataImpl("channel 12345", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
+                new HECRecordImpl("channel 12345", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
         );
 
         Assertions.assertNotEquals(specifiedTime1, specifiedTime2);
@@ -83,7 +83,7 @@ class GeneratedTimeTest {
     @DisplayName("asLong() returns the timeAsLong field")
     void asLongReturnsTheTimeAsLongField() {
         final GeneratedTime specifiedTime1 = new GeneratedTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
         );
 
         Assertions.assertEquals(123L, specifiedTime1.asLong());
@@ -93,7 +93,7 @@ class GeneratedTimeTest {
     @DisplayName("asString() returns the numberNode value as String")
     void asStringReturnsTheNumberNodeValueAsString() {
         final GeneratedTime specifiedTime1 = new GeneratedTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
         );
 
         Assertions.assertEquals("1234567890123", specifiedTime1.asString());
@@ -103,7 +103,7 @@ class GeneratedTimeTest {
     @DisplayName("parsed() returns false")
     void parsedReturnsFalse() {
         final GeneratedTime specifiedTime1 = new GeneratedTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
         );
 
         Assertions.assertFalse(specifiedTime1.parsed());
@@ -113,7 +113,7 @@ class GeneratedTimeTest {
     @DisplayName("source() returns \"generated\"")
     void sourceReturnsGenerated() {
         final GeneratedTime specifiedTime1 = new GeneratedTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")), 12345L
         );
 
         Assertions.assertEquals("generated", specifiedTime1.source());
