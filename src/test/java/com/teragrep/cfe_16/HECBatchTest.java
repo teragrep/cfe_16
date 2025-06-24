@@ -57,7 +57,7 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class EventBatchTest {
+class HECBatchTest {
 
     private static final String channel1 = "CHANNEL_11111";
     private static final String authToken1 = "AUTH_TOKEN_12223";
@@ -75,8 +75,8 @@ class EventBatchTest {
         final List<HttpEventData> supposedList = new ArrayList<>();
         supposedList.add(supposedResponse);
 
-        final EventBatch eventBatch = new EventBatch(authToken1, channel1, allEventsInJson);
-        List<HttpEventData> response = eventBatch.asHttpEventDataList();
+        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson);
+        List<HttpEventData> response = HECBatch.asHttpEventDataList();
         Assertions.assertEquals(supposedList, response, "Should get a JSON with fields text, code and ackID");
     }
 
@@ -86,9 +86,9 @@ class EventBatchTest {
     @Test
     public void asHttpEventDataListUsesAStubIfParsingFailsWithMalformedJSONTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": {{{{}}}}";
-        final EventBatch eventBatch = new EventBatch(authToken1, channel1, allEventsInJson);
+        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson);
 
-        Assertions.assertThrowsExactly(JsonSyntaxException.class, () -> eventBatch.asHttpEventDataList().toString());
+        Assertions.assertThrowsExactly(JsonSyntaxException.class, () -> HECBatch.asHttpEventDataList().toString());
     }
 
     /**
@@ -98,10 +98,10 @@ class EventBatchTest {
     public void asHttpEventDataListUsesAStubIfParsingFailsWithEmptyJSONTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": null}";
         String supposedResponse = "EventStub does not support this";
-        final EventBatch eventBatch = new EventBatch(authToken1, channel1, allEventsInJson);
+        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson);
         Exception exception = Assertions
                 .assertThrowsExactly(
-                        UnsupportedOperationException.class, () -> eventBatch.asHttpEventDataList().toString()
+                        UnsupportedOperationException.class, () -> HECBatch.asHttpEventDataList().toString()
                 );
         Assertions
                 .assertEquals(
@@ -112,16 +112,16 @@ class EventBatchTest {
     @Test
     public void noEventFieldInRequestTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-        final EventBatch eventBatch = new EventBatch(authToken1, channel1, allEventsInJson);
+        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson);
 
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> eventBatch.asHttpEventDataList().toString());
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> HECBatch.asHttpEventDataList().toString());
     }
 
     @Test
     public void eventFieldBlankInRequestTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-        final EventBatch eventBatch = new EventBatch(authToken1, channel1, allEventsInJson);
+        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson);
 
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> eventBatch.asHttpEventDataList().toString());
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> HECBatch.asHttpEventDataList().toString());
     }
 }

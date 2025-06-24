@@ -164,7 +164,7 @@ public class HECServiceImpl implements HECService {
         }
 
         List<SyslogMessage> syslogMessages = new SyslogBatch(
-                new EventBatch(
+                new HECBatch(
                         authToken,
                         channel,
                         eventInJson
