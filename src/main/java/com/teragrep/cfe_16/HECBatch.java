@@ -49,9 +49,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonStreamParser;
-import com.teragrep.cfe_16.bo.HttpEventData;
-import com.teragrep.cfe_16.bo.HttpEventDataImpl;
-import com.teragrep.cfe_16.bo.HttpEventDataStub;
+import com.teragrep.cfe_16.bo.HECRecord;
+import com.teragrep.cfe_16.bo.HECRecordImpl;
+import com.teragrep.cfe_16.bo.HECRecordStub;
 import com.teragrep.cfe_16.event.EventTime;
 import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.event.JsonEventImpl;
@@ -82,8 +82,8 @@ public final class HECBatch {
      * the channel name as string parameters. Returns a JSON node with ack id if
      * everything is successful. Example: {"text":"Success","code":0,"ackID":0}
      */
-    public List<HttpEventData> asHttpEventDataList() {
-        HttpEventData previousEvent = new HttpEventDataStub();
+    public List<HECRecord> asHttpEventDataList() {
+        HECRecord previousEvent = new HECRecordStub();
 
         JsonStreamParser parser = new JsonStreamParser(this.allEventInJSON);
 
@@ -97,8 +97,8 @@ public final class HECBatch {
          */
 
         // Init the HttpEventData as a Stub incase fails
-        HttpEventData eventData = new HttpEventDataStub();
-        List<HttpEventData> syslogMessages = new ArrayList<>();
+        HECRecord eventData = new HECRecordStub();
+        List<HECRecord> syslogMessages = new ArrayList<>();
         while (parser.hasNext()) {
             try {
                 String jsonObjectStr = parser.next().toString();
@@ -112,7 +112,7 @@ public final class HECBatch {
                 *
                 * Can throw an EventFieldBlankException
                 */
-                eventData = new HttpEventDataImpl(
+                eventData = new HECRecordImpl(
                         this.channel,
                         jsonEvent.asEvent(),
                         this.authToken,

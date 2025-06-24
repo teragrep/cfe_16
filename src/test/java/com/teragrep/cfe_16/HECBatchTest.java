@@ -47,8 +47,8 @@ package com.teragrep.cfe_16;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonSyntaxException;
-import com.teragrep.cfe_16.bo.HttpEventData;
-import com.teragrep.cfe_16.bo.HttpEventDataImpl;
+import com.teragrep.cfe_16.bo.HECRecord;
+import com.teragrep.cfe_16.bo.HECRecordImpl;
 import com.teragrep.cfe_16.event.EventImpl;
 import com.teragrep.cfe_16.event.TimeObjectImpl;
 import com.teragrep.cfe_16.event.time.NumericalTime;
@@ -65,18 +65,18 @@ class HECBatchTest {
     @Test
     public void asHttpEventDataListTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\", \"time\": 123456}";
-        HttpEventData supposedResponse = new HttpEventDataImpl(
+        HECRecord supposedResponse = new HECRecordImpl(
                 channel1,
                 new EventImpl("Hello, world!"),
                 authToken1,
                 0,
                 new NumericalTime(new TimeObjectImpl(new ObjectMapper().createObjectNode().numberNode(123456)))
         );
-        final List<HttpEventData> supposedList = new ArrayList<>();
+        final List<HECRecord> supposedList = new ArrayList<>();
         supposedList.add(supposedResponse);
 
         final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson);
-        List<HttpEventData> response = HECBatch.asHttpEventDataList();
+        List<HECRecord> response = HECBatch.asHttpEventDataList();
         Assertions.assertEquals(supposedList, response, "Should get a JSON with fields text, code and ackID");
     }
 

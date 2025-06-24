@@ -46,8 +46,8 @@
 package com.teragrep.cfe_16.event.time;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teragrep.cfe_16.bo.HttpEventDataImpl;
-import com.teragrep.cfe_16.bo.HttpEventDataStub;
+import com.teragrep.cfe_16.bo.HECRecordImpl;
+import com.teragrep.cfe_16.bo.HECRecordStub;
 import com.teragrep.cfe_16.event.EventImpl;
 import com.teragrep.cfe_16.event.TimeObjectImpl;
 import org.junit.jupiter.api.Assertions;
@@ -60,10 +60,10 @@ class TextualTimeTest {
     @DisplayName("happy equals test")
     void happyEqualsTest() {
         final TextualTime specifiedTime1 = new TextualTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
         );
         final TextualTime specifiedTime2 = new TextualTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
         );
 
         Assertions.assertEquals(specifiedTime1, specifiedTime2);
@@ -73,10 +73,10 @@ class TextualTimeTest {
     @DisplayName("unhappy equals test")
     void unhappyEqualsTest() {
         final TextualTime specifiedTime1 = new TextualTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
         );
         final TextualTime specifiedTime2 = new TextualTime(
-                new HttpEventDataImpl("channel 12345", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
+                new HECRecordImpl("channel 12345", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
         );
 
         Assertions.assertNotEquals(specifiedTime1, specifiedTime2);
@@ -86,7 +86,7 @@ class TextualTimeTest {
     @DisplayName("asLong() converts TextNode to long")
     void asLongConvertsTextNodeToLong() {
         final TextualTime specifiedTime1 = new TextualTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
         );
 
         Assertions.assertEquals(12345L, specifiedTime1.asLong());
@@ -96,7 +96,7 @@ class TextualTimeTest {
     @DisplayName("asLong() uses time from previousEvent if TextNode parsing fails")
     void asLongUsesTimeFromPreviousEventIfTextNodeParsingFails() {
         final TextualTime specifiedTime1 = new TextualTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("DefinitelyNotANumber123"))
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("DefinitelyNotANumber123"))
         );
 
         Assertions.assertEquals(1234L, specifiedTime1.asLong());
@@ -106,7 +106,7 @@ class TextualTimeTest {
     @DisplayName("asString() returns the textNode value as String")
     void asStringReturnsTheTextNodeValueAsString() {
         final TextualTime specifiedTime1 = new TextualTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
         );
 
         Assertions.assertEquals("12345", specifiedTime1.asString());
@@ -116,7 +116,7 @@ class TextualTimeTest {
     @DisplayName("parsed() returns false if TextNode conversion was successful")
     void parsedReturnsFalseIfTextNodeConversionWasSuccessful() {
         final TextualTime specifiedTime1 = new TextualTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
         );
 
         Assertions.assertFalse(specifiedTime1.parsed());
@@ -126,7 +126,7 @@ class TextualTimeTest {
     @DisplayName("parsed() returns false if TextNode conversion was unsuccessful and previousEvent is a stub")
     void parsedReturnsFalseIfTextNodeConversionWasUnsuccessfulAndPreviousEventIsAStub() {
         final TextualTime specifiedTime1 = new TextualTime(
-                new HttpEventDataStub(),
+                new HECRecordStub(),
                 new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("DefinitelyNotANumber123"))
         );
 
@@ -139,7 +139,7 @@ class TextualTimeTest {
     )
     void parsedReturnsValueFromPreviousEventIfTextNodeConvertionWasUnsuccessfulAndPreviousEventIsNotAStub() {
         final TextualTime specifiedTime1 = new TextualTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("DefinitelyNotANumber123"))
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("DefinitelyNotANumber123"))
         );
 
         Assertions.assertTrue(specifiedTime1.parsed());
@@ -149,7 +149,7 @@ class TextualTimeTest {
     @DisplayName("source() returns \"generated\" if TextNode conversion was successful")
     void sourceReturnsGeneratedIfTextNodeConversionWasSuccessful() {
         final TextualTime specifiedTime1 = new TextualTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("12345"))
         );
 
         Assertions.assertEquals("generated", specifiedTime1.source());
@@ -159,7 +159,7 @@ class TextualTimeTest {
     @DisplayName("source() returns \"generated\" if TextNode conversion was unsuccessful and previousEvent is a stub")
     void sourceReturnsReportedIfTextNodeConversionWasUnsuccessfulAndPreviousEventIsAStub() {
         final TextualTime specifiedTime1 = new TextualTime(
-                new HttpEventDataStub(),
+                new HECRecordStub(),
                 new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("DefinitelyNotANumber123"))
         );
 
@@ -170,7 +170,7 @@ class TextualTimeTest {
     @DisplayName("source() returns \"reported\" if TextNode conversion was unsuccessful and previousEvent was parsed")
     void sourceReturnsReportedIfTextNodeConversionWasUnsuccessfulAndPreviousEventWasParsed() {
         final TextualTime specifiedTime1 = new TextualTime(
-                new HttpEventDataImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("DefinitelyNotANumber123"))
+                new HECRecordImpl("channel", new EventImpl("event"), "authToken", 1, new SpecifiedTime(1234L, "1234", true, "timeSourceIsNotTheSame")), new TimeObjectImpl(new ObjectMapper().createObjectNode().textNode("DefinitelyNotANumber123"))
         );
 
         Assertions.assertEquals("reported", specifiedTime1.source());

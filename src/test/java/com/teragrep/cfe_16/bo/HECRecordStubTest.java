@@ -49,12 +49,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HttpEventDataStubTest {
+class HECRecordStubTest {
 
     @Test
     @DisplayName("event() throws UnsupportedOperationException if called")
     void eventThrowsUnsupportedOperationExceptionIfCalled() {
-        final HttpEventDataStub stub = new HttpEventDataStub();
+        final HECRecordStub stub = new HECRecordStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::event);
@@ -69,7 +69,7 @@ class HttpEventDataStubTest {
     @Test
     @DisplayName("channel() throws UnsupportedOperationException if called")
     void channelThrowsUnsupportedOperationExceptionIfCalled() {
-        final HttpEventDataStub stub = new HttpEventDataStub();
+        final HECRecordStub stub = new HECRecordStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::channel);
@@ -84,7 +84,7 @@ class HttpEventDataStubTest {
     @Test
     @DisplayName("authenticationToken() throws UnsupportedOperationException if called")
     void authenticationTokenThrowsUnsupportedOperationExceptionIfCalled() {
-        final HttpEventDataStub stub = new HttpEventDataStub();
+        final HECRecordStub stub = new HECRecordStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::authenticationToken);
@@ -99,7 +99,7 @@ class HttpEventDataStubTest {
     @Test
     @DisplayName("ackID() throws UnsupportedOperationException if called")
     void ackIDThrowsUnsupportedOperationExceptionIfCalled() {
-        final HttpEventDataStub stub = new HttpEventDataStub();
+        final HECRecordStub stub = new HECRecordStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::ackID);
@@ -114,7 +114,7 @@ class HttpEventDataStubTest {
     @Test
     @DisplayName("time() throws UnsupportedOperationException if called")
     void timeThrowsUnsupportedOperationExceptionIfCalled() {
-        final HttpEventDataStub stub = new HttpEventDataStub();
+        final HECRecordStub stub = new HECRecordStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::time);
@@ -129,7 +129,7 @@ class HttpEventDataStubTest {
     @Test
     @DisplayName("hashCode() throws UnsupportedOperationException if called")
     void hashCodeThrowsUnsupportedOperationExceptionIfCalled() {
-        final HttpEventDataStub stub = new HttpEventDataStub();
+        final HECRecordStub stub = new HECRecordStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, stub::hashCode);
@@ -144,7 +144,7 @@ class HttpEventDataStubTest {
     @Test
     @DisplayName("equals() throws UnsupportedOperationException if called")
     void equalsThrowsUnsupportedOperationExceptionIfCalled() {
-        final HttpEventDataStub stub = new HttpEventDataStub();
+        final HECRecordStub stub = new HECRecordStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, () -> stub.equals(new Object()));
@@ -159,7 +159,7 @@ class HttpEventDataStubTest {
     @Test
     @DisplayName("isStub() returns true")
     void isStubReturnsTrue() {
-        final HttpEventDataStub stub = new HttpEventDataStub();
+        final HECRecordStub stub = new HECRecordStub();
         Assertions.assertTrue(stub::isStub, "isStub() did not return true");
     }
 }

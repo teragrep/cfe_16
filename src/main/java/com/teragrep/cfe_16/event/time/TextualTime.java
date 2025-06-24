@@ -45,16 +45,16 @@
  */
 package com.teragrep.cfe_16.event.time;
 
-import com.teragrep.cfe_16.bo.HttpEventData;
+import com.teragrep.cfe_16.bo.HECRecord;
 import com.teragrep.cfe_16.event.TimeObject;
 import java.util.Objects;
 
 public final class TextualTime implements Time {
 
-    private final HttpEventData previousEvent;
+    private final HECRecord previousEvent;
     private final TimeObject timeObject;
 
-    public TextualTime(HttpEventData previousEvent, TimeObject timeObject) {
+    public TextualTime(HECRecord previousEvent, TimeObject timeObject) {
         this.previousEvent = previousEvent;
         this.timeObject = timeObject;
     }

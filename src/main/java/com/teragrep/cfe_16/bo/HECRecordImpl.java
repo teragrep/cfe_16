@@ -49,7 +49,7 @@ import com.teragrep.cfe_16.event.Event;
 import com.teragrep.cfe_16.event.time.Time;
 import java.util.Objects;
 
-public final class HttpEventDataImpl implements HttpEventData {
+public final class HECRecordImpl implements HECRecord {
 
     private final String channel;
     private final Event event;
@@ -57,7 +57,7 @@ public final class HttpEventDataImpl implements HttpEventData {
     private final Integer ackID;
     private final Time time;
 
-    public HttpEventDataImpl(String channel, Event event, String authenticationToken, Integer ackID, Time time) {
+    public HECRecordImpl(String channel, Event event, String authenticationToken, Integer ackID, Time time) {
         this.channel = channel;
         this.event = event;
         this.authenticationToken = authenticationToken;
@@ -101,7 +101,7 @@ public final class HttpEventDataImpl implements HttpEventData {
             return false;
         }
 
-        HttpEventDataImpl that = (HttpEventDataImpl) o;
+        HECRecordImpl that = (HECRecordImpl) o;
         return Objects.equals(channel, that.channel) && Objects.equals(event, that.event) && Objects
                 .equals(authenticationToken, that.authenticationToken) && Objects.equals(ackID, that.ackID)
                 && Objects.equals(time, that.time);
