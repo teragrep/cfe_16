@@ -45,81 +45,25 @@
  */
 package com.teragrep.cfe_16.event.time;
 
-import com.teragrep.cfe_16.bo.HECRecord;
-import com.teragrep.cfe_16.event.TimeObject;
-import java.util.Objects;
-
-public final class TextualTime implements Time {
-
-    private final HECRecord previousEvent;
-    private final TimeObject timeObject;
-
-    public TextualTime(HECRecord previousEvent, TimeObject timeObject) {
-        this.previousEvent = previousEvent;
-        this.timeObject = timeObject;
-    }
+public final class HECTimeStub implements HECTime {
 
     @Override
-    public long asLong() {
-        // Try to convert the String to a long (if not convertable, default to 0L)
-        final long asLong = timeObject.asLong(0L);
-        if (asLong != 0L) {
-            return asLong;
-        }
-        else if (!previousEvent.isStub()) {
-            return previousEvent.time().asLong();
-        }
-        return 0;
-    }
-
-    @Override
-    public String asString() {
-        final long asLong = timeObject.asLong(0L);
-
-        if (asLong != 0L) {
-            return String.valueOf(asLong);
-        }
-        else {
-            return previousEvent.time().asString();
-        }
+    public long instant(long defaultValue) {
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
     public boolean parsed() {
-        final long asLong = timeObject.asLong(0L);
-
-        if (asLong != 0L) {
-            return false;
-        }
-        else
-            return !previousEvent.isStub() && previousEvent.time().parsed();
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
     public String source() {
-        final long asLong = timeObject.asLong(0L);
-
-        if (asLong != 0L) {
-            return "generated";
-        }
-        else if (!previousEvent.isStub() && previousEvent.time().parsed()) {
-            return "reported";
-        }
-        return "generated";
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        TextualTime that = (TextualTime) o;
-        return Objects.equals(timeObject, that.timeObject) && Objects.equals(previousEvent, that.previousEvent);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(previousEvent, timeObject);
+    public boolean isStub() {
+        return true;
     }
 }

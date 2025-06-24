@@ -49,9 +49,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonSyntaxException;
 import com.teragrep.cfe_16.bo.HECRecord;
 import com.teragrep.cfe_16.bo.HECRecordImpl;
+import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.event.EventImpl;
-import com.teragrep.cfe_16.event.TimeObjectImpl;
-import com.teragrep.cfe_16.event.time.NumericalTime;
+import com.teragrep.cfe_16.event.time.HECTimeImpl;
+import com.teragrep.cfe_16.event.time.HECTimeImplWithFallback;
+import com.teragrep.cfe_16.event.time.HECTimeStub;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -70,12 +72,12 @@ class HECBatchTest {
                 new EventImpl("Hello, world!"),
                 authToken1,
                 0,
-                new NumericalTime(new TimeObjectImpl(new ObjectMapper().createObjectNode().numberNode(123456)))
+                new HECTimeImplWithFallback(new HECTimeImpl(new ObjectMapper().createObjectNode().numberNode(123456)), new HECTimeStub()), new HeaderInfo()
         );
         final List<HECRecord> supposedList = new ArrayList<>();
         supposedList.add(supposedResponse);
 
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson);
+        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
         List<HECRecord> response = HECBatch.asHttpEventDataList();
         Assertions.assertEquals(supposedList, response, "Should get a JSON with fields text, code and ackID");
     }
@@ -86,7 +88,7 @@ class HECBatchTest {
     @Test
     public void asHttpEventDataListUsesAStubIfParsingFailsWithMalformedJSONTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": {{{{}}}}";
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson);
+        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
 
         Assertions.assertThrowsExactly(JsonSyntaxException.class, () -> HECBatch.asHttpEventDataList().toString());
     }
@@ -98,7 +100,7 @@ class HECBatchTest {
     public void asHttpEventDataListUsesAStubIfParsingFailsWithEmptyJSONTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": null}";
         String supposedResponse = "EventStub does not support this";
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson);
+        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
         Exception exception = Assertions
                 .assertThrowsExactly(
                         UnsupportedOperationException.class, () -> HECBatch.asHttpEventDataList().toString()
@@ -112,7 +114,7 @@ class HECBatchTest {
     @Test
     public void noEventFieldInRequestTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson);
+        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
 
         Assertions.assertThrows(UnsupportedOperationException.class, () -> HECBatch.asHttpEventDataList().toString());
     }
@@ -120,7 +122,7 @@ class HECBatchTest {
     @Test
     public void eventFieldBlankInRequestTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson);
+        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
 
         Assertions.assertThrows(UnsupportedOperationException.class, () -> HECBatch.asHttpEventDataList().toString());
     }

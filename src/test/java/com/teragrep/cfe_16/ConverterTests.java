@@ -46,10 +46,13 @@
 package com.teragrep.cfe_16;
 
 import com.cloudbees.syslog.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HECRecordImpl;
 import com.teragrep.cfe_16.event.EventImpl;
-import com.teragrep.cfe_16.event.time.SpecifiedTime;
+import com.teragrep.cfe_16.event.time.HECTimeImpl;
+import java.time.Instant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,7 +69,6 @@ import static org.junit.Assert.*;
  */
 public class ConverterTests {
 
-    private Converter converter;
     private HECRecordImpl eventData1;
     private HECRecordImpl eventData2;
     private HECRecordImpl eventData3;
@@ -97,8 +99,7 @@ public class ConverterTests {
      * that they can be compared to each other in the test methods.
      */
     @BeforeEach
-    public void initialize() {
-        converter = new Converter();
+    public void initialize() throws JsonProcessingException {
 
         supposedSyslogMessage1 = null;
         supposedSyslogMessage2 = null;
@@ -109,33 +110,30 @@ public class ConverterTests {
 
         supposedSeverity = Severity.INFORMATIONAL;
         supposedFacility = Facility.USER;
-
+        final ObjectMapper objectMapper = new ObjectMapper();
         eventData1 = new HECRecordImpl(
                 "CHANNEL_11111",
                 new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
-                new SpecifiedTime(1433188255253L, "1433188255253", true, "reported")
+                new HECTimeImpl(objectMapper.readTree("1433188255253")),
+                new HeaderInfo()
         );
         eventData2 = new HECRecordImpl(
                 "CHANNEL_22222",
                 new EventImpl("Event 2"),
                 "AUTH_TOKEN_22222",
                 1,
-                new SpecifiedTime(0L, null, false, "generated")
+                new HECTimeImpl(objectMapper.readTree("null")),
+                new HeaderInfo()
         );
         eventData3 = new HECRecordImpl(
                 "defaultchannel",
                 new EventImpl("Event 3"),
                 "AUTH_TOKEN_33333",
                 null,
-                new SpecifiedTime(
-
-                        0L,
-                        null,
-                        false,
-                        "generated"
-                )
+                new HECTimeImpl(objectMapper.readTree("null")),
+                new HeaderInfo()
         );
 
         metadataSDE1.addSDParam("authentication_token", eventData1.authenticationToken());
@@ -143,7 +141,7 @@ public class ConverterTests {
         metadataSDE1.addSDParam("ack_id", String.valueOf(eventData1.ackID()));
         metadataSDE1.addSDParam("time_source", eventData1.time().source());
         metadataSDE1.addSDParam("time_parsed", "true");
-        metadataSDE1.addSDParam("time", eventData1.time().asString());
+        metadataSDE1.addSDParam("time", String.valueOf(eventData1.time()));
         metadataSDE1.addSDParam("generated", "false");
 
         metadataSDE2.addSDParam("authentication_token", eventData2.authenticationToken());
@@ -151,18 +149,18 @@ public class ConverterTests {
         metadataSDE2.addSDParam("ack_id", String.valueOf(eventData2.ackID()));
         metadataSDE2.addSDParam("time_source", eventData2.time().source());
         metadataSDE2.addSDParam("time_parsed", "false");
-        metadataSDE2.addSDParam("time", eventData2.time().asString());
+        metadataSDE2.addSDParam("time", String.valueOf(eventData2.time()));
         metadataSDE2.addSDParam("generated", "true");
 
         metadataSDE3.addSDParam("authentication_token", eventData3.authenticationToken());
         metadataSDE3.addSDParam("channel", eventData3.channel());
         metadataSDE3.addSDParam("time_source", eventData3.time().source());
         metadataSDE3.addSDParam("time_parsed", "false");
-        metadataSDE3.addSDParam("time", eventData3.time().asString());
+        metadataSDE3.addSDParam("time", String.valueOf(eventData3.time()));
         metadataSDE3.addSDParam("generated", "true");
 
         supposedSyslogMessage1 = new SyslogMessage()
-                .withTimestamp(eventData1.time().asLong())
+                .withTimestamp(eventData1.time().instant(Instant.now().toEpochMilli()))
                 .withSeverity(supposedSeverity)
                 .withAppName("capsulated")
                 .withHostname("cfe-16")
@@ -185,11 +183,10 @@ public class ConverterTests {
                 .withFacility(supposedFacility)
                 .withSDElement(metadataSDE3)
                 .withMsg(eventData3.event().asString());
-        HeaderInfo headerInfo = new HeaderInfo();
 
-        returnedMessage1 = converter.httpToSyslog(eventData1, headerInfo);
-        returnedMessage2 = converter.httpToSyslog(eventData2, headerInfo);
-        returnedMessage3 = converter.httpToSyslog(eventData3, headerInfo);
+        returnedMessage1 = eventData1.toSyslogMessage();
+        returnedMessage2 = eventData2.toSyslogMessage();
+        returnedMessage3 = eventData3.toSyslogMessage();
 
         returnedSDElements1 = returnedMessage1.getSDElements();
         returnedSDElements2 = returnedMessage2.getSDElements();

@@ -98,15 +98,9 @@ public final class JsonEventImpl implements JsonEvent {
         return new TimeObjectImpl(node);
     }
 
-    /**
-     * Return the time from the {@link #jsonNode}. If it is null, it is the responsibility of someone else to generate a
-     * valid time.
-     * 
-     * @return time as it is reported in the {@link #jsonNode}, since it might be null, which is valid
-     */
     @Override
-    public String asTime() {
-        return this.jsonNode.get("time").asText();
+    public JsonNode asTimeNode() {
+        return this.jsonNode.get("time");
     }
 
     @Override

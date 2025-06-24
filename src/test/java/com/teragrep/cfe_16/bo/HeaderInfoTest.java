@@ -43,15 +43,27 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.event.time;
+package com.teragrep.cfe_16.bo;
 
-public interface Time {
+import static org.junit.jupiter.api.Assertions.*;
 
-    long asLong();
+import com.cloudbees.syslog.SDElement;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-    String asString();
+class HeaderInfoTest {
 
-    boolean parsed();
+    @Test
+    @DisplayName("asSDElement() uses all three parameters if they are not null")
+    void asSdElementUsesAllThreeParametersIfTheyAreNotNull() {
+        final HeaderInfo headerInfo = new HeaderInfo("forwardedFor", "forwardedHost", "forwardedProto");
 
-    String source();
+        final SDElement expectedSDElement = new SDElement("cfe_16-origin@48577");
+        expectedSDElement.addSDParam("X-Forwarded-For", "forwardedFor");
+        expectedSDElement.addSDParam("X-Forwarded-Host", "forwardedHost");
+        expectedSDElement.addSDParam("X-Forwarded-Proto", "forwardedProto");
+
+        Assertions.assertEquals(expectedSDElement, headerInfo.asSDElement());
+    }
 }

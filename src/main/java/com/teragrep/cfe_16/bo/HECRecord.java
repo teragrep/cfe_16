@@ -45,9 +45,10 @@
  */
 package com.teragrep.cfe_16.bo;
 
+import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.cfe_16.Stubable;
 import com.teragrep.cfe_16.event.Event;
-import com.teragrep.cfe_16.event.time.Time;
+import com.teragrep.cfe_16.event.time.HECTime;
 
 public interface HECRecord extends Stubable {
 
@@ -59,6 +60,8 @@ public interface HECRecord extends Stubable {
 
     Integer ackID();
 
-    Time time();
+    HECTime time();
+
+    SyslogMessage toSyslogMessage();
 
 }

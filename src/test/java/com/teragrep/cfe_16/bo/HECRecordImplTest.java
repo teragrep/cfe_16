@@ -45,9 +45,10 @@
  */
 package com.teragrep.cfe_16.bo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.event.Event;
 import com.teragrep.cfe_16.event.EventImpl;
-import com.teragrep.cfe_16.event.time.SpecifiedTime;
+import com.teragrep.cfe_16.event.time.HECTimeImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,52 +63,56 @@ class HECRecordImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                new SpecifiedTime(123L, null, true, "timeSource")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().nullNode()),
+                new HeaderInfo()
         );
 
         Assertions.assertEquals("generated", httpEventDataImpl.time().source());
     }
 
     @Test
-    @DisplayName("TimeSource() returns the timeSource even if time is less than 10 characters long")
-    void timeSourceReturnsTheTimeSourceEvenIfTimeIsLessThan10CharactersLong() {
+    @DisplayName("TimeSource() returns \"reported\" even if time is less than 10 characters long")
+    void timeSourceReturnsReportedEvenIfTimeIsLessThan10CharactersLong() {
         final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
                 1,
-                new SpecifiedTime(123L, "123456", true, "timeSource")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("123456")),
+                new HeaderInfo()
         );
 
-        Assertions.assertEquals("timeSource", httpEventDataImpl.time().source());
+        Assertions.assertEquals("reported", httpEventDataImpl.time().source());
     }
 
     @Test
-    @DisplayName("TimeSource() returns the timeSource even if time is more than 13 characters long")
-    void timeSourceReturnsTheTimeSourceEvenIfTimeIsMoreThan13CharactersLong() {
+    @DisplayName("TimeSource() returns \"reported\" even if time is more than 13 characters long")
+    void timeSourceReturnsReportedEvenIfTimeIsMoreThan13CharactersLong() {
         final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
                 1,
-                new SpecifiedTime(123L, "12345678901234", true, "timeSource")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("12345678901234")),
+                new HeaderInfo()
         );
 
-        Assertions.assertEquals("timeSource", httpEventDataImpl.time().source());
+        Assertions.assertEquals("reported", httpEventDataImpl.time().source());
     }
 
     @Test
-    @DisplayName("TimeSource returns timeSource if time is between 10 and 13 characters")
-    void timeSourceReturnsTimeSourceIfTimeIsBetween10And13Characters() {
+    @DisplayName("TimeSource returns \"reported\" if time is between 10 and 13 characters")
+    void timeSourceReturnsReportedIfTimeIsBetween10And13Characters() {
         final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
                 "channel",
                 new EventImpl("event"),
                 "authToken",
                 1,
-                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
+                new HeaderInfo()
         );
 
-        Assertions.assertEquals("timeSource", httpEventDataImpl.time().source());
+        Assertions.assertEquals("reported", httpEventDataImpl.time().source());
     }
 
     @Test
@@ -118,7 +123,8 @@ class HECRecordImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
+                new HeaderInfo()
         );
 
         final HECRecordImpl httpEventDataImpl2 = new HECRecordImpl(
@@ -126,7 +132,8 @@ class HECRecordImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
+                new HeaderInfo()
         );
         Assertions.assertEquals(httpEventDataImpl1, httpEventDataImpl2);
     }
@@ -139,15 +146,17 @@ class HECRecordImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
+                new HeaderInfo()
         );
 
         final HECRecordImpl httpEventDataImpl2 = new HECRecordImpl(
-                "channel",
+                "channel is not the same",
                 new EventImpl("event"),
                 "authToken",
                 1,
-                new SpecifiedTime(123L, "1234567890123", true, "timeSourceIsNotTheSame")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
+                new HeaderInfo()
         );
 
         Assertions.assertNotEquals(httpEventDataImpl1, httpEventDataImpl2);
@@ -161,7 +170,8 @@ class HECRecordImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
+                new HeaderInfo()
         );
 
         final Event expectedResult = new EventImpl("event");
@@ -177,7 +187,8 @@ class HECRecordImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
+                new HeaderInfo()
         );
 
         final String expectedResult = "channel";
@@ -193,7 +204,8 @@ class HECRecordImplTest {
                 new EventImpl("event"),
                 "authToken",
                 1,
-                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
+                new HeaderInfo()
         );
 
         final String expectedResult = "authToken";
@@ -209,7 +221,8 @@ class HECRecordImplTest {
                 new EventImpl("event"),
                 "authToken",
                 123,
-                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
+                new HeaderInfo()
         );
 
         final Integer expectedResult = 123;
@@ -225,7 +238,8 @@ class HECRecordImplTest {
                 new EventImpl("event"),
                 "authToken",
                 null,
-                new SpecifiedTime(123L, "1234567890123", true, "timeSource")
+                new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
+                new HeaderInfo()
         );
 
         Assertions.assertNull(defaultHttpEventData.ackID());
