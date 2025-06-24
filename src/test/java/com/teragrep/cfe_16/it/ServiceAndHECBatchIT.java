@@ -89,7 +89,7 @@ import static org.junit.Assert.*;
         "server.print.times=true"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class ServiceAndEventBatchIT {
+public class ServiceAndHECBatchIT {
 
     private static final Integer port = 1603;
     private static final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();

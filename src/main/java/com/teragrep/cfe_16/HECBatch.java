@@ -63,14 +63,14 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class EventBatch {
+public final class HECBatch {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventBatch.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HECBatch.class);
     private final String authToken;
     private final String channel;
     private final String allEventInJSON;
 
-    public EventBatch(String authToken, String channel, String allEventInJSON) {
+    public HECBatch(String authToken, String channel, String allEventInJSON) {
         this.authToken = authToken;
         this.channel = channel;
         this.allEventInJSON = allEventInJSON;
