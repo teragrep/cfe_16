@@ -45,24 +45,71 @@
  */
 package com.teragrep.cfe_16.bo;
 
+import com.cloudbees.syslog.Facility;
+import com.cloudbees.syslog.SDElement;
+import com.cloudbees.syslog.Severity;
+import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.cfe_16.event.Event;
-import com.teragrep.cfe_16.event.time.Time;
+import com.teragrep.cfe_16.event.time.HECTime;
+import java.time.Instant;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class HECRecordImpl implements HECRecord {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(HECRecordImpl.class);
     private final String channel;
     private final Event event;
     private final String authenticationToken;
     private final Integer ackID;
-    private final Time time;
+    private final HECTime hecTime;
+    private final String hostName;
+    private final Severity severity;
+    private final Facility facility;
+    private final HeaderInfo headerInfo;
 
-    public HECRecordImpl(String channel, Event event, String authenticationToken, Integer ackID, Time time) {
+    public HECRecordImpl(
+            String channel,
+            Event event,
+            String authenticationToken,
+            Integer ackID,
+            HECTime hecTime,
+            String hostName,
+            Severity severity,
+            Facility facility,
+            HeaderInfo headerInfo
+    ) {
         this.channel = channel;
         this.event = event;
         this.authenticationToken = authenticationToken;
         this.ackID = ackID;
-        this.time = time;
+        this.hecTime = hecTime;
+        this.hostName = hostName;
+        this.severity = severity;
+        this.facility = facility;
+        this.headerInfo = headerInfo;
+    }
+
+    public HECRecordImpl(
+            String channel,
+            Event event,
+            String authenticationToken,
+            Integer ackID,
+            HECTime hecTime,
+            HeaderInfo headerInfo
+    ) {
+        this(
+                channel,
+                event,
+                authenticationToken,
+                ackID,
+                hecTime,
+                "cfe-16",
+                Severity.INFORMATIONAL,
+                Facility.USER,
+                headerInfo
+        );
     }
 
     @Override
@@ -81,8 +128,50 @@ public final class HECRecordImpl implements HECRecord {
     }
 
     @Override
-    public Time time() {
-        return this.time;
+    public HECTime time() {
+        return this.hecTime;
+    }
+
+    @Override
+    public SyslogMessage toSyslogMessage() {
+        final long currentEpochMillis = Instant.now().toEpochMilli();
+        final SDElement structuredMetadata = structuredDataParams(currentEpochMillis);
+
+        SyslogMessage syslogMessage;
+        if (this.time().parsed()) {
+
+            /*
+             * Creates a Syslogmessage with a time stamp
+             */
+            LOGGER.debug("Creating new syslog message with timestamp");
+            syslogMessage = new SyslogMessage()
+                    .withTimestamp(this.time().instant(currentEpochMillis))
+                    .withSeverity(this.severity)
+                    .withAppName("capsulated")
+                    .withHostname(this.hostName)
+                    .withFacility(this.facility)
+                    .withSDElement(structuredMetadata)
+                    .withSDElement(this.headerInfo.asSDElement())
+                    .withMsg(this.event().asString());
+
+        }
+        else {
+            /*
+             * Creates a Syslogmessage without timestamp, because the time is already given
+             * in the request.
+             */
+            LOGGER.debug("Creating new syslog message without timestamp");
+            syslogMessage = new SyslogMessage()
+                    .withSeverity(this.severity)
+                    .withAppName("capsulated")
+                    .withHostname(this.hostName)
+                    .withFacility(this.facility)
+                    .withSDElement(structuredMetadata)
+                    .withSDElement(this.headerInfo.asSDElement())
+                    .withMsg(this.event().asString());
+        }
+
+        return syslogMessage;
     }
 
     @Override
@@ -95,6 +184,49 @@ public final class HECRecordImpl implements HECRecord {
         return false;
     }
 
+    /*
+     * Gets the data from the HTTP Event Data and adds it to SD Element as SD
+     * Parameters.
+     */
+    private SDElement structuredDataParams(final long fallbackEpoch) {
+        LOGGER.debug("Setting Structured Data params");
+        final SDElement metadataSDE = new SDElement("cfe_16-metadata@48577");
+
+        if (this.authenticationToken() != null) {
+            LOGGER.debug("Setting authentication token");
+            metadataSDE.addSDParam("authentication_token", this.authenticationToken());
+        }
+
+        if (this.channel() != null) {
+            LOGGER.debug("Setting channel");
+            metadataSDE.addSDParam("channel", this.channel());
+        }
+
+        if (this.ackID() != null) {
+            LOGGER.debug("Setting ack id");
+            metadataSDE.addSDParam("ack_id", String.valueOf(this.ackID()));
+        }
+
+        if (this.time().source() != null) {
+            LOGGER.debug("Setting time source");
+            metadataSDE.addSDParam("time_source", this.time().source());
+        }
+
+        LOGGER.debug("Setting time_parsed and time");
+        metadataSDE.addSDParam("time_parsed", String.valueOf(this.time().parsed()));
+        metadataSDE.addSDParam("time", String.valueOf(this.time().instant(fallbackEpoch)));
+        if (this.time().parsed()) {
+            LOGGER.debug("TimeParsed was true");
+            metadataSDE.addSDParam("generated", "false");
+        }
+        else {
+            LOGGER.debug("TimeParsed was false");
+            metadataSDE.addSDParam("generated", "true");
+        }
+
+        return metadataSDE;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
@@ -104,11 +236,11 @@ public final class HECRecordImpl implements HECRecord {
         HECRecordImpl that = (HECRecordImpl) o;
         return Objects.equals(channel, that.channel) && Objects.equals(event, that.event) && Objects
                 .equals(authenticationToken, that.authenticationToken) && Objects.equals(ackID, that.ackID)
-                && Objects.equals(time, that.time);
+                && Objects.equals(hecTime, that.hecTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(channel, event, authenticationToken, ackID, time);
+        return Objects.hash(channel, event, authenticationToken, ackID, hecTime);
     }
 }

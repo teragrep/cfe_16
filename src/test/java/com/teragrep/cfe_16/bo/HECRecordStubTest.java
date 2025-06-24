@@ -45,6 +45,7 @@
  */
 package com.teragrep.cfe_16.bo;
 
+import com.teragrep.cfe_16.event.time.HECTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -112,17 +113,16 @@ class HECRecordStubTest {
     }
 
     @Test
-    @DisplayName("time() throws UnsupportedOperationException if called")
-    void timeThrowsUnsupportedOperationExceptionIfCalled() {
+    @DisplayName("time() returns a HECTimeStub if called")
+    void timeReturnsAHecTimeStubIfCalled() {
         final HECRecordStub stub = new HECRecordStub();
 
-        final UnsupportedOperationException unsupportedOperationException = Assertions
-                .assertThrowsExactly(UnsupportedOperationException.class, stub::time);
+        final HECTime unsupportedOperationException = Assertions.assertDoesNotThrow(stub::time);
 
         Assertions
-                .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this",
-                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
+                .assertThrowsExactly(
+                        UnsupportedOperationException.class, unsupportedOperationException::source,
+                        "HECTimeStub did not throw an exception"
                 );
     }
 

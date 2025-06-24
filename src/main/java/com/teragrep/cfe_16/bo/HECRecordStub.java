@@ -45,8 +45,10 @@
  */
 package com.teragrep.cfe_16.bo;
 
+import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.cfe_16.event.Event;
-import com.teragrep.cfe_16.event.time.Time;
+import com.teragrep.cfe_16.event.time.HECTime;
+import com.teragrep.cfe_16.event.time.HECTimeStub;
 
 public final class HECRecordStub implements HECRecord {
 
@@ -71,7 +73,12 @@ public final class HECRecordStub implements HECRecord {
     }
 
     @Override
-    public Time time() {
+    public HECTime time() {
+        return new HECTimeStub();
+    }
+
+    @Override
+    public SyslogMessage toSyslogMessage() {
         throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
     }
 

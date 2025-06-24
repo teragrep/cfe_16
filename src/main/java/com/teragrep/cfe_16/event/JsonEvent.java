@@ -55,5 +55,5 @@ public interface JsonEvent {
 
     TimeObject asTimeObject();
 
-    String asTime();
+    JsonNode asTimeNode();
 }

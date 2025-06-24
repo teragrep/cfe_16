@@ -43,47 +43,41 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.event;
+package com.teragrep.cfe_16.event.time;
 
-import com.teragrep.cfe_16.bo.HECRecord;
-import com.teragrep.cfe_16.event.time.DoubleTime;
-import com.teragrep.cfe_16.event.time.GeneratedTime;
-import com.teragrep.cfe_16.event.time.NumericalTime;
-import com.teragrep.cfe_16.event.time.TextualTime;
-import com.teragrep.cfe_16.event.time.Time;
 import java.util.Objects;
 
-public final class EventTime {
+public final class HECTimeImplWithFallback implements HECTime {
 
-    private final HECRecord previousEvent;
-    private final TimeObject timeObject;
+    private final HECTime currentTime;
+    private final HECTime fallbackTime;
 
-    public EventTime(HECRecord previousEvent, TimeObject timeObject) {
-        this.previousEvent = previousEvent;
-        this.timeObject = timeObject;
+    public HECTimeImplWithFallback(HECTime currentTime, HECTime fallbackTime) {
+        this.currentTime = currentTime;
+        this.fallbackTime = fallbackTime;
     }
 
-    public Time asTime(long defaultValue) {
-        // No time provided in the event
-        if (timeObject.isStub()) {
-            return new GeneratedTime(previousEvent, defaultValue);
+    @Override
+    public long instant(long defaultValue) {
+        final long currentTime = this.currentTime.instant(defaultValue);
+
+        // Check if the currentTime relied on the defaultValue
+        if (currentTime == defaultValue && !this.fallbackTime.isStub()) {
+            return this.fallbackTime.instant(defaultValue);
         }
-        // Check if time is a double
-        else if (timeObject.isDouble()) {
-            return new DoubleTime(timeObject);
-        }
-        // Time is a number, no calculations required
-        else if (timeObject.canConvertToLong()) {
-            return new NumericalTime(timeObject);
-        }
-        // Time is a String
-        else if (timeObject.isTextual()) {
-            return new TextualTime(previousEvent, timeObject);
-        }
-        // Unknown format
         else {
-            return new GeneratedTime(previousEvent, defaultValue);
+            return currentTime;
         }
+    }
+
+    @Override
+    public boolean parsed() {
+        return false;
+    }
+
+    @Override
+    public String source() {
+        return "";
     }
 
     @Override
@@ -92,13 +86,17 @@ public final class EventTime {
             return false;
         }
 
-        EventTime eventTime = (EventTime) o;
-        return previousEvent.equals(eventTime.previousEvent) && timeObject.equals(eventTime.timeObject);
+        HECTimeImplWithFallback that = (HECTimeImplWithFallback) o;
+        return Objects.equals(currentTime, that.currentTime) && Objects.equals(fallbackTime, that.fallbackTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(previousEvent, timeObject);
+        return Objects.hash(currentTime, fallbackTime);
+    }
 
+    @Override
+    public boolean isStub() {
+        return false;
     }
 }

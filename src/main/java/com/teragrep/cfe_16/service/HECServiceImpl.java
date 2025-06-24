@@ -216,12 +216,7 @@ public class HECServiceImpl implements HECService {
         }
 
         List<SyslogMessage> syslogMessages = new SyslogBatch(
-                new HECBatch(
-                        authToken,
-                        channel,
-                        eventInJson
-                ).asHttpEventDataList(),
-                requestHandler.createHeaderInfoObject(request)
+                new HECBatch(authToken, channel, eventInJson, requestHandler.createHeaderInfoObject(request)).asHttpEventDataList()
         ).asSyslogMessages();
 
         try {

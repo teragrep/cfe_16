@@ -52,10 +52,11 @@ import com.google.gson.JsonStreamParser;
 import com.teragrep.cfe_16.bo.HECRecord;
 import com.teragrep.cfe_16.bo.HECRecordImpl;
 import com.teragrep.cfe_16.bo.HECRecordStub;
-import com.teragrep.cfe_16.event.EventTime;
+import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.event.JsonEventImpl;
-import java.time.Instant;
+import com.teragrep.cfe_16.event.time.HECTimeImpl;
+import com.teragrep.cfe_16.event.time.HECTimeImplWithFallback;
 import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,11 +70,13 @@ public final class HECBatch {
     private final String authToken;
     private final String channel;
     private final String allEventInJSON;
+    private final HeaderInfo headerInfo;
 
-    public HECBatch(String authToken, String channel, String allEventInJSON) {
+    public HECBatch(String authToken, String channel, String allEventInJSON, HeaderInfo headerInfo) {
         this.authToken = authToken;
         this.channel = channel;
         this.allEventInJSON = allEventInJSON;
+        this.headerInfo = headerInfo;
     }
 
     /*
@@ -117,7 +120,8 @@ public final class HECBatch {
                         jsonEvent.asEvent(),
                         this.authToken,
                         0,
-                        new EventTime(previousEvent, jsonEvent.asTimeObject()).asTime(Instant.now().toEpochMilli())
+                        new HECTimeImplWithFallback(new HECTimeImpl(jsonEvent.asTimeNode()), previousEvent.time()),
+                        this.headerInfo
                 );
                 // Set the previous event if the "current" event was parsed without an exception
                 previousEvent = eventData;

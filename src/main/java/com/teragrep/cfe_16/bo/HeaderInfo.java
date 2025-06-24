@@ -46,6 +46,10 @@
 package com.teragrep.cfe_16.bo;
 
 import com.cloudbees.syslog.SDElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.cloudbees.syslog.SDElement;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

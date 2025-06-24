@@ -55,7 +55,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class TimeObjectImplTest {
+class HECTimeObjectImplTest {
 
     @Test
     @DisplayName("isDouble() returns true for a DoubleNode")

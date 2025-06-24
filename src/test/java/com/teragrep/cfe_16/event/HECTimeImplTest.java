@@ -48,17 +48,15 @@ package com.teragrep.cfe_16.event;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teragrep.cfe_16.bo.HECRecordImpl;
-import com.teragrep.cfe_16.bo.HECRecordStub;
-import com.teragrep.cfe_16.event.time.Time;
-import com.teragrep.cfe_16.event.time.SpecifiedTime;
+import com.teragrep.cfe_16.event.time.HECTime;
+import com.teragrep.cfe_16.event.time.HECTimeImpl;
 import java.time.Instant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class EventTimeTest {
+class HECTimeImplTest {
 
     private ObjectMapper objectMapper;
 
@@ -70,227 +68,188 @@ class EventTimeTest {
     @Test
     @DisplayName("Time is generated, not parsed and uses the defaultValue when time is missing from the event")
     void timeIsGeneratedNotParsedAndUsesTheDefaultValueWhenTimeIsMissingFromTheEvent() throws JsonProcessingException {
-        String content = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": " + "\"mysourcetype\"}";
+        String content = "{}";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
         final long currentEpoch = Instant.now().toEpochMilli();
 
-        final Time time = new EventTime(new HECRecordStub(), new JsonEventImpl(jsonNode).asTimeObject())
-                .asTime(currentEpoch);
+        final HECTime HECTime = new HECTimeImpl(jsonNode);
 
         Assertions
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "generated", time.source(),
+                                        "generated", HECTime.source(),
                                         "Time source should be 'generated' when it's not specified in a request"
                                 ),
                         () -> Assertions
                                 .assertFalse(
-                                        time.parsed(),
+                                        HECTime.parsed(),
                                         "timeParsed should be false when time is not specified in a request"
                                 ),
-                        () -> Assertions
-                                .assertEquals(
-                                        currentEpoch, time.asLong(),
-                                        "Time as long should be the defaultValue provided when time is not specified in a request"
-                                )
+                        () -> Assertions.assertEquals(currentEpoch, HECTime.instant(currentEpoch), "Time as long should be the defaultValue provided when time is not specified in a request")
                 );
     }
 
     @Test
     @DisplayName("Time is reported and parsed when time is a double")
     void timeIsReportedAndParsedWhenTimeIsADouble() throws JsonProcessingException {
-        String content = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": "
-                + "\"mysourcetype\", \"time\": 1433188255.253}";
+        String content = "1433188255.253";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
+        final long currentEpoch = Instant.now().toEpochMilli();
 
-        final Time time = new EventTime(new HECRecordStub(), new JsonEventImpl(jsonNode).asTimeObject())
-                .asTime(Instant.now().toEpochMilli());
+        final HECTime HECTime = new HECTimeImpl(jsonNode);
 
         Assertions
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "reported", time.source(),
+                                        "reported", HECTime.source(),
                                         "Time source should be 'reported' when the time is specified in a request"
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        time.parsed(), "timeParsed should be true when time is specified in a request"
+                                        HECTime.parsed(),
+                                        "timeParsed should be true when time is specified in a request"
                                 ),
-                        () -> Assertions
-                                .assertEquals(
-                                        1433188255253L, time.asLong(),
-                                        "Time should be converted to epoch milliseconds when it's provided in a request in "
-                                                + "epoch seconds with decimals"
-                                )
+                        () -> Assertions.assertEquals(1433188255253L, HECTime.instant(currentEpoch), "Time should be converted to epoch milliseconds when it's provided in a request in " + "epoch seconds with decimals")
                 );
     }
 
     @Test
     @DisplayName("Time is reported and parsed when time is exactly 13 digits")
     void timeIsReportedAndParsedWhenTimeIsExactly13Digits() throws JsonProcessingException {
-        String content = "{\"event\": \"Pony 1 has left the barn\", "
-                + "\"sourcetype\":\"mysourcetype\", \"time\": 1433188255253}";
+        String content = "1433188255253";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final Time time = new EventTime(new HECRecordStub(), new JsonEventImpl(jsonNode).asTimeObject())
-                .asTime(Instant.now().toEpochMilli());
+        final long currentEpoch = Instant.now().toEpochMilli();
+        final HECTime HECTime = new HECTimeImpl(jsonNode);
 
         Assertions
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "reported", time.source(),
+                                        "reported", HECTime.source(),
                                         "Time source should be 'reported' when the time is specified in a request"
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        time.parsed(), "timeParsed should be true when time is specified in a request"
+                                        HECTime.parsed(),
+                                        "timeParsed should be true when time is specified in a request"
                                 ),
-                        () -> Assertions
-                                .assertEquals(
-                                        1433188255253L, time.asLong(),
-                                        "Time should be converted to epoch milliseconds when it's provided in a request in "
-                                                + "epoch seconds with decimals"
-                                )
+                        () -> Assertions.assertEquals(1433188255253L, HECTime.instant(currentEpoch), "Time should be converted to epoch milliseconds when it's provided in a request in " + "epoch seconds with decimals")
                 );
     }
 
     @Test
-    @DisplayName("Time is generated and not parsed when time is a string with numbers")
-    void timeIsGeneratedAndNotParsedWhenTimeIsAStringWithNumbers() throws JsonProcessingException {
-        String content = "{\"event\": \"Pony 1 has left the barn\", "
-                + "\"sourcetype\":\"mysourcetype\", \"time\": \"1433188255253\"}";
+    @DisplayName("Time is reported and parsed when time is a string with numbers")
+    void timeIsReportedAndParsedWhenTimeIsAStringWithNumbers() throws JsonProcessingException {
+        String content = "\"1433188255253\"";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final Time time = new EventTime(new HECRecordStub(), new JsonEventImpl(jsonNode).asTimeObject())
-                .asTime(Instant.now().toEpochMilli());
+        final long currentEpoch = Instant.now().toEpochMilli();
+
+        final HECTime HECTime = new HECTimeImpl(jsonNode);
 
         Assertions
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "generated", time.source(),
+                                        "reported", HECTime.source(),
                                         "Time source should be 'generated' when time is given as a string in a request"
                                 ),
                         () -> Assertions
-                                .assertFalse(
-                                        time.parsed(),
+                                .assertTrue(
+                                        HECTime.parsed(),
                                         "timeParsed should be false when time is given as a string in a request"
                                 ),
-                        () -> Assertions
-                                .assertEquals(
-                                        1433188255253L, time.asLong(),
-                                        "Time should be converted to long when time is given as a string in a request"
-                                )
+                        () -> Assertions.assertEquals(1433188255253L, HECTime.instant(currentEpoch), "Time should be converted to long when time is given as a string in a request")
                 );
     }
 
     @Test
     @DisplayName("Time is reported and parsed with less than 13 digits")
     void timeIsReportedAndParsedWithLessThan13Digits() throws JsonProcessingException {
-        String content = "{\"event\": \"Pony 1 has left the barn\", "
-                + "\"sourcetype\":\"mysourcetype\", \"time\": 143318}";
+        String content = "143318";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final Time time = new EventTime(new HECRecordStub(), new JsonEventImpl(jsonNode).asTimeObject())
-                .asTime(Instant.now().toEpochMilli());
+        final long currentEpoch = Instant.now().toEpochMilli();
+
+        final HECTime HECTime = new HECTimeImpl(jsonNode);
 
         Assertions
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "reported", time.source(),
+                                        "reported", HECTime.source(),
                                         "Time source should be 'reported' when time is given as an integer with less "
                                                 + "than 10" + " digits"
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        time.parsed(),
+                                        HECTime.parsed(),
                                         "timeParsed should be false when time is given as an integer with less than 10 "
                                                 + "digits"
                                 ),
-                        () -> Assertions
-                                .assertEquals(
-                                        143318L, time.asLong(), "Time as long should be as provided in the request"
-                                )
+                        () -> Assertions.assertEquals(143318L, HECTime.instant(currentEpoch), "Time as long should be as provided in the request")
                 );
     }
 
     @Test
     @DisplayName("Time is reported and parsed when time is longer than 13 digits")
     void timeIsReportedAndParsedWhenTimeIsLongerThan13Digits() throws JsonProcessingException {
-        String content = "{\"event\": \"Pony 1 has left the barn\", "
-                + "\"sourcetype\":\"mysourcetype\", \"time\": 14331882552523}";
+        String content = "14331882552523";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
+        final long currentEpoch = Instant.now().toEpochMilli();
 
-        final Time time = new EventTime(new HECRecordStub(), new JsonEventImpl(jsonNode).asTimeObject())
-                .asTime(Instant.now().toEpochMilli());
+        final HECTime HECTime = new HECTimeImpl(jsonNode);
 
         Assertions
                 .assertAll(
                         () -> Assertions
                                 .assertEquals(
-                                        "reported", time.source(),
+                                        "reported", HECTime.source(),
                                         "Time source should be 'reported' when time is given as an integer with more "
                                                 + "than 13 digits"
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        time.parsed(),
+                                        HECTime.parsed(),
                                         "timeParsed should be false when time is given as an integer with more than 13 "
                                                 + "digits"
                                 ),
-                        () -> Assertions
-                                .assertEquals(
-                                        14331882552523L, time.asLong(), "Time should be as it's provided in a request."
-                                )
+                        () -> Assertions.assertEquals(14331882552523L, HECTime.instant(currentEpoch), "Time should be as it's provided in a request.")
                 );
     }
 
     @Test
     @DisplayName("Happy equals test")
     void happyEqualsTest() throws JsonProcessingException {
-        String content = "{\"event\": \"Pony 1 has left the barn\", "
-                + "\"sourcetype\":\"mysourcetype\", \"time\": 1433188255252321}";
+        String content = "1433188255252321";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
 
-        final EventTime eventTime1 = new EventTime(
-                new HECRecordImpl("Channel 1", new EventImpl("Event 1"), "AuthToken 1", 0, new SpecifiedTime(123L, "1234567890123", true, "timeSource")), new JsonEventImpl(jsonNode).asTimeObject()
-        );
+        final HECTime HECTime1 = new HECTimeImpl(jsonNode);
+        final HECTime HECTime2 = new HECTimeImpl(jsonNode);
 
-        final EventTime eventTime2 = new EventTime(
-                new HECRecordImpl("Channel 1", new EventImpl("Event 1"), "AuthToken 1", 0, new SpecifiedTime(123L, "1234567890123", true, "timeSource")), new JsonEventImpl(jsonNode).asTimeObject()
-        );
-
-        Assertions.assertEquals(eventTime1, eventTime2);
+        Assertions.assertEquals(HECTime1, HECTime2);
     }
 
     @Test
     @DisplayName("Unhappy equals test")
     void unhappyEqualsTest() throws JsonProcessingException {
-        String content = "{\"event\": \"Pony 1 has left the barn\", "
-                + "\"sourcetype\":\"mysourcetype\", \"time\": 1433188255252321}";
+        String content1 = "1433188255252321";
+        String content2 = "14331882552";
 
-        final JsonNode jsonNode = objectMapper.readTree(content);
+        final HECTime HECTime1 = new HECTimeImpl(objectMapper.readTree(content1));
+        final HECTime HECTime2 = new HECTimeImpl(objectMapper.readTree(content2));
 
-        final EventTime eventTime1 = new EventTime(
-                new HECRecordImpl("Channel 1", new EventImpl("Event 1"), "AuthToken 1", 0, new SpecifiedTime(123L, "1234567890123", true, "timeSource")), new JsonEventImpl(jsonNode).asTimeObject()
-        );
-
-        final EventTime eventTime2 = new EventTime(
-                new HECRecordImpl("Channel 2", new EventImpl("Event 1"), "AuthToken 1", 0, new SpecifiedTime(123L, "1234567890123", true, "timeSource")), new JsonEventImpl(jsonNode).asTimeObject()
-        );
-
-        Assertions.assertNotEquals(eventTime1, eventTime2);
+        Assertions.assertNotEquals(HECTime1, HECTime2);
     }
 }

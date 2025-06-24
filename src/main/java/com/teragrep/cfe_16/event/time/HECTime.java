@@ -45,49 +45,13 @@
  */
 package com.teragrep.cfe_16.event.time;
 
-import com.teragrep.cfe_16.event.TimeObject;
-import java.util.Objects;
+import com.teragrep.cfe_16.Stubable;
 
-public final class NumericalTime implements Time {
+public interface HECTime extends Stubable {
 
-    private final TimeObject timeObject;
+    long instant(final long defaultValue);
 
-    public NumericalTime(TimeObject timeObject) {
-        this.timeObject = timeObject;
-    }
+    boolean parsed();
 
-    @Override
-    public long asLong() {
-        return timeObject.asLong();
-    }
-
-    @Override
-    public String asString() {
-        return timeObject.asText();
-    }
-
-    @Override
-    public boolean parsed() {
-        return true;
-    }
-
-    @Override
-    public String source() {
-        return "reported";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        NumericalTime that = (NumericalTime) o;
-        return Objects.equals(timeObject, that.timeObject);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(timeObject);
-    }
+    String source();
 }
