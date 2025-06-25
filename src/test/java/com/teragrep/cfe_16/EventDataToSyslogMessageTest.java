@@ -72,17 +72,9 @@ import static org.junit.Assert.*;
  */
 public class EventDataToSyslogMessageTest {
 
-    private HECRecordImpl eventData1;
-    private HECRecordImpl eventData2;
-    private HECRecordImpl eventData3;
-    private Severity supposedSeverity;
-    private Facility supposedFacility;
     private SyslogMessage supposedSyslogMessage1;
     private SyslogMessage supposedSyslogMessage2;
     private SyslogMessage supposedSyslogMessage3;
-    private SDElement metadataSDE1;
-    private SDElement metadataSDE2;
-    private SDElement metadataSDE3;
     private SyslogMessage returnedMessage1;
     private SyslogMessage returnedMessage2;
     private SyslogMessage returnedMessage3;
@@ -103,18 +95,15 @@ public class EventDataToSyslogMessageTest {
      */
     @BeforeEach
     public void initialize() {
+        SDElement metadataSDE1 = new SDElement("cfe_16-metadata@48577");
+        SDElement metadataSDE2 = new SDElement("cfe_16-metadata@48577");
+        SDElement metadataSDE3 = new SDElement("cfe_16-metadata@48577");
 
-        supposedSyslogMessage1 = null;
-        supposedSyslogMessage2 = null;
-        supposedSyslogMessage3 = null;
-        metadataSDE1 = new SDElement("cfe_16-metadata@48577");
-        metadataSDE2 = new SDElement("cfe_16-metadata@48577");
-        metadataSDE3 = new SDElement("cfe_16-metadata@48577");
+        Severity supposedSeverity = Severity.INFORMATIONAL;
+        Facility supposedFacility = Facility.USER;
 
-        supposedSeverity = Severity.INFORMATIONAL;
-        supposedFacility = Facility.USER;
         final ObjectMapper objectMapper = new ObjectMapper();
-        eventData1 = new HECRecordImpl(
+        HECRecordImpl eventData1 = new HECRecordImpl(
                 "CHANNEL_11111",
                 new EventImpl("Event 1"),
                 "AUTH_TOKEN_11111",
@@ -122,7 +111,7 @@ public class EventDataToSyslogMessageTest {
                 new HECTimeImpl(objectMapper.readTree("1433188255253")),
                 new HeaderInfo()
         );
-        eventData2 = new HECRecordImpl(
+        HECRecordImpl eventData2 = new HECRecordImpl(
                 "CHANNEL_22222",
                 new EventImpl("Event 2"),
                 "AUTH_TOKEN_22222",
@@ -130,7 +119,7 @@ public class EventDataToSyslogMessageTest {
                 new HECTimeImpl(objectMapper.readTree("null")),
                 new HeaderInfo()
         );
-        eventData3 = new HECRecordImpl(
+        HECRecordImpl eventData3 = new HECRecordImpl(
                 "defaultchannel",
                 new EventImpl("Event 3"),
                 "AUTH_TOKEN_33333",
