@@ -83,6 +83,11 @@ public final class HECRecordStub implements HECRecord {
     }
 
     @Override
+    public SyslogMessage toSyslogMessage(long defaultValue) {
+        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
+    }
+
+    @Override
     public boolean isStub() {
         return true;
     }

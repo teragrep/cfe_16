@@ -64,4 +64,6 @@ public interface HECRecord extends Stubable {
 
     SyslogMessage toSyslogMessage();
 
+    SyslogMessage toSyslogMessage(long defaultValue);
+
 }

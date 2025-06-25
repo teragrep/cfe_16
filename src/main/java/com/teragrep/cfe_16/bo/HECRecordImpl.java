@@ -175,6 +175,47 @@ public final class HECRecordImpl implements HECRecord {
     }
 
     @Override
+    public SyslogMessage toSyslogMessage(long defaultValue) {
+        final SDElement structuredMetadata = structuredDataParams(defaultValue);
+
+        SyslogMessage syslogMessage;
+        if (this.time().parsed()) {
+
+            /*
+             * Creates a Syslogmessage with a time stamp
+             */
+            LOGGER.debug("Creating new syslog message with timestamp");
+            syslogMessage = new SyslogMessage()
+                    .withTimestamp(this.time().instant(defaultValue))
+                    .withSeverity(this.severity)
+                    .withAppName("capsulated")
+                    .withHostname(this.hostName)
+                    .withFacility(this.facility)
+                    .withSDElement(structuredMetadata)
+                    .withSDElement(this.headerInfo.asSDElement())
+                    .withMsg(this.event().asString());
+
+        }
+        else {
+            /*
+             * Creates a Syslogmessage without timestamp, because the time is already given
+             * in the request.
+             */
+            LOGGER.debug("Creating new syslog message without timestamp");
+            syslogMessage = new SyslogMessage()
+                    .withSeverity(this.severity)
+                    .withAppName("capsulated")
+                    .withHostname(this.hostName)
+                    .withFacility(this.facility)
+                    .withSDElement(structuredMetadata)
+                    .withSDElement(this.headerInfo.asSDElement())
+                    .withMsg(this.event().asString());
+        }
+
+        return syslogMessage;
+    }
+
+    @Override
     public Integer ackID() {
         return this.ackID;
     }
