@@ -69,9 +69,9 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 /*
- * Tests the functionality of Converter
+ * Tests the functionality of the eventData.toSyslogMessage method
  */
-public class ConverterTests {
+public class EventDataToSyslogMessageTest {
 
     private HECRecordImpl eventData1;
     private HECRecordImpl eventData2;
