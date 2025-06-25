@@ -58,7 +58,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -282,7 +281,7 @@ public class EventDataToSyslogMessageTest {
     /*
      * Compares the time stamp from the supposed SyslogMessage and the SyslogMessage
      * returned from Converter if the time stamp is assigned to the SyslogMessage.
-     * Otherwise time stamp should be null.
+     * Otherwise, time stamp should be null.
      */
     @Test
     public void timestampTest() {
@@ -302,39 +301,30 @@ public class EventDataToSyslogMessageTest {
      */
     @Test
     public void SDElementsTest() {
-
-        List<SDParam> supposedSDParams = new ArrayList<SDParam>();
-        List<SDParam> returnedSDParams = new ArrayList<SDParam>();
-        Iterator<SDElement> iterator;
-        SDElement returnedSDE = null;
-        SDElement supposedSDE = null;
+        List<SDParam> supposedSDParams = new ArrayList<>();
+        List<SDParam> returnedSDParams = new ArrayList<>();
 
         // Gets the SDParams from the SDEs from the first SyslogMessage returned from
         // Converter and saves them in a List
-        for (iterator = returnedSDElements1.iterator(); iterator.hasNext();) {
-            returnedSDE = iterator.next();
-            for (int i = 0; i < returnedSDE.getSdParams().size(); i++) {
-                returnedSDParams.add(returnedSDE.getSdParams().get(i));
-            }
+        for (SDElement sdElement : returnedSDElements1) {
+            returnedSDParams.addAll(sdElement.getSdParams());
         }
 
         // Gets the SDParams from the SDEs from the first SyslogMessage created in
         // initialize() and saves them in a List
-        for (iterator = supposedSDElements1.iterator(); iterator.hasNext();) {
-            supposedSDE = iterator.next();
-            for (int i = 0; i < supposedSDE.getSdParams().size(); i++) {
-                supposedSDParams.add(supposedSDE.getSdParams().get(i));
-            }
+        for (SDElement sdElement : supposedSDElements1) {
+            supposedSDParams.addAll(sdElement.getSdParams());
         }
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
         final int expectedReturnedSDParamsAssertions = 7; // See lines 135 - 141
         int loopedReturnedSDParamsAssertions = 0;
-        for (int i = 0; i < returnedSDParams.size(); i++) {
+        for (SDParam returnedSDParam : returnedSDParams) {
             loopedReturnedSDParamsAssertions++;
             assertTrue(
-                    "SDParam '" + returnedSDParams.get(i) + "' should not be in returned SDElement.", supposedSDParams.contains(returnedSDParams.get(i))
+                    "SDParam '" + returnedSDParam + "' should not be in returned SDElement.",
+                    supposedSDParams.contains(returnedSDParam)
             );
         }
         Assertions
@@ -347,10 +337,11 @@ public class EventDataToSyslogMessageTest {
         // returned SDParams
         final int expectedSupposedSDParamsAssertions = 7; // See lines 135 - 141
         int loopedSupposedSDParamsAssertions = 0;
-        for (int i = 0; i < supposedSDParams.size(); i++) {
+        for (SDParam supposedSDParam : supposedSDParams) {
             loopedSupposedSDParamsAssertions++;
             assertTrue(
-                    "SDParam '" + supposedSDParams.get(i) + "' should be in returned SDElement.", returnedSDParams.contains(supposedSDParams.get(i))
+                    "SDParam '" + supposedSDParam + "' should be in returned SDElement.",
+                    returnedSDParams.contains(supposedSDParam)
             );
         }
         Assertions
@@ -360,34 +351,30 @@ public class EventDataToSyslogMessageTest {
                 );
 
         // Create new empty ArrayList that we can save SDParams from the next SDElement
-        supposedSDParams = new ArrayList<SDParam>();
-        returnedSDParams = new ArrayList<SDParam>();
+        supposedSDParams = new ArrayList<>();
+        returnedSDParams = new ArrayList<>();
 
         // Gets the SDParams from the SDEs from the second SyslogMessage returned from
         // Converter and saves them in a List
-        for (iterator = returnedSDElements2.iterator(); iterator.hasNext();) {
-            returnedSDE = iterator.next();
-            for (int i = 0; i < returnedSDE.getSdParams().size(); i++)
-                returnedSDParams.add(returnedSDE.getSdParams().get(i));
+        for (SDElement sdElement : returnedSDElements2) {
+            returnedSDParams.addAll(sdElement.getSdParams());
         }
 
         // Gets the SDParams from the SDEs from the second SyslogMessage created in
         // initialize() and saves them in a List
-        for (iterator = supposedSDElements2.iterator(); iterator.hasNext();) {
-            supposedSDE = iterator.next();
-            for (int i = 0; i < supposedSDE.getSdParams().size(); i++) {
-                supposedSDParams.add(supposedSDE.getSdParams().get(i));
-            }
+        for (SDElement sdElement : supposedSDElements2) {
+            supposedSDParams.addAll(sdElement.getSdParams());
         }
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
         final int expectedReturnedSDParamsAssertions1 = 7; // See lines 143 - 147
         int loopedReturnedSDParamsAssertions1 = 0;
-        for (int i = 0; i < returnedSDParams.size(); i++) {
+        for (SDParam returnedSDParam : returnedSDParams) {
             loopedReturnedSDParamsAssertions1++;
             assertTrue(
-                    "SDParam '" + returnedSDParams.get(i) + "' should not be in returned SDElement.", supposedSDParams.contains(returnedSDParams.get(i))
+                    "SDParam '" + returnedSDParam + "' should not be in returned SDElement.",
+                    supposedSDParams.contains(returnedSDParam)
             );
         }
         Assertions
@@ -400,10 +387,11 @@ public class EventDataToSyslogMessageTest {
         // returned SDParams
         final int expectedSupposedSDParamsAssertions1 = 7; // See lines 143 - 147
         int loopedSupposedSDParamsAssertions1 = 0;
-        for (int i = 0; i < supposedSDParams.size(); i++) {
+        for (SDParam supposedSDParam : supposedSDParams) {
             loopedSupposedSDParamsAssertions1++;
             assertTrue(
-                    "SDParam '" + supposedSDParams.get(i) + "' should be in returned SDElement.", returnedSDParams.contains(supposedSDParams.get(i))
+                    "SDParam '" + supposedSDParam + "' should be in returned SDElement.",
+                    returnedSDParams.contains(supposedSDParam)
             );
         }
         Assertions
@@ -413,34 +401,30 @@ public class EventDataToSyslogMessageTest {
                 );
 
         // Create new empty ArrayList that we can save SDParams from the next SDElement
-        supposedSDParams = new ArrayList<SDParam>();
-        returnedSDParams = new ArrayList<SDParam>();
+        supposedSDParams = new ArrayList<>();
+        returnedSDParams = new ArrayList<>();
 
         // Gets the SDParams from the SDEs from the third SyslogMessage returned from
         // Converter and saves them in a List
-        for (iterator = returnedSDElements3.iterator(); iterator.hasNext();) {
-            returnedSDE = iterator.next();
-            for (int i = 0; i < returnedSDE.getSdParams().size(); i++)
-                returnedSDParams.add(returnedSDE.getSdParams().get(i));
+        for (SDElement sdElement : returnedSDElements3) {
+            returnedSDParams.addAll(sdElement.getSdParams());
         }
 
         // Gets the SDParams from the SDEs from the third SyslogMessage created in
         // initialize() and saves them in a List
-        for (iterator = supposedSDElements3.iterator(); iterator.hasNext();) {
-            supposedSDE = iterator.next();
-            for (int i = 0; i < supposedSDE.getSdParams().size(); i++) {
-                supposedSDParams.add(supposedSDE.getSdParams().get(i));
-            }
+        for (SDElement sdElement : supposedSDElements3) {
+            supposedSDParams.addAll(sdElement.getSdParams());
         }
 
         // Goes through all the returned SDParams and checks that they are all found in
         // supposed SDParams
         final int expectedReturnedSDParamsAssertions2 = 6;
         int loopedReturnedSDParamsAssertions2 = 0;
-        for (int i = 0; i < returnedSDParams.size(); i++) {
+        for (SDParam returnedSDParam : returnedSDParams) {
             loopedReturnedSDParamsAssertions2++;
             assertTrue(
-                    "SDParam '" + returnedSDParams.get(i) + "' should not be in returned SDElement.", supposedSDParams.contains(returnedSDParams.get(i))
+                    "SDParam '" + returnedSDParam + "' should not be in returned SDElement.",
+                    supposedSDParams.contains(returnedSDParam)
             );
         }
         Assertions
@@ -453,10 +437,11 @@ public class EventDataToSyslogMessageTest {
         // returned SDParams
         final int expectedSupposedSDParamsAssertions2 = 6;
         int loopedSupposedSDParamsAssertions2 = 0;
-        for (int i = 0; i < supposedSDParams.size(); i++) {
+        for (SDParam supposedSDParam : supposedSDParams) {
             loopedSupposedSDParamsAssertions2++;
             assertTrue(
-                    "SDParam '" + supposedSDParams.get(i) + "' should be in returned SDElement.", returnedSDParams.contains(supposedSDParams.get(i))
+                    "SDParam '" + supposedSDParam + "' should be in returned SDElement.",
+                    returnedSDParams.contains(supposedSDParam)
             );
         }
         Assertions
