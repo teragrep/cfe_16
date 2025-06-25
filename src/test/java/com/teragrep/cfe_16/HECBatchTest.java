@@ -54,7 +54,6 @@ import com.teragrep.cfe_16.event.EventImpl;
 import com.teragrep.cfe_16.event.time.HECTimeImpl;
 import com.teragrep.cfe_16.event.time.HECTimeImplWithFallback;
 import com.teragrep.cfe_16.event.time.HECTimeStub;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -74,12 +73,20 @@ class HECBatchTest {
                 0,
                 new HECTimeImplWithFallback(new HECTimeImpl(new ObjectMapper().createObjectNode().numberNode(123456)), new HECTimeStub()), new HeaderInfo()
         );
-        final List<HECRecord> supposedList = new ArrayList<>();
-        supposedList.add(supposedResponse);
 
         final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
         List<HECRecord> response = HECBatch.asHttpEventDataList();
-        Assertions.assertEquals(supposedList, response, "Should get a JSON with fields text, code and ackID");
+
+        // Test the individual methods, since HECTimeImplWithFallback will have a stub, which does not implement equals or hashcode
+        Assertions.assertEquals(1, response.size());
+        Assertions.assertEquals(supposedResponse.event(), response.get(0).event(), "Event was not the one expected");
+        Assertions
+                .assertEquals(supposedResponse.channel(), response.get(0).channel(), "Event was not the one expected");
+        Assertions
+                .assertEquals(supposedResponse.authenticationToken(), response.get(0).authenticationToken(), "Authentication token was not the one expected");
+        // Use different defaultValues for instant() methods, to ensure they're not the same if they use the defaultValue
+        Assertions
+                .assertEquals(supposedResponse.time().instant(0L), response.get(0).time().instant(1L), "Time was not the one expected");
     }
 
     /**
