@@ -46,6 +46,7 @@
 package com.teragrep.cfe_16.bo;
 
 import com.cloudbees.syslog.SDElement;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,5 +108,21 @@ public class HeaderInfo {
 
     public void setxForwardedProto(String xForwardedProto) {
         this.xForwardedProto = xForwardedProto;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        HeaderInfo that = (HeaderInfo) o;
+        return Objects.equals(xForwardedFor, that.xForwardedFor) && Objects.equals(xForwardedHost, that.xForwardedHost)
+                && Objects.equals(xForwardedProto, that.xForwardedProto);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(xForwardedFor, xForwardedHost, xForwardedProto);
     }
 }
