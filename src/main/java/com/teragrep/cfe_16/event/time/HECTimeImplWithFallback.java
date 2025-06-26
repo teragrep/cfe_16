@@ -72,7 +72,15 @@ public final class HECTimeImplWithFallback implements HECTime {
 
     @Override
     public boolean parsed() {
-        return false;
+        if (this.currentTime.isStub() && this.fallbackTime.isStub()) {
+            return false;
+        }
+        else if (!this.currentTime.isStub() && this.fallbackTime.isStub()) {
+            return this.currentTime.parsed();
+        }
+        else {
+            return this.fallbackTime.parsed();
+        }
     }
 
     @Override
