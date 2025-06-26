@@ -85,7 +85,15 @@ public final class HECTimeImplWithFallback implements HECTime {
 
     @Override
     public String source() {
-        return "";
+        if (this.currentTime.isStub() && this.fallbackTime.isStub()) {
+            return "generated";
+        }
+        else if (!this.currentTime.isStub() && this.fallbackTime.isStub()) {
+            return this.currentTime.source();
+        }
+        else {
+            return this.fallbackTime.source();
+        }
     }
 
     @Override

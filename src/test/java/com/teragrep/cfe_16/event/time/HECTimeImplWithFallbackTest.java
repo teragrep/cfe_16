@@ -95,4 +95,49 @@ class HECTimeImplWithFallbackTest {
 
         Assertions.assertTrue(hecTimeImplWithFallback.parsed());
     }
+
+    @Test
+    @DisplayName("source() returns \"generated\" if current and fallback times are both stubs")
+    void sourceReturnsGeneratedIfCurrentAndFallbackTimesAreBothStubs() {
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                new HECTimeStub(),
+                new HECTimeStub()
+        );
+
+        Assertions.assertEquals("generated", hecTimeImplWithFallback.source());
+    }
+
+    @Test
+    @DisplayName(
+        "source() returns the source() value from the current time if it is not a stub and the fallback time is a stub"
+    )
+    void sourceReturnsTheSourceValueFromTheCurrentTimeIfItIsNotAStubAndTheFallbackTimeIsAStub() {
+        final String content = "1433188255.253";
+        final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
+
+        final HECTime currentTime = new HECTimeImpl(jsonNode);
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                currentTime,
+                new HECTimeStub()
+        );
+
+        Assertions.assertEquals("reported", hecTimeImplWithFallback.source());
+    }
+
+    @Test
+    @DisplayName("source() returns the source() value from the fallback time if the current time is a stub")
+    void sourceReturnsTheSourceValueFromTheFallbackTimeIfTheCurrentTimeIsAStub() {
+        final String content = "1433188255.253";
+        final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
+
+        final HECTime fallbackTime = new HECTimeImpl(jsonNode);
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                new HECTimeStub(),
+                fallbackTime
+        );
+
+        Assertions.assertEquals("reported", hecTimeImplWithFallback.source());
+    }
 }
