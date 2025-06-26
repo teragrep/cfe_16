@@ -140,4 +140,36 @@ class HECTimeImplWithFallbackTest {
 
         Assertions.assertEquals("reported", hecTimeImplWithFallback.source());
     }
+
+    @Test
+    @DisplayName("happy equals test")
+    void happyEqualsTest() {
+        final String content = "1433188255.253";
+        final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
+
+        final HECTime currentTime = new HECTimeImpl(jsonNode);
+        final HECTime fallbackTime = new HECTimeImpl(jsonNode);
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback1 = new HECTimeImplWithFallback(currentTime, fallbackTime);
+        final HECTimeImplWithFallback hecTimeImplWithFallback2 = new HECTimeImplWithFallback(currentTime, fallbackTime);
+
+        Assertions.assertEquals(hecTimeImplWithFallback1, hecTimeImplWithFallback2);
+    }
+
+    @Test
+    @DisplayName("unhappy equals test")
+    void unhappyEqualsTest() {
+        final String content1 = "1433188255.253";
+        final String content2 = "1433188255";
+        final JsonNode jsonNode1 = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content1));
+        final JsonNode jsonNode2 = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content2));
+
+        final HECTime time1 = new HECTimeImpl(jsonNode1);
+        final HECTime time2 = new HECTimeImpl(jsonNode2);
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback1 = new HECTimeImplWithFallback(time1, time1);
+        final HECTimeImplWithFallback hecTimeImplWithFallback2 = new HECTimeImplWithFallback(time1, time2);
+
+        Assertions.assertNotEquals(hecTimeImplWithFallback1, hecTimeImplWithFallback2);
+    }
 }
