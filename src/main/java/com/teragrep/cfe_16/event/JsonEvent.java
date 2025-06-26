@@ -53,7 +53,5 @@ public interface JsonEvent {
 
     JsonNode asNode();
 
-    TimeObject asTimeObject();
-
     JsonNode asTimeNode();
 }

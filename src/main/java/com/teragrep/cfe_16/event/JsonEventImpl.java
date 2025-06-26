@@ -87,18 +87,6 @@ public final class JsonEventImpl implements JsonEvent {
     }
 
     @Override
-    public TimeObject asTimeObject() {
-        final JsonNode node = this.jsonNode.get("time");
-
-        // cannot use node.isEmpty(), since longNode doesn't implement it, resulting in all longs being "empty"
-        if (node == null || node.asText().isEmpty()) {
-            return new TimeObjectStub();
-        }
-
-        return new TimeObjectImpl(node);
-    }
-
-    @Override
     public JsonNode asTimeNode() {
         return this.jsonNode.get("time");
     }
