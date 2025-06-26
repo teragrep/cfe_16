@@ -47,11 +47,69 @@ package com.teragrep.cfe_16.event.time;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Instant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class HECTimeImplWithFallbackTest {
+
+    @Test
+    @DisplayName("instant() returns the defaultValue if currentTime uses the defaultValue and fallbackTime is a stub")
+    void instantReturnsTheDefaultValueIfCurrentTimeUsesTheDefaultValueAndFallbackTimeIsAStub() {
+        final String content = "{}";
+        final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
+
+        final HECTime currentTimeWithTrueParsedValue = new HECTimeImpl(jsonNode);
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                currentTimeWithTrueParsedValue,
+                new HECTimeStub()
+        );
+        final long currentEpoch = Instant.now().toEpochMilli();
+
+        Assertions.assertEquals(currentEpoch, hecTimeImplWithFallback.instant(currentEpoch));
+    }
+
+    @Test
+    @DisplayName("instant() returns the non-default value from currentTime")
+    void instantReturnsTheNonDefaultValueFromCurrentTime() {
+        final String content = "1433188255.253";
+        final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
+
+        final HECTime currentTimeWithTrueParsedValue = new HECTimeImpl(jsonNode);
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                currentTimeWithTrueParsedValue,
+                new HECTimeStub()
+        );
+
+        final long currentEpoch = Instant.now().toEpochMilli();
+        final long expectedTime = 1433188255253L;
+        Assertions.assertEquals(expectedTime, hecTimeImplWithFallback.instant(currentEpoch));
+    }
+
+    @Test
+    @DisplayName(
+        "instant() returns the instant() value from the fallbackTime is currentTime.instant() is teh defaultValue"
+    )
+    void instantReturnsTheInstantValueFromTheFallbackTimeIsCurrentTimeInstantIsTehDefaultValue() {
+        final String jsonThatWillBeDefaultTime = "{}";
+        final String usableJsonTime = "1433188255.253";
+
+        final JsonNode jsonNode1 = Assertions
+                .assertDoesNotThrow(() -> new ObjectMapper().readTree(jsonThatWillBeDefaultTime));
+        final JsonNode jsonNode2 = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(usableJsonTime));
+
+        final HECTime currentTime = new HECTimeImpl(jsonNode1);
+        final HECTime fallbackTime = new HECTimeImpl(jsonNode2);
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(currentTime, fallbackTime);
+
+        final long currentEpoch = Instant.now().toEpochMilli();
+        final long expectedTime = 1433188255253L;
+        Assertions.assertEquals(expectedTime, hecTimeImplWithFallback.instant(currentEpoch));
+    }
 
     @Test
     @DisplayName("parsed() returns false if current and fallback times are both stubs")
