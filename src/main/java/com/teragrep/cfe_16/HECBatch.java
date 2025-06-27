@@ -85,7 +85,7 @@ public final class HECBatch {
      * the channel name as string parameters. Returns a JSON node with ack id if
      * everything is successful. Example: {"text":"Success","code":0,"ackID":0}
      */
-    public List<HECRecord> asHttpEventDataList() {
+    public List<HECRecord> toHECRecordList() {
         HECRecord previousEvent = new HECRecordStub();
 
         JsonStreamParser parser = new JsonStreamParser(this.allEventInJSON);
@@ -93,13 +93,13 @@ public final class HECBatch {
         /*
          * There can be multiple events in one request. Here they are handled one by
          * one. The event is saved in a string variable and is converted into
-         * HttpEventData object. Metadata is assigned to the object. HttpEventData is
+         * HECRecord object. Metadata is assigned to the object. HECRecord is
          * converted into SyslogMessage and saved in a list in a RequestInfo object.
          * After the event is handled, it is assigned as a value to previousEvent
          * variable.
          */
 
-        // Init the HttpEventData as a Stub incase fails
+        // Init the HECRecord as a Stub incase fails
         HECRecord eventData = new HECRecordStub();
         List<HECRecord> syslogMessages = new ArrayList<>();
         while (parser.hasNext()) {
@@ -110,11 +110,7 @@ public final class HECBatch {
                  * case.
                  */
                 final JsonEvent jsonEvent = new JsonEventImpl(new ObjectMapper().readTree(jsonObjectStr));
-                /*
-                * Construct TimestampedHttpEventData with correct time values, based on the previous event
-                *
-                * Can throw an EventFieldBlankException
-                */
+
                 eventData = new HECRecordImpl(
                         this.channel,
                         jsonEvent.asEvent(),

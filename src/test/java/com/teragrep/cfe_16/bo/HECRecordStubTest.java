@@ -62,8 +62,8 @@ class HECRecordStubTest {
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this",
-                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
+                        "HECRecordStub does not support this", unsupportedOperationException.getMessage(),
+                        "Exception message was not what was expected"
                 );
     }
 
@@ -77,8 +77,8 @@ class HECRecordStubTest {
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this",
-                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
+                        "HECRecordStub does not support this", unsupportedOperationException.getMessage(),
+                        "Exception message was not what was expected"
                 );
     }
 
@@ -92,8 +92,8 @@ class HECRecordStubTest {
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this",
-                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
+                        "HECRecordStub does not support this", unsupportedOperationException.getMessage(),
+                        "Exception message was not what was expected"
                 );
     }
 
@@ -107,8 +107,8 @@ class HECRecordStubTest {
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this",
-                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
+                        "HECRecordStub does not support this", unsupportedOperationException.getMessage(),
+                        "Exception message was not what was expected"
                 );
     }
 
@@ -136,8 +136,8 @@ class HECRecordStubTest {
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this",
-                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
+                        "HECRecordStub does not support this", unsupportedOperationException.getMessage(),
+                        "Exception message was not what was expected"
                 );
     }
 
@@ -151,8 +151,8 @@ class HECRecordStubTest {
 
         Assertions
                 .assertEquals(
-                        "TimestampedHttpEventDataStub does not support this",
-                        unsupportedOperationException.getMessage(), "Exception message was not what was expected"
+                        "HECRecordStub does not support this", unsupportedOperationException.getMessage(),
+                        "Exception message was not what was expected"
                 );
     }
 

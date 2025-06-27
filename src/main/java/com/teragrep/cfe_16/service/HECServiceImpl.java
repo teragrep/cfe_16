@@ -97,8 +97,6 @@ public class HECServiceImpl implements HECService {
     @Autowired
     private TokenManager tokenManager;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     private final XForwardedForStub xForwardedForStub;
     private final XForwardedHostStub xForwardedHostStub;
     private final XForwardedProtoStub xForwardedProtoStub;
@@ -216,7 +214,7 @@ public class HECServiceImpl implements HECService {
         }
 
         List<SyslogMessage> syslogMessages = new SyslogBatch(
-                new HECBatch(authToken, channel, eventInJson, requestHandler.createHeaderInfoObject(request)).asHttpEventDataList()
+                new HECBatch(authToken, channel, eventInJson, requestHandler.createHeaderInfoObject(request)).toHECRecordList()
         ).asSyslogMessages();
 
         try {

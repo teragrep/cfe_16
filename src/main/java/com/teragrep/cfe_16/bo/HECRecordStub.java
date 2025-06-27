@@ -54,22 +54,22 @@ public final class HECRecordStub implements HECRecord {
 
     @Override
     public EventMessage event() {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("HECRecordStub does not support this");
     }
 
     @Override
     public String channel() {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("HECRecordStub does not support this");
     }
 
     @Override
     public String authenticationToken() {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("HECRecordStub does not support this");
     }
 
     @Override
     public Integer ackID() {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("HECRecordStub does not support this");
     }
 
     @Override
@@ -79,12 +79,12 @@ public final class HECRecordStub implements HECRecord {
 
     @Override
     public SyslogMessage toSyslogMessage() {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("HECRecordStub does not support this");
     }
 
     @Override
     public SyslogMessage toSyslogMessage(long defaultValue) {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("HECRecordStub does not support this");
     }
 
     @Override
@@ -94,11 +94,11 @@ public final class HECRecordStub implements HECRecord {
 
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("HECRecordStub does not support this");
     }
 
     @Override
     public boolean equals(Object obj) {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("HECRecordStub does not support this");
     }
 }

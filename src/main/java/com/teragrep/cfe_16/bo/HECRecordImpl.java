@@ -101,7 +101,7 @@ public final class HECRecordImpl implements HECRecord {
     ) {
         this(
                 channel,
-            eventMessage,
+                eventMessage,
                 authenticationToken,
                 ackID,
                 hecTime,
