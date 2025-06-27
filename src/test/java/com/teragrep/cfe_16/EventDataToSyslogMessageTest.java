@@ -53,7 +53,7 @@ import com.teragrep.cfe_16.bo.XForwardedForStub;
 import com.teragrep.cfe_16.bo.XForwardedHostStub;
 import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import com.teragrep.cfe_16.bo.HECRecordImpl;
-import com.teragrep.cfe_16.event.EventImpl;
+import com.teragrep.cfe_16.event.EventMessageImpl;
 import com.teragrep.cfe_16.event.time.HECTimeImpl;
 import java.time.Instant;
 import org.junit.jupiter.api.Assertions;
@@ -79,7 +79,7 @@ public class EventDataToSyslogMessageTest {
 
         HECRecordImpl hecRecord1 = new HECRecordImpl(
                 "CHANNEL_11111",
-                new EventImpl("Event 1"),
+                new EventMessageImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 new HECTimeImpl(Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree("1433188255253"))),
@@ -146,7 +146,7 @@ public class EventDataToSyslogMessageTest {
 
         HECRecordImpl hecRecord1 = new HECRecordImpl(
                 "CHANNEL_11111",
-                new EventImpl("Event 1"),
+                new EventMessageImpl("Event 1"),
                 "AUTH_TOKEN_11111",
                 0,
                 new HECTimeImpl(Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree("1433188255253"))),
@@ -217,7 +217,7 @@ public class EventDataToSyslogMessageTest {
 
         HECRecordImpl hecRecord2 = new HECRecordImpl(
                 "CHANNEL_22222",
-                new EventImpl("Event 2"),
+                new EventMessageImpl("Event 2"),
                 "AUTH_TOKEN_22222",
                 1,
                 new HECTimeImpl(Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree("null"))),
@@ -281,7 +281,7 @@ public class EventDataToSyslogMessageTest {
 
         HECRecordImpl hecRecord2 = new HECRecordImpl(
                 "CHANNEL_22222",
-                new EventImpl("Event 2"),
+                new EventMessageImpl("Event 2"),
                 "AUTH_TOKEN_22222",
                 1,
                 new HECTimeImpl(Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree("null"))),
@@ -344,7 +344,7 @@ public class EventDataToSyslogMessageTest {
         Facility expectedFacility = Facility.USER;
         HECRecordImpl hecRecord3 = new HECRecordImpl(
                 "defaultchannel",
-                new EventImpl("Event 3"),
+                new EventMessageImpl("Event 3"),
                 "AUTH_TOKEN_33333",
                 null,
                 new HECTimeImpl(Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree("null"))),
@@ -404,7 +404,7 @@ public class EventDataToSyslogMessageTest {
         Facility expectedFacility = Facility.USER;
         HECRecordImpl hecRecord3 = new HECRecordImpl(
                 "defaultchannel",
-                new EventImpl("Event 3"),
+                new EventMessageImpl("Event 3"),
                 "AUTH_TOKEN_33333",
                 null,
                 new HECTimeImpl(Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree("null"))),

@@ -45,38 +45,12 @@
  */
 package com.teragrep.cfe_16.event;
 
-import java.util.Objects;
+import com.teragrep.cfe_16.Stubable;
 
-public final class EventImpl implements Event {
+/**
+ * Interface for objects that work with the Event (message)
+ */
+public interface EventMessage extends Stubable {
 
-    private final String eventAsString;
-
-    public EventImpl(String eventAsString) {
-        this.eventAsString = eventAsString;
-    }
-
-    @Override
-    public String asString() {
-        return this.eventAsString;
-    }
-
-    @Override
-    public boolean isStub() {
-        return false;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        EventImpl event = (EventImpl) o;
-        return eventAsString.equals(event.eventAsString);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(this.eventAsString);
-    }
+    String asString();
 }

@@ -49,7 +49,7 @@ import com.cloudbees.syslog.Facility;
 import com.cloudbees.syslog.SDElement;
 import com.cloudbees.syslog.Severity;
 import com.cloudbees.syslog.SyslogMessage;
-import com.teragrep.cfe_16.event.Event;
+import com.teragrep.cfe_16.event.EventMessage;
 import com.teragrep.cfe_16.event.time.HECTime;
 import java.time.Instant;
 import java.util.Objects;
@@ -60,7 +60,7 @@ public final class HECRecordImpl implements HECRecord {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HECRecordImpl.class);
     private final String channel;
-    private final Event event;
+    private final EventMessage eventMessage;
     private final String authenticationToken;
     private final Integer ackID;
     private final HECTime hecTime;
@@ -71,7 +71,7 @@ public final class HECRecordImpl implements HECRecord {
 
     public HECRecordImpl(
             String channel,
-            Event event,
+            EventMessage eventMessage,
             String authenticationToken,
             Integer ackID,
             HECTime hecTime,
@@ -81,7 +81,7 @@ public final class HECRecordImpl implements HECRecord {
             HeaderInfo headerInfo
     ) {
         this.channel = channel;
-        this.event = event;
+        this.eventMessage = eventMessage;
         this.authenticationToken = authenticationToken;
         this.ackID = ackID;
         this.hecTime = hecTime;
@@ -93,7 +93,7 @@ public final class HECRecordImpl implements HECRecord {
 
     public HECRecordImpl(
             String channel,
-            Event event,
+            EventMessage eventMessage,
             String authenticationToken,
             Integer ackID,
             HECTime hecTime,
@@ -101,7 +101,7 @@ public final class HECRecordImpl implements HECRecord {
     ) {
         this(
                 channel,
-                event,
+            eventMessage,
                 authenticationToken,
                 ackID,
                 hecTime,
@@ -113,8 +113,8 @@ public final class HECRecordImpl implements HECRecord {
     }
 
     @Override
-    public Event event() {
-        return this.event;
+    public EventMessage event() {
+        return this.eventMessage;
     }
 
     @Override
@@ -275,13 +275,13 @@ public final class HECRecordImpl implements HECRecord {
         }
 
         HECRecordImpl that = (HECRecordImpl) o;
-        return Objects.equals(channel, that.channel) && Objects.equals(event, that.event) && Objects
+        return Objects.equals(channel, that.channel) && Objects.equals(eventMessage, that.eventMessage) && Objects
                 .equals(authenticationToken, that.authenticationToken) && Objects.equals(ackID, that.ackID)
                 && Objects.equals(hecTime, that.hecTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(channel, event, authenticationToken, ackID, hecTime);
+        return Objects.hash(channel, eventMessage, authenticationToken, ackID, hecTime);
     }
 }
