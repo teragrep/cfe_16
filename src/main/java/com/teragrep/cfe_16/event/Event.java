@@ -47,6 +47,9 @@ package com.teragrep.cfe_16.event;
 
 import com.teragrep.cfe_16.Stubable;
 
+/**
+ * Interface for objects that work with the Event (message)
+ */
 public interface Event extends Stubable {
 
     String asString();
