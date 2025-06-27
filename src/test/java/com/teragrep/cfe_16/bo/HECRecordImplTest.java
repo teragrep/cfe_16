@@ -58,7 +58,7 @@ class HECRecordImplTest {
     @Test
     @DisplayName("TimeSource() returns \"generated\" if time field is null")
     void timeSourceReturnsGeneratedIfTimeFieldIsNull() {
-        final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
+        final HECRecordImpl hecRecord = new HECRecordImpl(
                 "channel",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -67,13 +67,13 @@ class HECRecordImplTest {
                 new HeaderInfo()
         );
 
-        Assertions.assertEquals("generated", httpEventDataImpl.time().source());
+        Assertions.assertEquals("generated", hecRecord.time().source());
     }
 
     @Test
     @DisplayName("TimeSource() returns \"reported\" even if time is less than 10 characters long")
     void timeSourceReturnsReportedEvenIfTimeIsLessThan10CharactersLong() {
-        final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
+        final HECRecordImpl hecRecord = new HECRecordImpl(
                 "channel",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -82,13 +82,13 @@ class HECRecordImplTest {
                 new HeaderInfo()
         );
 
-        Assertions.assertEquals("reported", httpEventDataImpl.time().source());
+        Assertions.assertEquals("reported", hecRecord.time().source());
     }
 
     @Test
     @DisplayName("TimeSource() returns \"reported\" even if time is more than 13 characters long")
     void timeSourceReturnsReportedEvenIfTimeIsMoreThan13CharactersLong() {
-        final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
+        final HECRecordImpl hecRecord = new HECRecordImpl(
                 "channel",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -97,13 +97,13 @@ class HECRecordImplTest {
                 new HeaderInfo()
         );
 
-        Assertions.assertEquals("reported", httpEventDataImpl.time().source());
+        Assertions.assertEquals("reported", hecRecord.time().source());
     }
 
     @Test
     @DisplayName("TimeSource returns \"reported\" if time is between 10 and 13 characters")
     void timeSourceReturnsReportedIfTimeIsBetween10And13Characters() {
-        final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
+        final HECRecordImpl hecRecord = new HECRecordImpl(
                 "channel",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -112,13 +112,13 @@ class HECRecordImplTest {
                 new HeaderInfo()
         );
 
-        Assertions.assertEquals("reported", httpEventDataImpl.time().source());
+        Assertions.assertEquals("reported", hecRecord.time().source());
     }
 
     @Test
     @DisplayName("Happy equals test")
     void happyEqualsTest() {
-        final HECRecordImpl httpEventDataImpl1 = new HECRecordImpl(
+        final HECRecordImpl hecRecord1 = new HECRecordImpl(
                 "channel",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -127,7 +127,7 @@ class HECRecordImplTest {
                 new HeaderInfo()
         );
 
-        final HECRecordImpl httpEventDataImpl2 = new HECRecordImpl(
+        final HECRecordImpl hecRecord2 = new HECRecordImpl(
                 "channel",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -135,13 +135,13 @@ class HECRecordImplTest {
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
                 new HeaderInfo()
         );
-        Assertions.assertEquals(httpEventDataImpl1, httpEventDataImpl2);
+        Assertions.assertEquals(hecRecord1, hecRecord2);
     }
 
     @Test
     @DisplayName("Unhappy equals test")
     void unhappyEqualsTest() {
-        final HECRecordImpl httpEventDataImpl1 = new HECRecordImpl(
+        final HECRecordImpl hecRecord1 = new HECRecordImpl(
                 "channel",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -150,7 +150,7 @@ class HECRecordImplTest {
                 new HeaderInfo()
         );
 
-        final HECRecordImpl httpEventDataImpl2 = new HECRecordImpl(
+        final HECRecordImpl hecRecord2 = new HECRecordImpl(
                 "channel is not the same",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -159,13 +159,13 @@ class HECRecordImplTest {
                 new HeaderInfo()
         );
 
-        Assertions.assertNotEquals(httpEventDataImpl1, httpEventDataImpl2);
+        Assertions.assertNotEquals(hecRecord1, hecRecord2);
     }
 
     @Test
     @DisplayName("Event returns event")
     void eventReturnsEvent() {
-        final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
+        final HECRecordImpl hecRecord = new HECRecordImpl(
                 "channel",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -176,13 +176,13 @@ class HECRecordImplTest {
 
         final EventMessage expectedResult = new EventMessageImpl("event");
 
-        Assertions.assertEquals(expectedResult, defaultHttpEventData.event());
+        Assertions.assertEquals(expectedResult, hecRecord.event());
     }
 
     @Test
     @DisplayName("Channel returns channel")
     void channelReturnsChannel() {
-        final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
+        final HECRecordImpl hecRecord = new HECRecordImpl(
                 "channel",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -193,13 +193,13 @@ class HECRecordImplTest {
 
         final String expectedResult = "channel";
 
-        Assertions.assertEquals(expectedResult, defaultHttpEventData.channel());
+        Assertions.assertEquals(expectedResult, hecRecord.channel());
     }
 
     @Test
     @DisplayName("AuthenticationToken returns authentication token")
     void authenticationTokenReturnsAuthenticationToken() {
-        final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
+        final HECRecordImpl hecRecord = new HECRecordImpl(
                 "channel",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -210,13 +210,13 @@ class HECRecordImplTest {
 
         final String expectedResult = "authToken";
 
-        Assertions.assertEquals(expectedResult, defaultHttpEventData.authenticationToken());
+        Assertions.assertEquals(expectedResult, hecRecord.authenticationToken());
     }
 
     @Test
     @DisplayName("AckID returns ackID if not null")
     void ackIdReturnsAckIdIfNotNull() {
-        final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
+        final HECRecordImpl hecRecord = new HECRecordImpl(
                 "channel",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -227,13 +227,13 @@ class HECRecordImplTest {
 
         final Integer expectedResult = 123;
 
-        Assertions.assertEquals(expectedResult, defaultHttpEventData.ackID());
+        Assertions.assertEquals(expectedResult, hecRecord.ackID());
     }
 
     @Test
     @DisplayName("AckID returns null if ackID is null")
     void ackIdReturnsNullIfAckIdIsNull() {
-        final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
+        final HECRecordImpl hecRecord = new HECRecordImpl(
                 "channel",
                 new EventMessageImpl("event"),
                 "authToken",
@@ -242,6 +242,6 @@ class HECRecordImplTest {
                 new HeaderInfo()
         );
 
-        Assertions.assertNull(defaultHttpEventData.ackID());
+        Assertions.assertNull(hecRecord.ackID());
     }
 }

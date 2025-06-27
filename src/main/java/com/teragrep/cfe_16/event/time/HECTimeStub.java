@@ -49,17 +49,17 @@ public final class HECTimeStub implements HECTime {
 
     @Override
     public long instant(long defaultValue) {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("HECTimeStub does not support this");
     }
 
     @Override
     public boolean parsed() {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("HECTimeStub does not support this");
     }
 
     @Override
     public String source() {
-        throw new UnsupportedOperationException("TimestampedHttpEventDataStub does not support this");
+        throw new UnsupportedOperationException("HECTimeStub does not support this");
     }
 
     @Override
