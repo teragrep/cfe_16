@@ -50,7 +50,7 @@ import com.google.gson.JsonSyntaxException;
 import com.teragrep.cfe_16.bo.HECRecord;
 import com.teragrep.cfe_16.bo.HECRecordImpl;
 import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.event.EventImpl;
+import com.teragrep.cfe_16.event.EventMessageImpl;
 import com.teragrep.cfe_16.event.time.HECTimeImpl;
 import com.teragrep.cfe_16.event.time.HECTimeImplWithFallback;
 import com.teragrep.cfe_16.event.time.HECTimeStub;
@@ -68,7 +68,7 @@ class HECBatchTest {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\", \"time\": 123456}";
         HECRecord supposedResponse = new HECRecordImpl(
                 channel1,
-                new EventImpl("Hello, world!"),
+                new EventMessageImpl("Hello, world!"),
                 authToken1,
                 0,
                 new HECTimeImplWithFallback(new HECTimeImpl(new ObjectMapper().createObjectNode().numberNode(123456)), new HECTimeStub()), new HeaderInfo()

@@ -45,25 +45,50 @@
  */
 package com.teragrep.cfe_16.event;
 
-public final class EventStub implements Event {
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-    @Override
-    public String asString() {
-        throw new UnsupportedOperationException("EventStub does not support this");
+class EventMessageStubTest {
+
+    @Test
+    @DisplayName("isStub() returns true")
+    void isStubReturnsTrue() {
+        final EventMessageStub eventStub = new EventMessageStub();
+
+        Assertions.assertTrue(eventStub::isStub);
     }
 
-    @Override
-    public boolean isStub() {
-        return true;
+    @Test
+    @DisplayName("asString() throws UnsupportedOperationException if called")
+    void asStringThrowsUnsupportedOperationExceptionIfCalled() {
+        final EventMessageStub eventStub = new EventMessageStub();
+
+        final Exception exception = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, eventStub::asString);
+
+        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
     }
 
-    @Override
-    public int hashCode() {
-        throw new UnsupportedOperationException("EventStub does not support this");
+    @Test
+    @DisplayName("hashCode() throws UnsupportedOperationException if called")
+    void hashCodeThrowsUnsupportedOperationExceptionIfCalled() {
+        final EventMessageStub eventStub = new EventMessageStub();
+
+        final Exception exception = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, eventStub::hashCode);
+
+        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        throw new UnsupportedOperationException("EventStub does not support this");
+    @Test
+    @DisplayName("equals() throws UnsupportedOperationException if called")
+    void equalsThrowsUnsupportedOperationExceptionIfCalled() {
+        final EventMessageStub eventStub = new EventMessageStub();
+
+        final Exception exception = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, () -> eventStub.equals(new Object()));
+
+        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
     }
 }

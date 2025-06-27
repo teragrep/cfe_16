@@ -45,12 +45,25 @@
  */
 package com.teragrep.cfe_16.event;
 
-import com.teragrep.cfe_16.Stubable;
+public final class EventMessageStub implements EventMessage {
 
-/**
- * Interface for objects that work with the Event (message)
- */
-public interface Event extends Stubable {
+    @Override
+    public String asString() {
+        throw new UnsupportedOperationException("EventStub does not support this");
+    }
 
-    String asString();
+    @Override
+    public boolean isStub() {
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        throw new UnsupportedOperationException("EventStub does not support this");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        throw new UnsupportedOperationException("EventStub does not support this");
+    }
 }

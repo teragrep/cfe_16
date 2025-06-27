@@ -49,7 +49,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public interface JsonEvent {
 
-    Event asEvent();
+    EventMessage asEvent();
 
     JsonNode asNode();
 

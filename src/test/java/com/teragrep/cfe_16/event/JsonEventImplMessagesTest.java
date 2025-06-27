@@ -61,9 +61,9 @@ class JsonEventImplMessagesTest {
 
         final JsonEventImpl jsonEventImpl = new JsonEventImpl(jsonNode);
 
-        final Event returnedEvent = jsonEventImpl.asEvent();
+        final EventMessage returnedEventMessage = jsonEventImpl.asEvent();
 
-        Assertions.assertTrue(returnedEvent::isStub);
+        Assertions.assertTrue(returnedEventMessage::isStub);
     }
 
     @Test
@@ -74,9 +74,9 @@ class JsonEventImplMessagesTest {
 
         final JsonEventImpl jsonEventImpl = new JsonEventImpl(jsonNode);
 
-        final Event returnedEvent = jsonEventImpl.asEvent();
+        final EventMessage returnedEventMessage = jsonEventImpl.asEvent();
 
-        Assertions.assertTrue(returnedEvent::isStub);
+        Assertions.assertTrue(returnedEventMessage::isStub);
     }
 
     @Test
@@ -89,9 +89,9 @@ class JsonEventImplMessagesTest {
 
         final JsonEventImpl jsonEventImpl = new JsonEventImpl(jsonNode);
 
-        final Event returnedEvent = jsonEventImpl.asEvent();
+        final EventMessage returnedEventMessage = jsonEventImpl.asEvent();
 
-        Assertions.assertTrue(returnedEvent::isStub);
+        Assertions.assertTrue(returnedEventMessage::isStub);
     }
 
     @Test
@@ -104,9 +104,9 @@ class JsonEventImplMessagesTest {
 
         final JsonEventImpl jsonEventImpl = new JsonEventImpl(jsonNode);
 
-        final Event returnedNode = jsonEventImpl.asEvent();
+        final EventMessage returnedNode = jsonEventImpl.asEvent();
 
-        final Event expectedNode = new EventImpl("Valid event");
+        final EventMessage expectedNode = new EventMessageImpl("Valid event");
 
         Assertions.assertEquals(expectedNode, returnedNode);
     }

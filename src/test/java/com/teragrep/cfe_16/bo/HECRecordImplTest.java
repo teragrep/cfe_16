@@ -46,8 +46,8 @@
 package com.teragrep.cfe_16.bo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teragrep.cfe_16.event.Event;
-import com.teragrep.cfe_16.event.EventImpl;
+import com.teragrep.cfe_16.event.EventMessage;
+import com.teragrep.cfe_16.event.EventMessageImpl;
 import com.teragrep.cfe_16.event.time.HECTimeImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -60,7 +60,7 @@ class HECRecordImplTest {
     void timeSourceReturnsGeneratedIfTimeFieldIsNull() {
         final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
                 "channel",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 1,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().nullNode()),
@@ -75,7 +75,7 @@ class HECRecordImplTest {
     void timeSourceReturnsReportedEvenIfTimeIsLessThan10CharactersLong() {
         final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
                 "channel",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 1,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("123456")),
@@ -90,7 +90,7 @@ class HECRecordImplTest {
     void timeSourceReturnsReportedEvenIfTimeIsMoreThan13CharactersLong() {
         final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
                 "channel",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 1,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("12345678901234")),
@@ -105,7 +105,7 @@ class HECRecordImplTest {
     void timeSourceReturnsReportedIfTimeIsBetween10And13Characters() {
         final HECRecordImpl httpEventDataImpl = new HECRecordImpl(
                 "channel",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 1,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
@@ -120,7 +120,7 @@ class HECRecordImplTest {
     void happyEqualsTest() {
         final HECRecordImpl httpEventDataImpl1 = new HECRecordImpl(
                 "channel",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 1,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
@@ -129,7 +129,7 @@ class HECRecordImplTest {
 
         final HECRecordImpl httpEventDataImpl2 = new HECRecordImpl(
                 "channel",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 1,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
@@ -143,7 +143,7 @@ class HECRecordImplTest {
     void unhappyEqualsTest() {
         final HECRecordImpl httpEventDataImpl1 = new HECRecordImpl(
                 "channel",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 1,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
@@ -152,7 +152,7 @@ class HECRecordImplTest {
 
         final HECRecordImpl httpEventDataImpl2 = new HECRecordImpl(
                 "channel is not the same",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 1,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
@@ -167,14 +167,14 @@ class HECRecordImplTest {
     void eventReturnsEvent() {
         final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
                 "channel",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 1,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
                 new HeaderInfo()
         );
 
-        final Event expectedResult = new EventImpl("event");
+        final EventMessage expectedResult = new EventMessageImpl("event");
 
         Assertions.assertEquals(expectedResult, defaultHttpEventData.event());
     }
@@ -184,7 +184,7 @@ class HECRecordImplTest {
     void channelReturnsChannel() {
         final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
                 "channel",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 1,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
@@ -201,7 +201,7 @@ class HECRecordImplTest {
     void authenticationTokenReturnsAuthenticationToken() {
         final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
                 "channel",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 1,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
@@ -218,7 +218,7 @@ class HECRecordImplTest {
     void ackIdReturnsAckIdIfNotNull() {
         final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
                 "channel",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 123,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),
@@ -235,7 +235,7 @@ class HECRecordImplTest {
     void ackIdReturnsNullIfAckIdIsNull() {
         final HECRecordImpl defaultHttpEventData = new HECRecordImpl(
                 "channel",
-                new EventImpl("event"),
+                new EventMessageImpl("event"),
                 "authToken",
                 null,
                 new HECTimeImpl(new ObjectMapper().createObjectNode().textNode("1234567890123")),

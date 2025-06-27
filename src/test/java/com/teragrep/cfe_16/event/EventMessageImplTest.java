@@ -49,12 +49,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class EventImplTest {
+class EventMessageImplTest {
 
     @Test
     @DisplayName("isStub() returns false")
     void isStubReturnsFalse() {
-        final EventImpl event = new EventImpl("event");
+        final EventMessageImpl event = new EventMessageImpl("event");
 
         Assertions.assertFalse(event::isStub);
     }
@@ -62,7 +62,7 @@ class EventImplTest {
     @Test
     @DisplayName("asString() returns the eventAsString field")
     void asStringReturnsTheEventAsStringField() {
-        final EventImpl event = new EventImpl("event");
+        final EventMessageImpl event = new EventMessageImpl("event");
 
         Assertions.assertEquals("event", event.asString());
     }
@@ -70,8 +70,8 @@ class EventImplTest {
     @Test
     @DisplayName("Happy equals test")
     void happyEqualsTest() {
-        final EventImpl event1 = new EventImpl("event");
-        final EventImpl event2 = new EventImpl("event");
+        final EventMessageImpl event1 = new EventMessageImpl("event");
+        final EventMessageImpl event2 = new EventMessageImpl("event");
 
         Assertions.assertEquals(event1, event2);
     }
@@ -79,8 +79,8 @@ class EventImplTest {
     @Test
     @DisplayName("Unhappy equals test")
     void unhappyEqualsTest() {
-        final EventImpl event1 = new EventImpl("event");
-        final EventImpl event2 = new EventImpl("event123");
+        final EventMessageImpl event1 = new EventMessageImpl("event");
+        final EventMessageImpl event2 = new EventMessageImpl("event123");
 
         Assertions.assertNotEquals(event1, event2);
     }
