@@ -117,18 +117,18 @@ public class EventManager {
             String channel,
             String allEventsInJson,
             HeaderInfo headerInfo,
-            AckManager ackManager
+            Acknowledgements acknowledgements
     ) {
         HttpEventData previousEvent = null;
 
-        ackManager.initializeContext(authToken, channel);
-        int ackId = ackManager.getCurrentAckValue(authToken, channel);
-        boolean incremented = ackManager.incrementAckValue(authToken, channel);
+        acknowledgements.initializeContext(authToken, channel);
+        int ackId = acknowledgements.getCurrentAckValue(authToken, channel);
+        boolean incremented = acknowledgements.incrementAckValue(authToken, channel);
         if (!incremented) {
             throw new InternalServerErrorException("Ack value couldn't be incremented.");
         }
         Ack ack = new Ack(ackId, false);
-        boolean addedAck = ackManager.addAck(authToken, channel, ack);
+        boolean addedAck = acknowledgements.addAck(authToken, channel, ack);
         if (!addedAck) {
             throw new InternalServerErrorException("Ack ID " + ackId + " couldn't be added to the Ack set.");
         }
@@ -180,7 +180,7 @@ public class EventManager {
         boolean shouldAck = channel != null && !channel.equals(Session.DEFAULT_CHANNEL);
 
         if (shouldAck) {
-            boolean acked = ackManager.acknowledge(authToken, channel, ackId);
+            boolean acked = acknowledgements.acknowledge(authToken, channel, ackId);
             if (!acked) {
                 throw new InternalServerErrorException("Ack ID " + ackId + " not Acked.");
             }

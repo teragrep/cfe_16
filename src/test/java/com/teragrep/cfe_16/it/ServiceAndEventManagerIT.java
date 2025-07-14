@@ -47,7 +47,7 @@ package com.teragrep.cfe_16.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teragrep.cfe_16.AckManager;
+import com.teragrep.cfe_16.Acknowledgements;
 import com.teragrep.cfe_16.EventManager;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
@@ -119,7 +119,7 @@ public class ServiceAndEventManagerIT {
     @Autowired
     private HECService service;
     @Autowired
-    private AckManager ackManager;
+    private Acknowledgements acknowledgements;
     private static final ServerSocket serverSocket = getSocket();
 
     private MockHttpServletRequest request1;
@@ -338,7 +338,7 @@ public class ServiceAndEventManagerIT {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":2}";
         String response = eventManager
-                .convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager)
+                .convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements)
                 .toString();
         assertEquals("Should get a JSON with fields text, code and ackID", supposedResponse, response);
     }
@@ -358,8 +358,9 @@ public class ServiceAndEventManagerIT {
         String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
 
         assertEquals(
-                "Should get a JSON with fields text and code.", supposedResponse,
-                eventManager.convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager).toString()
+                "Should get a JSON with fields text and code.", supposedResponse, eventManager
+                        .convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, acknowledgements)
+                        .toString()
         );
 
     }
@@ -373,7 +374,7 @@ public class ServiceAndEventManagerIT {
         Assertions.assertThrows(EventFieldMissingException.class, () -> {
             /*AckManager ackManager = new AckManager();*/
             String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-            eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
+            eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements);
         });
     }
 
@@ -386,7 +387,7 @@ public class ServiceAndEventManagerIT {
         Assertions.assertThrows(EventFieldBlankException.class, () -> {
             /*AckManager ackManager = new AckManager();*/
             String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-            eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager);
+            eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements);
         });
     }
 
@@ -552,12 +553,12 @@ public class ServiceAndEventManagerIT {
      * at once.
      */
     public void sendingMultipleEventsTest() {
-        AckManager ackManager = new AckManager();
+        Acknowledgements acknowledgements = new Acknowledgements();
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
         assertEquals(
                 "Should get a JSON with fields text, code and ackID", supposedResponse,
-                eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, ackManager).toString()
+                eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements).toString()
         );
 
     }
@@ -567,12 +568,13 @@ public class ServiceAndEventManagerIT {
      * sending multiple events at once.
      */
     public void sendingMultipleEventsWithDefaultChannelTest() {
-        AckManager ackManager = new AckManager();
+        Acknowledgements acknowledgements = new Acknowledgements();
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
         assertEquals(
-                "Should get a JSON with fields text, code and ackID", supposedResponse,
-                eventManager.convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, ackManager).toString()
+                "Should get a JSON with fields text, code and ackID", supposedResponse, eventManager
+                        .convertData(authToken1, defaultChannel, allEventsInJson, headerInfo, acknowledgements)
+                        .toString()
         );
     }
 }
