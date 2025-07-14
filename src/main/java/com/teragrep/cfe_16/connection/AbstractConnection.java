@@ -45,28 +45,39 @@
  */
 package com.teragrep.cfe_16.connection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.cloudbees.syslog.SyslogMessage;
+import com.cloudbees.syslog.sender.AbstractSyslogMessageSender;
 
 import java.io.IOException;
 
-public class SenderFactory {
+/**
+ * An abstract connection class for sending batch messages.
+ */
+public abstract class AbstractConnection extends AbstractSyslogMessageSender {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SenderFactory.class);
+    protected String hostname;
+    protected int port;
 
-    public static AbstractSender createSender(String type, String hostname, int port) throws IOException {
-        LOGGER.debug("Creating sender for type <[{}]> to <[{}]>:<[{}]>", type, hostname, port);
-        if (type.equalsIgnoreCase("UDP")) {
-            return new UdpSender(hostname, port);
-        }
-        else if (type.equalsIgnoreCase("TCP")) {
-            return new TcpSender(hostname, port);
-        }
-        else if (type.equalsIgnoreCase("RELP")) {
-            return new RelpSender(hostname, port);
-        }
-        else {
-            throw new IOException("Invalid sender type: " + type);
-        }
+    protected AbstractConnection(String hostname, int port) {
+        super();
+        this.hostname = hostname;
+        this.port = port;
+    }
+
+    /**
+     * Sends a batch of syslog messages.
+     * 
+     * @param syslogMessages
+     */
+    public abstract void sendMessages(SyslogMessage[] syslogMessages) throws IOException;
+
+    @Override
+    public void setSyslogServerHostname(String syslogServerHostname) {
+        this.hostname = syslogServerHostname;
+    }
+
+    @Override
+    public void setSyslogServerPort(int syslogServerPort) {
+        this.port = syslogServerPort;
     }
 }

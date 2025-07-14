@@ -52,12 +52,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class TcpSender extends AbstractSender {
+public class TcpConnection extends AbstractConnection {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TcpSender.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TcpConnection.class);
     private TcpSyslogMessageSender sender;
 
-    public TcpSender(String hostname, int port) {
+    public TcpConnection(String hostname, int port) {
         super(hostname, port);
         this.sender = new TcpSyslogMessageSender();
         this.sender.setSyslogServerHostname(this.hostname);

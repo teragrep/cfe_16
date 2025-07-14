@@ -45,42 +45,28 @@
  */
 package com.teragrep.cfe_16.connection;
 
-import com.cloudbees.syslog.SyslogMessage;
-import com.cloudbees.syslog.sender.UdpSyslogMessageSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class UdpSender extends AbstractSender {
+public class ConnectionFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UdpSender.class);
-    private UdpSyslogMessageSender sender;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionFactory.class);
 
-    public UdpSender(String hostname, int port) {
-        super(hostname, port);
-        this.sender = new UdpSyslogMessageSender();
-        this.sender.setSyslogServerHostname(this.hostname);
-        this.sender.setSyslogServerPort(this.port);
-    }
-
-    @Override
-    public void sendMessages(SyslogMessage[] syslogMessages) throws IOException {
-        LOGGER.debug("Sending messages");
-        for (SyslogMessage syslogMessage : syslogMessages) {
-            this.sender.sendMessage(syslogMessage);
+    public static AbstractConnection createSender(String type, String hostname, int port) throws IOException {
+        LOGGER.debug("Creating connection for type <[{}]> to <[{}]>:<[{}]>", type, hostname, port);
+        if (type.equalsIgnoreCase("UDP")) {
+            return new UdpConnection(hostname, port);
         }
-    }
-
-    @Override
-    public void sendMessage(SyslogMessage syslogMessage) throws IOException {
-        LOGGER.debug("Sending message");
-        this.sender.sendMessage(syslogMessage);
-    }
-
-    @Override
-    public void close() throws IOException {
-        LOGGER.debug("Closing sender");
-        this.sender.close();
+        else if (type.equalsIgnoreCase("TCP")) {
+            return new TcpConnection(hostname, port);
+        }
+        else if (type.equalsIgnoreCase("RELP")) {
+            return new RelpConnection(hostname, port);
+        }
+        else {
+            throw new IOException("Invalid connection type: " + type);
+        }
     }
 }
