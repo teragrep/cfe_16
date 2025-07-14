@@ -70,7 +70,7 @@ import java.util.Map;
  *
  */
 @Component
-public class Acknowledgements implements Runnable, LifeCycle {
+public final class Acknowledgements implements Runnable, LifeCycle {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Acknowledgements.class);
 
