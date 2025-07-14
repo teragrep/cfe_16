@@ -161,7 +161,7 @@ public class EventManager {
          */
         /*
          * After all the events are sent, previousEvent object is set to null, the
-         * events are sent with the ackManager and ack id and JSON node with an ack id
+         * events are sent with the Acknowledgements and ack id and JSON node with an ack id
          * will be returned informing that the sending of the events has been
          * successful.
          */

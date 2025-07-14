@@ -127,7 +127,7 @@ public class HECServiceImpl implements HECService {
             session.addChannel(channel);
         }
 
-        // TODO: find a nice way of not passing AckManager instance
+        // TODO: find a nice way of not passing Acknowledgements
         ObjectNode ackNode = this.eventManager
                 .convertData(authToken, channel, eventInJson, headerInfo, this.acknowledgements);
 

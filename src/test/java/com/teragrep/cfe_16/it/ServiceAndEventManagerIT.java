@@ -334,7 +334,6 @@ public class ServiceAndEventManagerIT {
      */
     @Test
     public void convertDataTest() {
-        /*AckManager ackManager = new AckManager();*/
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":2}";
         String response = eventManager
@@ -353,7 +352,6 @@ public class ServiceAndEventManagerIT {
      */
     @Test
     public void convertDataTestWithDefaultChannel() {
-        /* AckManager ackManager = new AckManager(); */
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
 
@@ -372,7 +370,6 @@ public class ServiceAndEventManagerIT {
     @Test
     public void noEventFieldInRequestTest() {
         Assertions.assertThrows(EventFieldMissingException.class, () -> {
-            /*AckManager ackManager = new AckManager();*/
             String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements);
         });
@@ -385,7 +382,6 @@ public class ServiceAndEventManagerIT {
     @Test
     public void eventFieldBlankInRequestTest() {
         Assertions.assertThrows(EventFieldBlankException.class, () -> {
-            /*AckManager ackManager = new AckManager();*/
             String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
             eventManager.convertData(authToken1, channel1, allEventsInJson, headerInfo, acknowledgements);
         });

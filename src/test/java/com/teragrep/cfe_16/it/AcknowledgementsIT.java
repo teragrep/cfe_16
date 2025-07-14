@@ -69,7 +69,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /*
- * Tests the functionality of ackManager
+ * Tests the functionality of Acknowledgements
  */
 @SpringBootTest
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
@@ -175,10 +175,10 @@ public class AcknowledgementsIT {
     }
 
     /*
-     * Tests getting the Ack statuses from ackManager. First we create the request
+     * Tests getting the Ack statuses from Acknowledgements. First we create the request
      * bodies and the supposed responses as strings. Then we create the nodes for
      * the requests and read the strings into the node object. After that
-     * ackManager's getRequestedAckStatuses() is called with the JsonNode requests
+     * Acknowledgements' getRequestedAckStatuses() is called with the JsonNode requests
      * and the response is compared to the supposed responses.
      */
     @Test
@@ -258,32 +258,32 @@ public class AcknowledgementsIT {
         Acknowledgements acknowledgements2 = new Acknowledgements();
 
         assertEquals(
-                "AckManager 1 should return 0", 0,
+                "Acknowledgements 1 should return 0", 0,
                 acknowledgements1.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL)
         );
         acknowledgements1.incrementAckValue(this.authToken1, Session.DEFAULT_CHANNEL);
         assertEquals(
-                "AckManager 1 should return 1", 1,
+                "Acknowledgements 1 should return 1", 1,
                 acknowledgements1.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL)
         );
 
         assertEquals(
-                "AckManager 2 should return 0", 0,
+                "Acknowledgements 2 should return 0", 0,
                 acknowledgements2.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL)
         );
         acknowledgements2.incrementAckValue(this.authToken1, Session.DEFAULT_CHANNEL);
         assertEquals(
-                "AckManager 2 should return 1", 1,
+                "Acknowledgements 2 should return 1", 1,
                 acknowledgements2.getCurrentAckValue(this.authToken1, Session.DEFAULT_CHANNEL)
         );
 
     }
 
     /*
-     * Tests deleting the Ack from ackManager. First we get the list that is
-     * currently in the ackManager and save it to list1 variable. After that we
-     * delete an Ack from the ackManager's list, then we get the list from
-     * ackManager again and save it to list2 variable. These 2 lists are then
+     * Tests deleting the Ack from Acknowledgements. First we get the list that is
+     * currently in the Acknowledgements and save it to list1 variable. After that we
+     * delete an Ack from the Acknowledgements's list, then we get the list from
+     * Acknowledgements again and save it to list2 variable. These 2 lists are then
      * compared to each other.
      */
     @Test
@@ -324,8 +324,6 @@ public class AcknowledgementsIT {
     @Test
     public void maxAckValueTest() {
         Assertions.assertThrows(ServerIsBusyException.class, () -> {
-            /* AckManager ackManager = new AckManager(); */
-
             this.configuration.setMaxAckValue(2);
             int ackId;
 
