@@ -143,14 +143,14 @@ public class EventManager {
          * variable.
          */
         HttpEventData eventData = null;
-        Converter converter = new Converter();
+        Converter converter = new Converter(headerInfo);
         List<SyslogMessage> syslogMessages = new ArrayList<SyslogMessage>();
         while (parser.hasNext()) {
             previousEvent = eventData;
             String jsonObjectStr = parser.next().toString();
             eventData = verifyJsonData(jsonObjectStr, previousEvent);
             eventData = assignMetaData(eventData, authToken, channel);
-            SyslogMessage syslogMessage = converter.httpToSyslog(eventData, headerInfo);
+            SyslogMessage syslogMessage = converter.httpToSyslog(eventData);
             syslogMessages.add(syslogMessage);
         }
 

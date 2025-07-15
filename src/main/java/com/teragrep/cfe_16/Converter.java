@@ -53,7 +53,6 @@ import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 /*
  * Converts HTTP Event Data into a Syslog message.
@@ -61,25 +60,28 @@ import org.springframework.stereotype.Component;
  * This class is NOT thread safe!
  *
  */
-@Component
-public class Converter {
+
+public final class Converter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
     private Severity severity;
     private Facility facility;
 
     private SDElement metadataSDE;
-    private SDElement headerSDE;
+    private final HeaderInfo headerInfo;
 
     private final String hostName = "cfe-16";
 
-    public SyslogMessage httpToSyslog(HttpEventData httpEventData, HeaderInfo headerInfo) {
+    public Converter(HeaderInfo headerInfo) {
+        this.headerInfo = headerInfo;
+    }
+
+    public SyslogMessage httpToSyslog(HttpEventData httpEventData) {
 
         setEventSeverity();
         setEventFacility();
 
         setStructuredDataParams(httpEventData);
-        setHeaderSDE(headerInfo);
 
         SyslogMessage syslogMessage;
         if (httpEventData.isTimeParsed()) {
@@ -95,7 +97,7 @@ public class Converter {
                     .withHostname(hostName)
                     .withFacility(facility)
                     .withSDElement(metadataSDE)
-                    .withSDElement(headerSDE)
+                    .withSDElement(this.headerInfo.asSDElement())
                     .withMsg(httpEventData.getEvent());
 
         }
@@ -111,7 +113,7 @@ public class Converter {
                     .withHostname(hostName)
                     .withFacility(facility)
                     .withSDElement(metadataSDE)
-                    .withSDElement(headerSDE)
+                    .withSDElement(this.headerInfo.asSDElement())
                     .withMsg(httpEventData.getEvent());
         }
 
@@ -164,38 +166,6 @@ public class Converter {
             LOGGER.debug("Setting time_parsed and time");
             metadataSDE.addSDParam("time_parsed", "true");
             metadataSDE.addSDParam("time", eventData.getTime());
-        }
-    }
-
-    public SyslogMessage getHeaderInfoSyslogMessage(HeaderInfo headerInfo) {
-
-        SyslogMessage syslogMessage = null;
-        setHeaderSDE(headerInfo);
-        syslogMessage = new SyslogMessage()
-                .withSeverity(severity)
-                .withAppName("capsulated")
-                .withHostname(hostName)
-                .withFacility(facility)
-                .withSDElement(headerSDE);
-
-        return syslogMessage;
-    }
-
-    private void setHeaderSDE(HeaderInfo headerInfo) {
-        LOGGER.debug("Setting Structured Data headers");
-        headerSDE = new SDElement("cfe_16-origin@48577");
-
-        if (headerInfo.getxForwardedFor() != null) {
-            LOGGER.debug("Adding X-Forwarded-For header to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-For", headerInfo.getxForwardedFor());
-        }
-        if (headerInfo.getxForwardedHost() != null) {
-            LOGGER.debug("Adding X-Forwarder-Host to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-Host", headerInfo.getxForwardedHost());
-        }
-        if (headerInfo.getxForwardedProto() != null) {
-            LOGGER.debug("Adding X-Forwarded-Proto to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-Proto", headerInfo.getxForwardedProto());
         }
     }
 }

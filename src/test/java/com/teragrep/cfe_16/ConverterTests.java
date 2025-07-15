@@ -96,7 +96,7 @@ public class ConverterTests {
     @BeforeEach
     public void initialize() {
 
-        converter = new Converter();
+        converter = new Converter(new HeaderInfo());
 
         eventData1 = new HttpEventData();
         eventData2 = new HttpEventData();
@@ -174,11 +174,10 @@ public class ConverterTests {
                 .withFacility(supposedFacility)
                 .withSDElement(metadataSDE3)
                 .withMsg(eventData3.getEvent());
-        HeaderInfo headerInfo = new HeaderInfo();
 
-        returnedMessage1 = converter.httpToSyslog(eventData1, headerInfo);
-        returnedMessage2 = converter.httpToSyslog(eventData2, headerInfo);
-        returnedMessage3 = converter.httpToSyslog(eventData3, headerInfo);
+        returnedMessage1 = converter.httpToSyslog(eventData1);
+        returnedMessage2 = converter.httpToSyslog(eventData2);
+        returnedMessage3 = converter.httpToSyslog(eventData3);
 
         returnedSDElements1 = returnedMessage1.getSDElements();
         returnedSDElements2 = returnedMessage2.getSDElements();
