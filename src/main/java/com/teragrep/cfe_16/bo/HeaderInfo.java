@@ -45,10 +45,14 @@
  */
 package com.teragrep.cfe_16.bo;
 
-/**
- */
-public class HeaderInfo {
+import com.cloudbees.syslog.SDElement;
+import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public final class HeaderInfo {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HeaderInfo.class);
     private String xForwardedFor;
     private String xForwardedHost;
     private String xForwardedProto;
@@ -60,6 +64,26 @@ public class HeaderInfo {
         this.xForwardedFor = xForwardedFor;
         this.xForwardedHost = xForwardedHost;
         this.xForwardedProto = xForwardedProto;
+    }
+
+    public SDElement asSDElement() {
+        LOGGER.debug("Setting Structured Data headers");
+        final SDElement headerSDE = new SDElement("cfe_16-origin@48577");
+
+        if (this.xForwardedFor != null) {
+            LOGGER.debug("Adding X-Forwarded-For header to headerSDE");
+            headerSDE.addSDParam("X-Forwarded-For", this.xForwardedFor);
+        }
+        if (this.xForwardedHost != null) {
+            LOGGER.debug("Adding X-Forwarder-Host to headerSDE");
+            headerSDE.addSDParam("X-Forwarded-Host", this.xForwardedHost);
+        }
+        if (this.xForwardedProto != null) {
+            LOGGER.debug("Adding X-Forwarded-Proto to headerSDE");
+            headerSDE.addSDParam("X-Forwarded-Proto", this.xForwardedProto);
+        }
+
+        return headerSDE;
     }
 
     public String getxForwardedFor() {
@@ -84,5 +108,21 @@ public class HeaderInfo {
 
     public void setxForwardedProto(String xForwardedProto) {
         this.xForwardedProto = xForwardedProto;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        HeaderInfo that = (HeaderInfo) o;
+        return Objects.equals(xForwardedFor, that.xForwardedFor) && Objects.equals(xForwardedHost, that.xForwardedHost)
+            && Objects.equals(xForwardedProto, that.xForwardedProto);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(xForwardedFor, xForwardedHost, xForwardedProto);
     }
 }
