@@ -64,4 +64,22 @@ class HeaderInfoTest {
 
         Assertions.assertEquals(expectedSDElement, headerInfo.asSDElement());
     }
+
+    @Test
+    @DisplayName("Happy equals test")
+    void happyEqualsTest() {
+        final HeaderInfo headerInfo1 = new HeaderInfo("forwardedFor", "forwardedHost", "forwardedProto");
+        final HeaderInfo headerInfo2 = new HeaderInfo("forwardedFor", "forwardedHost", "forwardedProto");
+
+        Assertions.assertEquals(headerInfo1, headerInfo2);
+    }
+
+    @Test
+    @DisplayName("Unhappy equals test")
+    void unhappyEqualsTest() {
+        final HeaderInfo headerInfo1 = new HeaderInfo("forwardedFor", "forwardedHost", "forwardedProto");
+        final HeaderInfo headerInfo2 = new HeaderInfo("forwardedFor1234", "forwardedHost", "forwardedProto");
+
+        Assertions.assertNotEquals(headerInfo1, headerInfo2);
+    }
 }

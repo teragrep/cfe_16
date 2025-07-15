@@ -83,18 +83,6 @@ public final class HeaderInfo {
         return headerSDE;
     }
 
-    public String xForwardedFor() {
-        return xForwardedFor;
-    }
-
-    public String xForwardedHost() {
-        return xForwardedHost;
-    }
-
-    public String xForwardedProto() {
-        return xForwardedProto;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
