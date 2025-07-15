@@ -118,7 +118,7 @@ public final class HeaderInfo {
 
         HeaderInfo that = (HeaderInfo) o;
         return Objects.equals(xForwardedFor, that.xForwardedFor) && Objects.equals(xForwardedHost, that.xForwardedHost)
-            && Objects.equals(xForwardedProto, that.xForwardedProto);
+                && Objects.equals(xForwardedProto, that.xForwardedProto);
     }
 
     @Override

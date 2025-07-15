@@ -58,16 +58,18 @@ import org.springframework.stereotype.Component;
 public class RequestHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
-    private String xForwardedFor;
-    private String xForwardedHost;
-    private String xForwardedProto;
+    private final HttpServletRequest request;
 
-    public HeaderInfo createHeaderInfoObject(HttpServletRequest request) {
+    public RequestHandler(HttpServletRequest request) {
+        this.request = request;
+    }
+
+    public HeaderInfo createHeaderInfoObject() {
         LOGGER.debug("Creating new Header Info");
         HeaderInfo headerInfo = new HeaderInfo();
-        xForwardedFor = request.getHeader("X-Forwarded-For");
-        xForwardedHost = request.getHeader("X-Forwarded-Host");
-        xForwardedProto = request.getHeader("X-Forwarded-Proto");
+        String xForwardedFor = this.request.getHeader("X-Forwarded-For");
+        String xForwardedHost = this.request.getHeader("X-Forwarded-Host");
+        String xForwardedProto = this.request.getHeader("X-Forwarded-Proto");
         if (xForwardedFor != null) {
             LOGGER.debug("Setting X-Forwarded-For");
             LOGGER.trace("Setting X-Forwarded-For to value <[{}]>", xForwardedFor);
@@ -86,5 +88,4 @@ public class RequestHandler {
 
         return headerInfo;
     }
-
 }
