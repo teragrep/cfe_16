@@ -145,7 +145,7 @@ public class ServiceAndEventManagerIT {
     @Autowired
     private EventManager eventManager;
 
-    private HeaderInfo headerInfo = new HeaderInfo();
+    private HeaderInfo headerInfo = new HeaderInfo(null, null, null);
 
     private static ServerSocket getSocket() {
         ServerSocket socket = null;

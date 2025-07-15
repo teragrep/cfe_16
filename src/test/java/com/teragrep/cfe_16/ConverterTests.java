@@ -96,7 +96,7 @@ public class ConverterTests {
     @BeforeEach
     public void initialize() {
 
-        converter = new Converter(new HeaderInfo());
+        converter = new Converter(new HeaderInfo(null, null, null));
 
         eventData1 = new HttpEventData();
         eventData2 = new HttpEventData();

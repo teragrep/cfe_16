@@ -53,12 +53,9 @@ import org.slf4j.LoggerFactory;
 public final class HeaderInfo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeaderInfo.class);
-    private String xForwardedFor;
-    private String xForwardedHost;
-    private String xForwardedProto;
-
-    public HeaderInfo() {
-    }
+    private final String xForwardedFor;
+    private final String xForwardedHost;
+    private final String xForwardedProto;
 
     public HeaderInfo(String xForwardedFor, String xForwardedHost, String xForwardedProto) {
         this.xForwardedFor = xForwardedFor;
@@ -86,28 +83,16 @@ public final class HeaderInfo {
         return headerSDE;
     }
 
-    public String getxForwardedFor() {
+    public String xForwardedFor() {
         return xForwardedFor;
     }
 
-    public void setxForwardedFor(String xForwardedFor) {
-        this.xForwardedFor = xForwardedFor;
-    }
-
-    public String getxForwardedHost() {
+    public String xForwardedHost() {
         return xForwardedHost;
     }
 
-    public void setxForwardedHost(String xForwardedHost) {
-        this.xForwardedHost = xForwardedHost;
-    }
-
-    public String getxForwardedProto() {
+    public String xForwardedProto() {
         return xForwardedProto;
-    }
-
-    public void setxForwardedProto(String xForwardedProto) {
-        this.xForwardedProto = xForwardedProto;
     }
 
     @Override

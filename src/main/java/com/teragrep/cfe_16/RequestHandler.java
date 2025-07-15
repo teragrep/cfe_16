@@ -66,26 +66,40 @@ public class RequestHandler {
 
     public HeaderInfo createHeaderInfoObject() {
         LOGGER.debug("Creating new Header Info");
-        HeaderInfo headerInfo = new HeaderInfo();
-        String xForwardedFor = this.request.getHeader("X-Forwarded-For");
-        String xForwardedHost = this.request.getHeader("X-Forwarded-Host");
-        String xForwardedProto = this.request.getHeader("X-Forwarded-Proto");
+
+        final String xForwardedFor = this.request.getHeader("X-Forwarded-For");
+        final String xForwardedHost = this.request.getHeader("X-Forwarded-Host");
+        final String xForwardedProto = this.request.getHeader("X-Forwarded-Proto");
+
+        final String forwardedFor;
+        final String forwardedHost;
+        final String forwardedProto;
         if (xForwardedFor != null) {
             LOGGER.debug("Setting X-Forwarded-For");
             LOGGER.trace("Setting X-Forwarded-For to value <[{}]>", xForwardedFor);
-            headerInfo.setxForwardedFor(xForwardedFor);
+            forwardedFor = xForwardedFor;
         }
+        else {
+            forwardedFor = null;
+        }
+
         if (xForwardedHost != null) {
             LOGGER.debug("Setting X-Forwarded-Host");
             LOGGER.trace("Setting X-Forwarded-Host to value <[{}]>", xForwardedHost);
-            headerInfo.setxForwardedHost(xForwardedHost);
+            forwardedHost = xForwardedHost;
         }
+        else {
+            forwardedHost = null;
+        }
+
         if (xForwardedProto != null) {
             LOGGER.debug("Setting X-Forwarded-Proto");
             LOGGER.trace("Setting X-Forwarded-Proto to value <[{}]>", xForwardedProto);
-            headerInfo.setxForwardedProto(xForwardedProto);
+            forwardedProto = xForwardedProto;
         }
-
-        return headerInfo;
+        else {
+            forwardedProto = null;
+        }
+        return new HeaderInfo(forwardedFor, forwardedHost, forwardedProto);
     }
 }
