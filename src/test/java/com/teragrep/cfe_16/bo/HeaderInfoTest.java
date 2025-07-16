@@ -66,6 +66,18 @@ class HeaderInfoTest {
     }
 
     @Test
+    @DisplayName("asSDElement ignores null fields")
+    void asSdElementIgnoresNullFields() {
+        final HeaderInfo headerInfo = new HeaderInfo("forwardedFor", null, "forwardedProto");
+
+        final SDElement expectedSDElement = new SDElement("cfe_16-origin@48577");
+        expectedSDElement.addSDParam("X-Forwarded-For", "forwardedFor");
+        expectedSDElement.addSDParam("X-Forwarded-Proto", "forwardedProto");
+
+        Assertions.assertEquals(expectedSDElement, headerInfo.asSDElement());
+    }
+
+    @Test
     @DisplayName("Happy equals test")
     void happyEqualsTest() {
         final HeaderInfo headerInfo1 = new HeaderInfo("forwardedFor", "forwardedHost", "forwardedProto");
