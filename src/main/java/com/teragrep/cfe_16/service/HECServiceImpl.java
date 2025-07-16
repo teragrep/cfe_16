@@ -98,7 +98,22 @@ public class HECServiceImpl implements HECService {
         // AspectLoggerWrapper.logMetricDuration(null, "new_metric",
         // MetricDurationOptionsImpl.MetricDuration.P10S);
         String authHeader = request.getHeader("Authorization");
-        final HeaderInfo headerInfo = new RequestHandler(request).headerInfo();
+        LOGGER.debug("Creating new Header Info");
+
+        final String xForwardedFor = request.getHeader("X-Forwarded-For");
+        final String xForwardedHost = request.getHeader("X-Forwarded-Host");
+        final String xForwardedProto = request.getHeader("X-Forwarded-Proto");
+
+        LOGGER.debug("Setting X-Forwarded-For");
+        LOGGER.trace("Setting X-Forwarded-For to value <[{}]>", xForwardedFor);
+
+        LOGGER.debug("Setting X-Forwarded-Host");
+        LOGGER.trace("Setting X-Forwarded-Host to value <[{}]>", xForwardedHost);
+
+        LOGGER.debug("Setting X-Forwarded-Proto");
+        LOGGER.trace("Setting X-Forwarded-Proto to value <[{}]>", xForwardedProto);
+
+        final HeaderInfo headerInfo = new HeaderInfo(xForwardedFor, xForwardedHost, xForwardedProto);
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {
