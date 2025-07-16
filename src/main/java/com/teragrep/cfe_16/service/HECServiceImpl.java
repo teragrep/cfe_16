@@ -98,7 +98,7 @@ public class HECServiceImpl implements HECService {
         // AspectLoggerWrapper.logMetricDuration(null, "new_metric",
         // MetricDurationOptionsImpl.MetricDuration.P10S);
         String authHeader = request.getHeader("Authorization");
-        final HeaderInfo headerInfo = new RequestHandler(request).createHeaderInfoObject();
+        final HeaderInfo headerInfo = new RequestHandler(request).headerInfo();
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {

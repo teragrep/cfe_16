@@ -64,7 +64,7 @@ public class RequestHandler {
         this.request = request;
     }
 
-    public HeaderInfo createHeaderInfoObject() {
+    public HeaderInfo headerInfo() {
         LOGGER.debug("Creating new Header Info");
 
         final String xForwardedFor = this.request.getHeader("X-Forwarded-For");
