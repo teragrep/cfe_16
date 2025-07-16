@@ -57,7 +57,7 @@ public final class HeaderInfo {
     private final String xForwardedHost;
     private final String xForwardedProto;
 
-    public HeaderInfo(String xForwardedFor, String xForwardedHost, String xForwardedProto) {
+    public HeaderInfo(final String xForwardedFor, final String xForwardedHost, final String xForwardedProto) {
         this.xForwardedFor = xForwardedFor;
         this.xForwardedHost = xForwardedHost;
         this.xForwardedProto = xForwardedProto;
