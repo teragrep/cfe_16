@@ -47,6 +47,7 @@ package com.teragrep.cfe_16.connection;
 
 import com.cloudbees.syslog.SyslogMessage;
 import com.cloudbees.syslog.sender.UdpSyslogMessageSender;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,7 @@ public class UdpConnection extends AbstractConnection {
     }
 
     @Override
-    public void sendMessages(SyslogMessage[] syslogMessages) throws IOException {
+    public void sendMessages(List<SyslogMessage> syslogMessages) throws IOException {
         LOGGER.debug("Sending messages");
         for (SyslogMessage syslogMessage : syslogMessages) {
             this.sender.sendMessage(syslogMessage);

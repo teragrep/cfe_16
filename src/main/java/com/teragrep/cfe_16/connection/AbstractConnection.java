@@ -49,6 +49,7 @@ import com.cloudbees.syslog.SyslogMessage;
 import com.cloudbees.syslog.sender.AbstractSyslogMessageSender;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * An abstract connection class for sending batch messages.
@@ -69,7 +70,7 @@ public abstract class AbstractConnection extends AbstractSyslogMessageSender {
      * 
      * @param syslogMessages
      */
-    public abstract void sendMessages(SyslogMessage[] syslogMessages) throws IOException;
+    public abstract void sendMessages(List<SyslogMessage> syslogMessages) throws IOException;
 
     @Override
     public void setSyslogServerHostname(String syslogServerHostname) {
