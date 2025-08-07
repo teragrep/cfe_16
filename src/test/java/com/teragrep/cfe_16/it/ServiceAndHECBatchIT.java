@@ -47,21 +47,22 @@ package com.teragrep.cfe_16.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teragrep.cfe_16.Acknowledgements;
+import com.teragrep.cfe_16.RequestHandler;
+import com.teragrep.cfe_16.SessionManager;
+import com.teragrep.cfe_16.TokenManager;
+import com.teragrep.cfe_16.config.Configuration;
+import com.teragrep.cfe_16.connection.RelpConnection;
 import com.teragrep.cfe_16.exceptionhandling.*;
 import com.teragrep.cfe_16.server.TestServer;
 import com.teragrep.cfe_16.server.TestServerFactory;
 import com.teragrep.cfe_16.service.HECService;
+import com.teragrep.cfe_16.service.HECServiceImpl;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
-
-import java.io.IOException;
 
 import static org.junit.Assert.*;
 
@@ -69,152 +70,79 @@ import static org.junit.Assert.*;
  * Tests the functionality of HECServiceImpl
  */
 
-@SpringBootTest
-@TestPropertySource(properties = {
-        "syslog.server.host=127.0.0.1",
-        "syslog.server.port=1603",
-        "syslog.server.protocol=RELP",
-        "max.channels=1000000",
-        "max.ack.value=1000000",
-        "max.ack.age=20000",
-        "max.session.age=30000",
-        "poll.time=30000",
-        "server.print.times=true"
-})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class ServiceAndHECBatchIT {
-
-    private static final Integer port = 1603;
-    private static final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
-    private static final AtomicLong openCount = new AtomicLong();
-    private static final AtomicLong closeCount = new AtomicLong();
-    private static TestServer server;
-    @Autowired
-    private HECService service;
-    private MockHttpServletRequest request1;
-    private MockHttpServletRequest request2;
-    private MockHttpServletRequest request3;
-    private MockHttpServletRequest request4;
-    private MockHttpServletRequest request5;
-    private String eventInJson;
-    private String channel1;
-    private String channel2;
-    private String channel3;
-    private String authToken1;
-    private String authToken2;
-    private String authToken3;
-    private String authToken4;
-    private String ackRequest;
-    private ObjectMapper objectMapper;
-    private JsonNode ackRequestNode;
-
-    @BeforeAll
-    public static void init() {
-        TestServerFactory serverFactory = new TestServerFactory();
-        try {
-            server = serverFactory.create(port, messageList, openCount, closeCount);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        server.run();
-    }
-
-    @AfterAll
-    public static void close() {
-        try {
-            server.close();
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @AfterEach
-    public void clear() {
-        openCount.set(0);
-        closeCount.set(0);
-        messageList.clear();
-    }
-
-    /*
-     * Opens a ServerSocket so that the sending an event won't produce an error. 4
-     * Mock requests are created. request2 will not have authorization token
-     * assigned to it. eventInJson variable is the body of the request as a string
-     * when sending an event and ackRequest is the body of the request when
-     * requesting Ack statuses.
-     */
-    @BeforeEach
-    public void initialize() {
-        objectMapper = new ObjectMapper();
-        request1 = new MockHttpServletRequest();
-        request2 = new MockHttpServletRequest();
-        request3 = new MockHttpServletRequest();
-        request4 = new MockHttpServletRequest();
-        request5 = new MockHttpServletRequest();
-
-        eventInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-
-        channel1 = "CHANNEL_11111";
-        channel2 = "CHANNEL_22222";
-        channel3 = "CHANNEL_33333";
-
-        authToken1 = "AUTH_TOKEN_12223";
-        authToken2 = "AUTH_TOKEN_16664";
-        authToken3 = "AUTH_TOKEN_23667";
-        authToken4 = "AUTH_TOKEN_23249";
-
-        request1.addHeader("Authorization", authToken1);
-        request3.addHeader("Authorization", authToken2);
-        request4.addHeader("Authorization", authToken3);
-        request5.addHeader("Authorization", authToken4);
-
-        ackRequest = "{\"acks\": [1,3,4]}";
-
-        ackRequestNode = objectMapper.createObjectNode();
-        try {
-            ackRequestNode = objectMapper.readTree(ackRequest);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+public final class ServiceAndHECBatchIT {
 
     /*
      * Tests the sendEvents() and getAcks() method of the service.
      */
     @Test
     public void sendEventsAndGetAcksTest() {
-        String supposedResponse;
+        final int port = 1603;
+        final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
+        final AtomicLong openCount = new AtomicLong();
+        final AtomicLong closeCount = new AtomicLong();
+        final TestServerFactory serverFactory = new TestServerFactory();
+        final TestServer server = Assertions
+                .assertDoesNotThrow(() -> serverFactory.create(port, messageList, openCount, closeCount));
+        server.run();
 
-        supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
-        assertEquals(
-                "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 0)",
-                supposedResponse, service.sendEvents(request1, channel3, eventInJson).toString()
+        final Configuration configuration = new Configuration(
+                "127.0.0.1",
+                "RELP",
+                port,
+                100000,
+                20000,
+                30000,
+                1000000,
+                30000,
+                true
         );
 
-        supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":1}";
-        assertEquals(
-                "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 1)",
-                supposedResponse, service.sendEvents(request1, channel3, eventInJson).toString()
+        final HECService service = new HECServiceImpl(
+                new Acknowledgements(configuration),
+                new SessionManager(),
+                new TokenManager(),
+                new RequestHandler(),
+                configuration,
+                new RelpConnection("127.0.0.1", port)
         );
 
-        supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
-        assertEquals(
-                "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 0)",
-                supposedResponse, service.sendEvents(request1, channel2, eventInJson).toString()
-        );
+        final String authToken1 = "AUTH_TOKEN_12223";
+        final String authToken2 = "AUTH_TOKEN_16664";
 
-        assertEquals(
-                "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 0)",
-                supposedResponse, service.sendEvents(request3, channel3, eventInJson).toString()
-        );
+        final MockHttpServletRequest request1 = new MockHttpServletRequest();
+        request1.addHeader("Authorization", authToken1);
+        final MockHttpServletRequest request2 = new MockHttpServletRequest();
+        request2.addHeader("Authorization", authToken2);
 
-        supposedResponse = "{\"acks\":{\"1\":true,\"3\":false,\"4\":false}}";
-        assertEquals(
-                "JSON object should be returned with ack statuses.", supposedResponse,
-                service.getAcks(request1, channel3, ackRequestNode).toString()
-        );
+        final String eventInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+        final String channel2 = "CHANNEL_22222";
+        final String channel3 = "CHANNEL_33333";
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final String ackRequest = "{\"acks\": [1,3,4]}";
+        final JsonNode ackRequestNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(ackRequest));
+
+        final String firstResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
+        Assertions
+                .assertEquals(firstResponse, service.sendEvents(request1, channel3, eventInJson).toString(), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 0)");
+
+        final String secondResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":1}";
+        Assertions
+                .assertEquals(secondResponse, service.sendEvents(request1, channel3, eventInJson).toString(), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 1)");
+
+        final String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request1, channel2, eventInJson).toString(), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 0)");
+
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request2, channel3, eventInJson).toString(), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 0)");
+
+        final String thirdResponse = "{\"acks\":{\"1\":true,\"3\":false,\"4\":false}}";
+        Assertions
+                .assertEquals(thirdResponse, service.getAcks(request1, channel3, ackRequestNode).toString(), "JSON object should be returned with ack statuses.");
+
+        Assertions.assertDoesNotThrow(server::close);
     }
 
     /*
@@ -223,9 +151,47 @@ public class ServiceAndHECBatchIT {
      */
     @Test
     public void sendEventsWithoutAuthTokenTest() {
+        final int port = 1604;
+        final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
+        final AtomicLong openCount = new AtomicLong();
+        final AtomicLong closeCount = new AtomicLong();
+
+        final TestServerFactory serverFactory = new TestServerFactory();
+        final TestServer server = Assertions
+                .assertDoesNotThrow(() -> serverFactory.create(port, messageList, openCount, closeCount));
+        server.run();
+
+        final Configuration configuration = new Configuration(
+                "127.0.0.1",
+                "RELP",
+                port,
+                100000,
+                20000,
+                30000,
+                1000000,
+                30000,
+                true
+        );
+
+        final HECService service = new HECServiceImpl(
+                new Acknowledgements(configuration),
+                new SessionManager(),
+                new TokenManager(),
+                new RequestHandler(),
+                configuration,
+                new RelpConnection("127.0.0.1", port)
+        );
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+
+        final String eventInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+        final String channel1 = "CHANNEL_11111";
+
         Assertions.assertThrows(AuthenticationTokenMissingException.class, () -> {
-            service.sendEvents(request2, eventInJson, channel1);
+            service.sendEvents(request, eventInJson, channel1);
         });
+
+        Assertions.assertDoesNotThrow(server::close);
     }
 
     /*
@@ -234,9 +200,54 @@ public class ServiceAndHECBatchIT {
      */
     @Test
     public void sendEventsWithoutChannelTest() {
-        String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
-        String response = service.sendEvents(request1, null, eventInJson).toString();
-        assertEquals("Service should return JSON object with fields 'text' and 'code'", supposedResponse, response);
+        final int port = 1605;
+        final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
+        final AtomicLong openCount = new AtomicLong();
+        final AtomicLong closeCount = new AtomicLong();
+        final TestServerFactory serverFactory = new TestServerFactory();
+        final TestServer server = Assertions
+                .assertDoesNotThrow(() -> serverFactory.create(port, messageList, openCount, closeCount));
+        server.run();
+
+        final Configuration configuration = new Configuration(
+                "127.0.0.1",
+                "RELP",
+                port,
+                100000,
+                20000,
+                30000,
+                1000000,
+                30000,
+                true
+        );
+
+        final HECService service = new HECServiceImpl(
+                new Acknowledgements(configuration),
+                new SessionManager(),
+                new TokenManager(),
+                new RequestHandler(),
+                configuration,
+                new RelpConnection("127.0.0.1", port)
+        );
+
+        final String authToken1 = "AUTH_TOKEN_12223";
+        final String authToken2 = "AUTH_TOKEN_16664";
+
+        final MockHttpServletRequest request1 = new MockHttpServletRequest();
+        request1.addHeader("Authorization", authToken1);
+        final MockHttpServletRequest request2 = new MockHttpServletRequest();
+        request2.addHeader("Authorization", authToken2);
+
+        final String eventInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+
+        final String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
+        final String response = service.sendEvents(request1, null, eventInJson).toString();
+        Assertions
+                .assertEquals(
+                        supposedResponse, response, "Service should return JSON object with fields 'text' and 'code'"
+                );
+
+        Assertions.assertDoesNotThrow(server::close);
     }
 
     /*
@@ -245,9 +256,51 @@ public class ServiceAndHECBatchIT {
      */
     @Test
     public void getAcksWithoutChannel() {
+        final int port = 1606;
+        final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
+        final AtomicLong openCount = new AtomicLong();
+        final AtomicLong closeCount = new AtomicLong();
+
+        final TestServerFactory serverFactory = new TestServerFactory();
+        final TestServer server = Assertions
+                .assertDoesNotThrow(() -> serverFactory.create(port, messageList, openCount, closeCount));
+        server.run();
+
+        final Configuration configuration = new Configuration(
+                "127.0.0.1",
+                "RELP",
+                port,
+                100000,
+                20000,
+                30000,
+                1000000,
+                30000,
+                true
+        );
+
+        final HECService service = new HECServiceImpl(
+                new Acknowledgements(configuration),
+                new SessionManager(),
+                new TokenManager(),
+                new RequestHandler(),
+                configuration,
+                new RelpConnection("127.0.0.1", port)
+        );
+
+        final String authToken = "AUTH_TOKEN_12223";
+
+        final MockHttpServletRequest request1 = new MockHttpServletRequest();
+        request1.addHeader("Authorization", authToken);
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final String ackRequest = "{\"acks\": [1,3,4]}";
+        final JsonNode ackRequestNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(ackRequest));
+
         Assertions.assertThrows(ChannelNotProvidedException.class, () -> {
             service.getAcks(request1, null, ackRequestNode);
         });
+
+        Assertions.assertDoesNotThrow(server::close);
     }
 
     /*
@@ -257,9 +310,50 @@ public class ServiceAndHECBatchIT {
      */
     @Test
     public void getAcksWithoutAuthTokenTest() {
+        final int port = 1607;
+        final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
+        final AtomicLong openCount = new AtomicLong();
+        final AtomicLong closeCount = new AtomicLong();
+
+        final TestServerFactory serverFactory = new TestServerFactory();
+        final TestServer server = Assertions
+                .assertDoesNotThrow(() -> serverFactory.create(port, messageList, openCount, closeCount));
+        server.run();
+
+        final Configuration configuration = new Configuration(
+                "127.0.0.1",
+                "RELP",
+                port,
+                100000,
+                20000,
+                30000,
+                1000000,
+                30000,
+                true
+        );
+
+        final HECService service = new HECServiceImpl(
+                new Acknowledgements(configuration),
+                new SessionManager(),
+                new TokenManager(),
+                new RequestHandler(),
+                configuration,
+                new RelpConnection("127.0.0.1", port)
+        );
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+
+        final String channel1 = "CHANNEL_11111";
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final String ackRequest = "{\"acks\": [1,3,4]}";
+        final JsonNode ackRequestNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(ackRequest));
+
         Assertions.assertThrows(AuthenticationTokenMissingException.class, () -> {
-            service.getAcks(request2, channel1, ackRequestNode);
+            service.getAcks(request, channel1, ackRequestNode);
         });
+
+        Assertions.assertDoesNotThrow(server::close);
     }
 
     /*
@@ -268,9 +362,53 @@ public class ServiceAndHECBatchIT {
      */
     @Test
     public void getAcksWithUnusedAuthToken() {
+        final int port = 1608;
+        final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
+        final AtomicLong openCount = new AtomicLong();
+        final AtomicLong closeCount = new AtomicLong();
+
+        final TestServerFactory serverFactory = new TestServerFactory();
+        final TestServer server = Assertions
+                .assertDoesNotThrow(() -> serverFactory.create(port, messageList, openCount, closeCount));
+        server.run();
+
+        final Configuration configuration = new Configuration(
+                "127.0.0.1",
+                "RELP",
+                port,
+                100000,
+                20000,
+                30000,
+                1000000,
+                30000,
+                true
+        );
+
+        final HECService service = new HECServiceImpl(
+                new Acknowledgements(configuration),
+                new SessionManager(),
+                new TokenManager(),
+                new RequestHandler(),
+                configuration,
+                new RelpConnection("127.0.0.1", port)
+        );
+
+        final String authToken = "AUTH_TOKEN_12223";
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", authToken);
+
+        final String channel = "CHANNEL_22222";
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final String ackRequest = "{\"acks\": [1,3,4]}";
+        final JsonNode ackRequestNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(ackRequest));
+
         Assertions.assertThrows(SessionNotFoundException.class, () -> {
-            service.getAcks(request4, channel1, ackRequestNode);
+            service.getAcks(request, channel, ackRequestNode);
         });
+
+        Assertions.assertDoesNotThrow(server::close);
     }
 
     /*
@@ -279,10 +417,56 @@ public class ServiceAndHECBatchIT {
      */
     @Test
     public void getAcksWithUnusedChannel() {
+        final int port = 1609;
+        final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
+        final AtomicLong openCount = new AtomicLong();
+        final AtomicLong closeCount = new AtomicLong();
+
+        final TestServerFactory serverFactory = new TestServerFactory();
+        final TestServer server = Assertions
+                .assertDoesNotThrow(() -> serverFactory.create(port, messageList, openCount, closeCount));
+        server.run();
+
+        final Configuration configuration = new Configuration(
+                "127.0.0.1",
+                "RELP",
+                port,
+                100000,
+                20000,
+                30000,
+                1000000,
+                30000,
+                true
+        );
+
+        final HECService service = new HECServiceImpl(
+                new Acknowledgements(configuration),
+                new SessionManager(),
+                new TokenManager(),
+                new RequestHandler(),
+                configuration,
+                new RelpConnection("127.0.0.1", port)
+        );
+
+        final String authToken = "AUTH_TOKEN_12223";
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", authToken);
+
+        final String eventInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+        final String channel1 = "CHANNEL_11111";
+        final String channel2 = "CHANNEL_22222";
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final String ackRequest = "{\"acks\": [1,3,4]}";
+        final JsonNode ackRequestNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(ackRequest));
+
         Assertions.assertThrows(ChannelNotFoundException.class, () -> {
-            service.sendEvents(request5, channel1, eventInJson);
-            service.getAcks(request5, channel2, ackRequestNode);
+            service.sendEvents(request, channel1, eventInJson);
+            service.getAcks(request, channel2, ackRequestNode);
         });
+
+        Assertions.assertDoesNotThrow(server::close);
     }
 
     /*
@@ -291,13 +475,53 @@ public class ServiceAndHECBatchIT {
      */
     @Test
     public void sendingMultipleEventsTest() {
-        String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
-        String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
-        assertEquals(
-                "Should get a JSON with fields text, code and ackID", supposedResponse,
-                service.sendEvents(request1, channel1, allEventsInJson).toString()
+        final int port = 1610;
+        final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
+        final AtomicLong openCount = new AtomicLong();
+        final AtomicLong closeCount = new AtomicLong();
+
+        final TestServerFactory serverFactory = new TestServerFactory();
+        final TestServer server = Assertions
+                .assertDoesNotThrow(() -> serverFactory.create(port, messageList, openCount, closeCount));
+        server.run();
+
+        final Configuration configuration = new Configuration(
+                "127.0.0.1",
+                "RELP",
+                port,
+                100000,
+                20000,
+                30000,
+                1000000,
+                30000,
+                true
         );
 
+        final HECService service = new HECServiceImpl(
+                new Acknowledgements(configuration),
+                new SessionManager(),
+                new TokenManager(),
+                new RequestHandler(),
+                configuration,
+                new RelpConnection("127.0.0.1", port)
+        );
+
+        final String authToken1 = "AUTH_TOKEN_12223";
+        final String authToken2 = "AUTH_TOKEN_16664";
+
+        final MockHttpServletRequest request1 = new MockHttpServletRequest();
+        request1.addHeader("Authorization", authToken1);
+        final MockHttpServletRequest request2 = new MockHttpServletRequest();
+        request2.addHeader("Authorization", authToken2);
+
+        final String channel1 = "CHANNEL_11111";
+
+        final String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
+        final String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request1, channel1, allEventsInJson).toString(), "Should get a JSON with fields text, code and ackID");
+
+        Assertions.assertDoesNotThrow(server::close);
     }
 
     /*
@@ -306,11 +530,47 @@ public class ServiceAndHECBatchIT {
      */
     @Test
     public void sendingMultipleEventsWithDefaultChannelTest() {
-        String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
-        String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
-        assertEquals(
-                "Should get a JSON with fields text, code and ackID", supposedResponse,
-                service.sendEvents(request1, null, allEventsInJson).toString()
+        final int port = 1611;
+        final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
+        final AtomicLong openCount = new AtomicLong();
+        final AtomicLong closeCount = new AtomicLong();
+
+        final TestServerFactory serverFactory = new TestServerFactory();
+        final TestServer server = Assertions
+                .assertDoesNotThrow(() -> serverFactory.create(port, messageList, openCount, closeCount));
+        server.run();
+
+        final Configuration configuration = new Configuration(
+                "127.0.0.1",
+                "RELP",
+                port,
+                100000,
+                20000,
+                30000,
+                1000000,
+                30000,
+                true
         );
+
+        final HECService service = new HECServiceImpl(
+                new Acknowledgements(configuration),
+                new SessionManager(),
+                new TokenManager(),
+                new RequestHandler(),
+                configuration,
+                new RelpConnection("127.0.0.1", port)
+        );
+
+        final String authToken = "AUTH_TOKEN_12223";
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", authToken);
+
+        final String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
+        final String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request, null, allEventsInJson).toString(), "Should get a JSON with fields text, code and ackID");
+
+        Assertions.assertDoesNotThrow(server::close);
     }
 }
