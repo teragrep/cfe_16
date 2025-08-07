@@ -99,6 +99,26 @@ public class HECServiceImpl implements HECService {
     public HECServiceImpl() {
     }
 
+    public HECServiceImpl(final Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    public HECServiceImpl(
+            final Acknowledgements acknowledgements,
+            final SessionManager sessionManager,
+            final TokenManager tokenManager,
+            final RequestHandler requestHandler,
+            final Configuration configuration,
+            final AbstractConnection connection
+    ) {
+        this.acknowledgements = acknowledgements;
+        this.sessionManager = sessionManager;
+        this.tokenManager = tokenManager;
+        this.requestHandler = requestHandler;
+        this.configuration = configuration;
+        this.connection = connection;
+    }
+
     @PostConstruct
     void init() {
         LOGGER.debug("Setting up connection");

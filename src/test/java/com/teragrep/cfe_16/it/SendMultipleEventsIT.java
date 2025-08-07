@@ -45,99 +45,80 @@
  */
 package com.teragrep.cfe_16.it;
 
+import com.teragrep.cfe_16.Acknowledgements;
+import com.teragrep.cfe_16.RequestHandler;
+import com.teragrep.cfe_16.SessionManager;
+import com.teragrep.cfe_16.TokenManager;
+import com.teragrep.cfe_16.config.Configuration;
+import com.teragrep.cfe_16.connection.RelpConnection;
 import com.teragrep.cfe_16.server.TestServer;
 import com.teragrep.cfe_16.server.TestServerFactory;
 import com.teragrep.cfe_16.service.HECService;
+import com.teragrep.cfe_16.service.HECServiceImpl;
 import java.util.concurrent.atomic.AtomicLong;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.TestPropertySource;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-@TestPropertySource(properties = {
-        "syslog.server.host=127.0.0.1",
-        "syslog.server.port=1236",
-        "syslog.server.protocol=RELP",
-        "max.channels=1000000",
-        "max.ack.value=1000000",
-        "max.ack.age=20000",
-        "max.session.age=30000",
-        "poll.time=30000",
-        "server.print.times=true"
-})
-@SpringBootTest
 public class SendMultipleEventsIT {
 
-    private static final int SERVER_PORT = 1236;
-    private static final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
-    private static final AtomicLong openCount = new AtomicLong();
-    private static final AtomicLong closeCount = new AtomicLong();
-    private static TestServer server;
-    @Autowired
-    private HECService service;
-    private MockHttpServletRequest request1;
-    private String eventInJson;
-    private String channel1;
-
-    @BeforeAll
-    public static void init() {
-        TestServerFactory serverFactory = new TestServerFactory();
-        server = Assertions
+    @Test
+    public void sendEventsTest() throws InterruptedException, ExecutionException {
+        final int SERVER_PORT = 1236;
+        final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
+        final AtomicLong openCount = new AtomicLong();
+        final AtomicLong closeCount = new AtomicLong();
+        final TestServerFactory serverFactory = new TestServerFactory();
+        final TestServer server = Assertions
                 .assertDoesNotThrow(() -> serverFactory.create(SERVER_PORT, messageList, openCount, closeCount));
         server.run();
-    }
 
-    @AfterAll
-    public static void close() {
-        try {
-            server.close();
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+        final Configuration configuration = new Configuration(
+                "127.0.0.1",
+                "RELP",
+                SERVER_PORT,
+                100000,
+                20000,
+                30000,
+                1000000,
+                30000,
+                true
+        );
 
-    @AfterEach
-    public void clear() {
-        openCount.set(0);
-        closeCount.set(0);
-        messageList.clear();
-    }
+        final HECService service = new HECServiceImpl(
+                new Acknowledgements(configuration),
+                new SessionManager(),
+                new TokenManager(),
+                new RequestHandler(),
+                configuration,
+                new RelpConnection("127.0.0.1", SERVER_PORT)
+        );
+        final MockHttpServletRequest request1 = new MockHttpServletRequest();
+        request1.addHeader("Authorization", "AUTH_TOKEN_11111");
 
-    @BeforeEach
-    public void initEach() {
+        final String channel1 = "CHANNEL_11111";
 
-        this.request1 = new MockHttpServletRequest();
-        this.request1.addHeader("Authorization", "AUTH_TOKEN_11111");
-        this.channel1 = "CHANNEL_11111";
-        this.eventInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": {\"message\":\"Access log test message 1\"}} {\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": {\"message\":\"Access log test message 2\"}}";
-
-    }
-
-    @Test
-    public void sendEventsTest() throws IOException, InterruptedException, ExecutionException {
+        final String eventInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": {\"message\":\"Access log test message 1\"}} {\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": {\"message\":\"Access log test message 2\"}}";
         final int NUMBER_OF_EVENTS_TO_BE_SENT = 100;
-        List<CompletableFuture<String>> futures = new ArrayList<>();
+        final List<CompletableFuture<String>> futures = new ArrayList<>();
 
         for (int i = 0; i < NUMBER_OF_EVENTS_TO_BE_SENT; i++) {
-            CompletableFuture<String> f = CompletableFuture
+            final CompletableFuture<String> f = CompletableFuture
                     .supplyAsync(() -> service.sendEvents(request1, channel1, eventInJson).toString());
             futures.add(f);
         }
-        List<String> supposedResponses = new ArrayList<>();
+        final List<String> supposedResponses = new ArrayList<>();
         for (int i = 0; i < NUMBER_OF_EVENTS_TO_BE_SENT; i++) {
             final String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":" + i + "}";
             supposedResponses.add(supposedResponse);
         }
         int countFuture = 0;
-        for (Future<String> f : futures) {
-            final String actualResponse = f.get();
+        for (final Future<String> future : futures) {
+            final String actualResponse = future.get();
             Assertions
                     .assertTrue(supposedResponses.contains(actualResponse), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be " + countFuture + ")");
             countFuture++;
@@ -146,5 +127,12 @@ public class SendMultipleEventsIT {
         Assertions.assertEquals(NUMBER_OF_EVENTS_TO_BE_SENT, countFuture, "All futures have NOT been looped through");
 
         Assertions.assertEquals(NUMBER_OF_EVENTS_TO_BE_SENT * 2, messageList.size());
+
+        try {
+            server.close();
+        }
+        catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
