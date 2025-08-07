@@ -46,6 +46,7 @@
 package com.teragrep.cfe_16.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 import org.springframework.stereotype.Component;
 
 /**
@@ -84,6 +85,29 @@ public class Configuration {
 
     public Configuration() {
 
+    }
+
+    @ConstructorBinding
+    public Configuration(
+            final String sysLogHost,
+            final String sysLogProtocol,
+            final int sysLogPort,
+            final int maxAckValue,
+            final int maxAckAge,
+            final int maxSessionAge,
+            final int maxChannels,
+            final long pollTime,
+            final boolean printTimes
+    ) {
+        this.sysLogHost = sysLogHost;
+        this.sysLogProtocol = sysLogProtocol;
+        this.sysLogPort = sysLogPort;
+        this.maxAckValue = maxAckValue;
+        this.maxAckAge = maxAckAge;
+        this.maxSessionAge = maxSessionAge;
+        this.maxChannels = maxChannels;
+        this.pollTime = pollTime;
+        this.printTimes = printTimes;
     }
 
     public String getSyslogHost() {

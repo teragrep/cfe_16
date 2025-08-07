@@ -139,7 +139,13 @@ public final class Acknowledgements implements Runnable, LifeCycle {
      */
     public Acknowledgements() {
         this.objectMapper = new ObjectMapper();
-        this.ackStates = Collections.synchronizedMap(new HashMap<String, State>());
+        this.ackStates = Collections.synchronizedMap(new HashMap<>());
+    }
+
+    public Acknowledgements(final Configuration configuration) {
+        this.configuration = configuration;
+        this.objectMapper = new ObjectMapper();
+        this.ackStates = Collections.synchronizedMap(new HashMap<>());
     }
 
     @Override
