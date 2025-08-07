@@ -50,22 +50,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class HECTimeImplTest {
 
-    private ObjectMapper objectMapper;
-
-    @BeforeEach
-    public void initialize() {
-        objectMapper = new ObjectMapper();
-    }
-
     @Test
     @DisplayName("Time is generated, not parsed and uses the defaultValue when time is missing from the event")
     void timeIsGeneratedNotParsedAndUsesTheDefaultValueWhenTimeIsMissingFromTheEvent() throws JsonProcessingException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+
         String content = "{}";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
@@ -93,6 +87,8 @@ class HECTimeImplTest {
     @Test
     @DisplayName("Time is reported and parsed when time is a double")
     void timeIsReportedAndParsedWhenTimeIsADouble() throws JsonProcessingException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+
         String content = "1433188255.253";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
@@ -119,6 +115,8 @@ class HECTimeImplTest {
     @Test
     @DisplayName("Time is reported and parsed when time is exactly 13 digits")
     void timeIsReportedAndParsedWhenTimeIsExactly13Digits() throws JsonProcessingException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+
         String content = "1433188255253";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
@@ -145,6 +143,8 @@ class HECTimeImplTest {
     @Test
     @DisplayName("Time is reported and parsed when time is a string with numbers")
     void timeIsReportedAndParsedWhenTimeIsAStringWithNumbers() throws JsonProcessingException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+
         String content = "\"1433188255253\"";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
@@ -172,6 +172,8 @@ class HECTimeImplTest {
     @Test
     @DisplayName("Time is reported and parsed with less than 13 digits")
     void timeIsReportedAndParsedWithLessThan13Digits() throws JsonProcessingException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+
         String content = "143318";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
@@ -201,6 +203,8 @@ class HECTimeImplTest {
     @Test
     @DisplayName("Time is reported and parsed when time is longer than 13 digits")
     void timeIsReportedAndParsedWhenTimeIsLongerThan13Digits() throws JsonProcessingException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+
         String content = "14331882552523";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
@@ -229,6 +233,8 @@ class HECTimeImplTest {
     @Test
     @DisplayName("Happy equals test")
     void happyEqualsTest() throws JsonProcessingException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+
         String content = "1433188255252321";
 
         final JsonNode jsonNode = objectMapper.readTree(content);
@@ -242,6 +248,8 @@ class HECTimeImplTest {
     @Test
     @DisplayName("Unhappy equals test")
     void unhappyEqualsTest() throws JsonProcessingException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+
         String content1 = "1433188255252321";
         String content2 = "14331882552";
 
