@@ -58,24 +58,21 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class HECBatchTest {
-
-    private static final String channel1 = "CHANNEL_11111";
-    private static final String authToken1 = "AUTH_TOKEN_12223";
+final class HECBatchTest {
 
     @Test
     public void toHECRecordListTest() {
-        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\", \"time\": 123456}";
-        HECRecord supposedResponse = new HECRecordImpl(
-                channel1,
+        final String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\", \"time\": 123456}";
+        final HECRecord supposedResponse = new HECRecordImpl(
+                "CHANNEL_11111",
                 new EventMessageImpl("Hello, world!"),
-                authToken1,
+                "AUTH_TOKEN_12223",
                 0,
                 new HECTimeImplWithFallback(new HECTimeImpl(new ObjectMapper().createObjectNode().numberNode(123456)), new HECTimeStub()), new HeaderInfo()
         );
 
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
-        List<HECRecord> response = HECBatch.toHECRecordList();
+        final HECBatch hecBatch = new HECBatch("AUTH_TOKEN_12223", "CHANNEL_11111", allEventsInJson, new HeaderInfo());
+        final List<HECRecord> response = hecBatch.toHECRecordList();
 
         // Test the individual methods, since HECTimeImplWithFallback will have a stub, which does not implement equals or hashcode
         Assertions.assertEquals(1, response.size());
@@ -94,10 +91,10 @@ class HECBatchTest {
      */
     @Test
     public void toHECRecordListUsesAStubIfParsingFailsWithMalformedJSONTest() {
-        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": {{{{}}}}";
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
+        final String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": {{{{}}}}";
+        final HECBatch hecBatch = new HECBatch("AUTH_TOKEN_12223", "CHANNEL_11111", allEventsInJson, new HeaderInfo());
 
-        Assertions.assertThrowsExactly(JsonSyntaxException.class, () -> HECBatch.toHECRecordList().toString());
+        Assertions.assertThrowsExactly(JsonSyntaxException.class, () -> hecBatch.toHECRecordList().toString());
     }
 
     /**
@@ -105,11 +102,11 @@ class HECBatchTest {
      */
     @Test
     public void toHECRecordListUsesAStubIfParsingFailsWithEmptyJSONTest() {
-        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": null}";
-        String supposedResponse = "EventStub does not support this";
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
-        Exception exception = Assertions
-                .assertThrowsExactly(UnsupportedOperationException.class, () -> HECBatch.toHECRecordList().toString());
+        final String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": null}";
+        final String supposedResponse = "EventStub does not support this";
+        final HECBatch hecBatch = new HECBatch("AUTH_TOKEN_12223", "CHANNEL_11111", allEventsInJson, new HeaderInfo());
+        final Exception exception = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, () -> hecBatch.toHECRecordList().toString());
         Assertions
                 .assertEquals(
                         supposedResponse, exception.getMessage(), "Exception message was not what it was supposed to be"
@@ -118,16 +115,16 @@ class HECBatchTest {
 
     @Test
     public void noEventFieldInRequestTest() {
-        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
+        final String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+        final HECBatch HECBatch = new HECBatch("AUTH_TOKEN_12223", "CHANNEL_11111", allEventsInJson, new HeaderInfo());
 
         Assertions.assertThrows(UnsupportedOperationException.class, () -> HECBatch.toHECRecordList().toString());
     }
 
     @Test
     public void eventFieldBlankInRequestTest() {
-        String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
+        final String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
+        final HECBatch HECBatch = new HECBatch("AUTH_TOKEN_12223", "CHANNEL_11111", allEventsInJson, new HeaderInfo());
 
         Assertions.assertThrows(UnsupportedOperationException.class, () -> HECBatch.toHECRecordList().toString());
     }
