@@ -64,8 +64,6 @@ import org.junit.jupiter.api.*;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static org.junit.Assert.*;
-
 /*
  * Tests the functionality of HECServiceImpl
  */
