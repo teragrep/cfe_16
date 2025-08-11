@@ -45,17 +45,25 @@
  */
 package com.teragrep.cfe_16.service;
 
+import com.cloudbees.syslog.SyslogMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.teragrep.cfe_16.*;
-import com.teragrep.cfe_16.bo.HeaderInfo;
+import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.Session;
+import com.teragrep.cfe_16.config.Configuration;
+import com.teragrep.cfe_16.connection.AbstractConnection;
+import com.teragrep.cfe_16.connection.ConnectionFactory;
 import com.teragrep.cfe_16.exceptionhandling.AuthenticationTokenMissingException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotFoundException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotProvidedException;
+import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
 import com.teragrep.cfe_16.exceptionhandling.SessionNotFoundException;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +78,9 @@ import org.springframework.stereotype.Service;
 public class HECServiceImpl implements HECService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HECServiceImpl.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
-    private AckManager ackManager;
+    private Acknowledgements acknowledgements;
 
     @Autowired
     private SessionManager sessionManager;
@@ -80,19 +89,55 @@ public class HECServiceImpl implements HECService {
     private TokenManager tokenManager;
 
     @Autowired
-    private EventManager eventManager;
-
-    @Autowired
     private RequestHandler requestHandler;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private Configuration configuration;
+
+    private AbstractConnection connection;
 
     public HECServiceImpl() {
     }
 
+    public HECServiceImpl(final Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    public HECServiceImpl(
+            final Acknowledgements acknowledgements,
+            final SessionManager sessionManager,
+            final TokenManager tokenManager,
+            final RequestHandler requestHandler,
+            final Configuration configuration,
+            final AbstractConnection connection
+    ) {
+        this.acknowledgements = acknowledgements;
+        this.sessionManager = sessionManager;
+        this.tokenManager = tokenManager;
+        this.requestHandler = requestHandler;
+        this.configuration = configuration;
+        this.connection = connection;
+    }
+
+    @PostConstruct
+    void init() {
+        LOGGER.debug("Setting up connection");
+        try {
+            this.connection = ConnectionFactory
+                    .createConnection(
+                            this.configuration.getSysLogProtocol(), this.configuration.getSyslogHost(),
+                            this.configuration.getSyslogPort()
+                    );
+        }
+        catch (IOException e) {
+            LOGGER.error("Error creating connection", e);
+            throw new InternalServerErrorException();
+        }
+    }
+
     @Override
     // @LogAnnotation(type = LogType.METRIC_COUNTER)
-    public ObjectNode sendEvents(HttpServletRequest request, String channel, String eventInJson) {
+    public synchronized ObjectNode sendEvents(HttpServletRequest request, String channel, String eventInJson) {
         LOGGER.debug("Sending events to channel <{}>", channel);
         if (this.tokenManager.tokenIsMissing(request)) {
             throw new AuthenticationTokenMissingException("Authentication token must be provided");
@@ -101,7 +146,6 @@ public class HECServiceImpl implements HECService {
         // AspectLoggerWrapper.logMetricDuration(null, "new_metric",
         // MetricDurationOptionsImpl.MetricDuration.P10S);
         String authHeader = request.getHeader("Authorization");
-        HeaderInfo headerInfo = requestHandler.createHeaderInfoObject(request);
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {
@@ -127,11 +171,50 @@ public class HECServiceImpl implements HECService {
             session.addChannel(channel);
         }
 
-        // TODO: find a nice way of not passing AckManager instance
-        ObjectNode ackNode = this.eventManager
-                .convertData(authToken, channel, eventInJson, headerInfo, this.ackManager);
+        acknowledgements.initializeContext(authToken, channel);
+        int ackId = acknowledgements.getCurrentAckValue(authToken, channel);
+        boolean incremented = acknowledgements.incrementAckValue(authToken, channel);
+        if (!incremented) {
+            throw new InternalServerErrorException("Ack value couldn't be incremented.");
+        }
+        Ack ack = new Ack(ackId, false);
+        boolean addedAck = acknowledgements.addAck(authToken, channel, ack);
+        if (!addedAck) {
+            throw new InternalServerErrorException("Ack ID " + ackId + " couldn't be added to the Ack set.");
+        }
 
-        return ackNode;
+        List<SyslogMessage> syslogMessages = new SyslogBatch(
+                new HECBatch(authToken, channel, eventInJson, requestHandler.createHeaderInfoObject(request)).toHECRecordList()
+
+        ).asSyslogMessages();
+
+        try {
+            // create a new object to avoid blocking of threads because
+            // the SyslogMessageSender.sendMessage() is synchronized
+            this.connection.sendMessages(syslogMessages.toArray(new SyslogMessage[syslogMessages.size()]));
+        }
+        catch (IOException e) {
+            throw new InternalServerErrorException(e);
+        }
+
+        boolean shouldAck = !channel.equals(Session.DEFAULT_CHANNEL);
+
+        if (shouldAck) {
+            boolean acked = acknowledgements.acknowledge(authToken, channel, ackId);
+            if (!acked) {
+                throw new InternalServerErrorException("Ack ID " + ackId + " not Acked.");
+            }
+        }
+
+        ObjectNode responseNode = this.objectMapper.createObjectNode();
+
+        responseNode.put("text", "Success");
+        responseNode.put("code", 0);
+        if (shouldAck) {
+            responseNode.put("ackID", ackId);
+        }
+
+        return responseNode;
     }
 
     // @LogAnnotation(type = LogType.RESPONSE)
@@ -175,7 +258,7 @@ public class HECServiceImpl implements HECService {
         session.touch();
 
         ObjectNode responseNode = objectMapper.createObjectNode();
-        JsonNode requestedAckStatuses = this.ackManager
+        JsonNode requestedAckStatuses = this.acknowledgements
                 .getRequestedAckStatuses(authToken, channel, requestedAcksInJson);
         responseNode.put("acks", requestedAckStatuses);
         return responseNode;

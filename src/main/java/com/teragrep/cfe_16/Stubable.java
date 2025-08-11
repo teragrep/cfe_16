@@ -43,30 +43,9 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.sender;
+package com.teragrep.cfe_16;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public interface Stubable {
 
-import java.io.IOException;
-
-public class SenderFactory {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SenderFactory.class);
-
-    public static AbstractSender createSender(String type, String hostname, int port) throws IOException {
-        LOGGER.debug("Creating sender for type <[{}]> to <[{}]>:<[{}]>", type, hostname, port);
-        if (type.equalsIgnoreCase("UDP")) {
-            return new UdpSender(hostname, port);
-        }
-        else if (type.equalsIgnoreCase("TCP")) {
-            return new TcpSender(hostname, port);
-        }
-        else if (type.equalsIgnoreCase("RELP")) {
-            return new RelpSender(hostname, port);
-        }
-        else {
-            throw new IOException("Invalid sender type: " + type);
-        }
-    }
+    boolean isStub();
 }

@@ -65,14 +65,14 @@ import java.util.Map;
 /*
  * Manager that handles the acknowledgement status of the sent events (acks).
  * A background thread is used to clean up NRU ACK objects.
- * 
+ *
  * This class is thread safe.
  *
  */
 @Component
-public class AckManager implements Runnable, LifeCycle {
+public final class Acknowledgements implements Runnable, LifeCycle {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AckManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Acknowledgements.class);
 
     /**
      * A class that encapsulates state of individual channels regarding to ACKs.
@@ -137,9 +137,15 @@ public class AckManager implements Runnable, LifeCycle {
     /**
      * An empty constructor for Spring @Autowired annotation.
      */
-    public AckManager() {
+    public Acknowledgements() {
         this.objectMapper = new ObjectMapper();
-        this.ackStates = Collections.synchronizedMap(new HashMap<String, State>());
+        this.ackStates = Collections.synchronizedMap(new HashMap<>());
+    }
+
+    public Acknowledgements(final Configuration configuration) {
+        this.configuration = configuration;
+        this.objectMapper = new ObjectMapper();
+        this.ackStates = Collections.synchronizedMap(new HashMap<>());
     }
 
     @Override
@@ -160,7 +166,7 @@ public class AckManager implements Runnable, LifeCycle {
     /**
      * A private Accessor for the State object indexed by the given auth token and channel. If no State object is found,
      * a new object is created and added to the map.
-     * 
+     *
      * @param authToken
      * @param channel
      * @return
@@ -179,7 +185,7 @@ public class AckManager implements Runnable, LifeCycle {
 
     /**
      * This method has to be called first before calling any other Ack related methods.
-     * 
+     *
      * @param authToken
      * @param channel
      */
@@ -262,7 +268,7 @@ public class AckManager implements Runnable, LifeCycle {
     /**
      * Adds a new Ack object for given channel. If this is the first time a channel is assigned a new Ack, a new State
      * object is created.
-     * 
+     *
      * @param channel
      * @param ack
      */
@@ -353,7 +359,7 @@ public class AckManager implements Runnable, LifeCycle {
 
     /*
      * Checks if there is room in the Ack list for a new entry
-     * 
+     *
      * Not thread safe, needs external synchronization.
      */
     private boolean acksAvailable(State state) {
@@ -370,7 +376,7 @@ public class AckManager implements Runnable, LifeCycle {
 
     /*
      * Deletes a given Ack from the Ack list.
-     * 
+     *
      * This is an O(n) operation..
      */
     public boolean deleteAckFromList(String authToken, String channel, Ack ack) {
@@ -421,7 +427,7 @@ public class AckManager implements Runnable, LifeCycle {
 
     /**
      * Returns the size of the Ack set of given channel.
-     * 
+     *
      * @param channel
      * @return
      */
@@ -438,7 +444,7 @@ public class AckManager implements Runnable, LifeCycle {
 
     /**
      * Returns the unmodifiable set of Acks for a channel.
-     * 
+     *
      * @param channel
      * @return
      */
@@ -456,7 +462,7 @@ public class AckManager implements Runnable, LifeCycle {
     /**
      * Returns the current Ack value for given token and channel. A new State is created, so this method must be called
      * first before other Ack manipulating methods are called.
-     * 
+     *
      * @param authToken
      * @param channel
      * @return

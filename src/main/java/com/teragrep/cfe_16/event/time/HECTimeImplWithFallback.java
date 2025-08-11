@@ -43,71 +43,57 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.bo;
+package com.teragrep.cfe_16.event.time;
 
-import com.cloudbees.syslog.SDElement;
 import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class HeaderInfo {
+public final class HECTimeImplWithFallback implements HECTime {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HeaderInfo.class);
-    private String xForwardedFor;
-    private String xForwardedHost;
-    private String xForwardedProto;
+    private final HECTime currentTime;
+    private final HECTime fallbackTime;
 
-    public HeaderInfo() {
+    public HECTimeImplWithFallback(HECTime currentTime, HECTime fallbackTime) {
+        this.currentTime = currentTime;
+        this.fallbackTime = fallbackTime;
     }
 
-    public HeaderInfo(String xForwardedFor, String xForwardedHost, String xForwardedProto) {
-        this.xForwardedFor = xForwardedFor;
-        this.xForwardedHost = xForwardedHost;
-        this.xForwardedProto = xForwardedProto;
-    }
+    @Override
+    public long instant(long defaultValue) {
+        final long currentTime = this.currentTime.instant(defaultValue);
 
-    public SDElement asSDElement() {
-        LOGGER.debug("Setting Structured Data headers");
-        final SDElement headerSDE = new SDElement("cfe_16-origin@48577");
-
-        if (this.xForwardedFor != null) {
-            LOGGER.debug("Adding X-Forwarded-For header to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-For", this.xForwardedFor);
+        // Check if the currentTime relied on the defaultValue
+        if (currentTime == defaultValue && !this.fallbackTime.isStub()) {
+            return this.fallbackTime.instant(defaultValue);
         }
-        if (this.xForwardedHost != null) {
-            LOGGER.debug("Adding X-Forwarder-Host to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-Host", this.xForwardedHost);
+        else {
+            return currentTime;
         }
-        if (this.xForwardedProto != null) {
-            LOGGER.debug("Adding X-Forwarded-Proto to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-Proto", this.xForwardedProto);
+    }
+
+    @Override
+    public boolean parsed() {
+        if (this.currentTime.isStub() && this.fallbackTime.isStub()) {
+            return false;
         }
-
-        return headerSDE;
+        else if (!this.currentTime.isStub() && this.fallbackTime.isStub()) {
+            return this.currentTime.parsed();
+        }
+        else {
+            return this.fallbackTime.parsed();
+        }
     }
 
-    public String getxForwardedFor() {
-        return xForwardedFor;
-    }
-
-    public void setxForwardedFor(String xForwardedFor) {
-        this.xForwardedFor = xForwardedFor;
-    }
-
-    public String getxForwardedHost() {
-        return xForwardedHost;
-    }
-
-    public void setxForwardedHost(String xForwardedHost) {
-        this.xForwardedHost = xForwardedHost;
-    }
-
-    public String getxForwardedProto() {
-        return xForwardedProto;
-    }
-
-    public void setxForwardedProto(String xForwardedProto) {
-        this.xForwardedProto = xForwardedProto;
+    @Override
+    public String source() {
+        if (this.currentTime.isStub() && this.fallbackTime.isStub()) {
+            return "generated";
+        }
+        else if (!this.currentTime.isStub() && this.fallbackTime.isStub()) {
+            return this.currentTime.source();
+        }
+        else {
+            return this.fallbackTime.source();
+        }
     }
 
     @Override
@@ -116,13 +102,17 @@ public class HeaderInfo {
             return false;
         }
 
-        HeaderInfo that = (HeaderInfo) o;
-        return Objects.equals(xForwardedFor, that.xForwardedFor) && Objects.equals(xForwardedHost, that.xForwardedHost)
-                && Objects.equals(xForwardedProto, that.xForwardedProto);
+        HECTimeImplWithFallback that = (HECTimeImplWithFallback) o;
+        return Objects.equals(currentTime, that.currentTime) && Objects.equals(fallbackTime, that.fallbackTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(xForwardedFor, xForwardedHost, xForwardedProto);
+        return Objects.hash(currentTime, fallbackTime);
+    }
+
+    @Override
+    public boolean isStub() {
+        return false;
     }
 }

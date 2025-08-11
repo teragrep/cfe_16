@@ -72,7 +72,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <revision>0.0.1</revision>
     <rlp_01.version>4.0.1</rlp_01.version>
-    <rlp_03.version>3.0.0</rlp_03.version>
+    <rlp_03.version>10.0.0</rlp_03.version>
     <sha1></sha1>
     <spring.boot.version>3.4.3</spring.boot.version>
     <spring.session.version>3.4.2</spring.session.version>
@@ -190,12 +190,6 @@
       <version>2024.1.6</version>
     </dependency>
     <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito2</artifactId>
-      <version>2.0.9</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <version>${junit.version}</version>
@@ -224,6 +218,15 @@
     <directory>${project.basedir}/target</directory>
     <finalName>cfe_16</finalName>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgs>
+            <arg>-parameters</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>3.4.1</version>
@@ -261,7 +264,7 @@
             <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
               <notes>Also allow the license url to be https.</notes>
               <patterns>
-                <pattern>Copyright (C) 2021  Suomen Kanuuna Oy</pattern>
+                <pattern>Copyright (C) 2021-2025 Suomen Kanuuna Oy</pattern>
               </patterns>
             </license>
           </licenses>
@@ -293,6 +296,10 @@
             <exclude>Dockerfile</exclude>
             <exclude>config/*</exclude>
             <exclude>*.sh</exclude>
+            <exclude>src/main/resources/application.properties</exclude>
+            <exclude>src/test/resources/application.properties</exclude>
+            <!-- Other plugin settings -->
+            <exclude>eclipse-java-formatter.xml</exclude>
           </excludes>
         </configuration>
         <executions>

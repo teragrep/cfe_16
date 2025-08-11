@@ -43,41 +43,15 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.sender;
+package com.teragrep.cfe_16.event.time;
 
-import com.cloudbees.syslog.SyslogMessage;
-import com.cloudbees.syslog.sender.AbstractSyslogMessageSender;
+import com.teragrep.cfe_16.Stubable;
 
-import java.io.IOException;
+public interface HECTime extends Stubable {
 
-/**
- * An abstract sender class for sending batch messages.
- */
-public abstract class AbstractSender extends AbstractSyslogMessageSender {
+    long instant(final long defaultValue);
 
-    protected String hostname;
-    protected int port;
+    boolean parsed();
 
-    protected AbstractSender(String hostname, int port) {
-        super();
-        this.hostname = hostname;
-        this.port = port;
-    }
-
-    /**
-     * Sends a batch of syslog messages.
-     * 
-     * @param syslogMessages
-     */
-    public abstract void sendMessages(SyslogMessage[] syslogMessages) throws IOException;
-
-    @Override
-    public void setSyslogServerHostname(String syslogServerHostname) {
-        this.hostname = syslogServerHostname;
-    }
-
-    @Override
-    public void setSyslogServerPort(int syslogServerPort) {
-        this.port = syslogServerPort;
-    }
+    String source();
 }

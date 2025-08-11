@@ -43,44 +43,41 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.sender;
+package com.teragrep.cfe_16.connection;
 
 import com.cloudbees.syslog.SyslogMessage;
-import com.cloudbees.syslog.sender.UdpSyslogMessageSender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.cloudbees.syslog.sender.AbstractSyslogMessageSender;
 
 import java.io.IOException;
 
-public class UdpSender extends AbstractSender {
+/**
+ * An abstract connection class for sending batch messages.
+ */
+public abstract class AbstractConnection extends AbstractSyslogMessageSender {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UdpSender.class);
-    private UdpSyslogMessageSender sender;
+    protected String hostname;
+    protected int port;
 
-    public UdpSender(String hostname, int port) {
-        super(hostname, port);
-        this.sender = new UdpSyslogMessageSender();
-        this.sender.setSyslogServerHostname(this.hostname);
-        this.sender.setSyslogServerPort(this.port);
+    protected AbstractConnection(String hostname, int port) {
+        super();
+        this.hostname = hostname;
+        this.port = port;
+    }
+
+    /**
+     * Sends a batch of syslog messages.
+     * 
+     * @param syslogMessages
+     */
+    public abstract void sendMessages(SyslogMessage[] syslogMessages) throws IOException;
+
+    @Override
+    public void setSyslogServerHostname(String syslogServerHostname) {
+        this.hostname = syslogServerHostname;
     }
 
     @Override
-    public void sendMessages(SyslogMessage[] syslogMessages) throws IOException {
-        LOGGER.debug("Sending messages");
-        for (SyslogMessage syslogMessage : syslogMessages) {
-            this.sender.sendMessage(syslogMessage);
-        }
-    }
-
-    @Override
-    public void sendMessage(SyslogMessage syslogMessage) throws IOException {
-        LOGGER.debug("Sending message");
-        this.sender.sendMessage(syslogMessage);
-    }
-
-    @Override
-    public void close() throws IOException {
-        LOGGER.debug("Closing sender");
-        this.sender.close();
+    public void setSyslogServerPort(int syslogServerPort) {
+        this.port = syslogServerPort;
     }
 }

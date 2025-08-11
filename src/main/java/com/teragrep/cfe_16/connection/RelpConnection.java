@@ -43,21 +43,21 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.sender;
+package com.teragrep.cfe_16.connection;
 
 import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.rlp_01.RelpBatch;
-import com.teragrep.rlp_01.RelpConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
-public class RelpSender extends AbstractSender {
+public class RelpConnection extends AbstractConnection {
 
-    private final RelpConnection sender;
-    private static final Logger LOGGER = LoggerFactory.getLogger(RelpSender.class);
+    private final com.teragrep.rlp_01.RelpConnection connection;
+    private static final Logger LOGGER = LoggerFactory.getLogger(RelpConnection.class);
     //settings for timeouts, if they are 0 that we skip them
     //default are 0
     private int connectionTimeout = 10000;
@@ -65,12 +65,12 @@ public class RelpSender extends AbstractSender {
     private int writeTimeout = 5000;
     private int reconnectInterval = 500;
 
-    public RelpSender(String hostname, int port) {
+    public RelpConnection(String hostname, int port) {
         super(hostname, port);
-        this.sender = new RelpConnection();
-        this.sender.setConnectionTimeout(connectionTimeout);
-        this.sender.setReadTimeout(this.readTimeout);
-        this.sender.setWriteTimeout(this.writeTimeout);
+        this.connection = new com.teragrep.rlp_01.RelpConnection();
+        this.connection.setConnectionTimeout(connectionTimeout);
+        this.connection.setReadTimeout(this.readTimeout);
+        this.connection.setWriteTimeout(this.writeTimeout);
         connect();
     }
 
@@ -80,7 +80,7 @@ public class RelpSender extends AbstractSender {
             boolean connected = false;
             try {
                 LOGGER.debug("Connecting to RELP server");
-                connected = this.sender.connect(this.hostname, this.port);
+                connected = this.connection.connect(this.hostname, this.port);
             }
             catch (Exception e) {
                 LOGGER.warn("Failed to connect to RELP Server: ", e);
@@ -102,13 +102,13 @@ public class RelpSender extends AbstractSender {
 
     synchronized private void tearDown() {
         LOGGER.debug("Tearing down connection");
-        this.sender.tearDown();
+        this.connection.tearDown();
     }
 
     synchronized private void disconnect() {
         try {
             LOGGER.debug("Disconnecting from RELP server");
-            this.sender.disconnect();
+            this.connection.disconnect();
         }
         catch (IllegalStateException | IOException | TimeoutException e) {
             LOGGER.warn("Failed to disconnect from RELP Server: ", e);
@@ -124,18 +124,18 @@ public class RelpSender extends AbstractSender {
     }
 
     @Override
-    synchronized public void sendMessages(SyslogMessage[] syslogMessages) throws IOException {
+    synchronized public void sendMessages(SyslogMessage[] syslogMessages) {
         final RelpBatch relpBatch = new RelpBatch();
         for (SyslogMessage syslogMessage : syslogMessages) {
-            relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes("UTF-8"));
+            relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
         }
         doSend(relpBatch);
     }
 
     @Override
-    synchronized public void sendMessage(SyslogMessage syslogMessage) throws IOException {
+    synchronized public void sendMessage(SyslogMessage syslogMessage) {
         final RelpBatch relpBatch = new RelpBatch();
-        relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes("UTF-8"));
+        relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
         doSend(relpBatch);
     }
 
@@ -145,7 +145,7 @@ public class RelpSender extends AbstractSender {
         while (notSent) {
             try {
                 LOGGER.debug("Committing a RELP batch");
-                this.sender.commit(relpBatch);
+                this.connection.commit(relpBatch);
             }
             catch (IllegalStateException | IOException | TimeoutException e) {
                 LOGGER.warn("Failed to commit batch: ", e);

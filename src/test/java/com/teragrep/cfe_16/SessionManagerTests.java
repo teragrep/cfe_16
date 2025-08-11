@@ -46,25 +46,13 @@
 package com.teragrep.cfe_16;
 
 import com.teragrep.cfe_16.bo.Session;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.Assert.*;
 
 /*
  * Tests the functionality of SessionManager
  */
-public class SessionManagerTests {
-
-    private SessionManager sessionManager;
-
-    /*
-     * A SessionManager is initialized
-     */
-    @BeforeEach
-    public void initialize() {
-        sessionManager = new SessionManager();
-    }
+public final class SessionManagerTests {
 
     /*
      * Tests creating a session with SessionManager and getting that same session
@@ -72,42 +60,35 @@ public class SessionManagerTests {
      */
     @Test
     public void createSessionAndGetItWithAuthTokenTest() {
+        final SessionManager sessionManager = new SessionManager();
 
-        String authToken1 = "AUTH_TOKEN_12345";
-        String authToken2 = "AUTH_TOKEN_54321";
-        String authToken3 = "AUTH_TOKEN_99999";
+        final String authToken1 = "AUTH_TOKEN_12345";
+        final String authToken2 = "AUTH_TOKEN_54321";
+        final String authToken3 = "AUTH_TOKEN_99999";
 
-        Session session1 = sessionManager.createSession(authToken1);
-        Session session2 = sessionManager.createSession(authToken2);
-        assertSame(
-                "Same session should be returned with the same authentication token", session1,
-                sessionManager.getSession(authToken1)
-        );
-        assertSame(
-                "Same session should be returned with the same authentication token", session2,
-                sessionManager.getSession(authToken2)
-        );
-        assertNotSame(
-                "Different session should be returned with a different authentication token", session1,
-                sessionManager.getSession(authToken2)
-        );
-        assertNotSame(
-                "Different session should be returned with a different authentication token", session2,
-                sessionManager.getSession(authToken1)
-        );
-        assertNull(
-                "Getting a session with an unused authentication token should return null",
-                sessionManager.getSession(authToken3)
-        );
+        final Session session1 = sessionManager.createSession(authToken1);
+        final Session session2 = sessionManager.createSession(authToken2);
+        Assertions
+                .assertSame(session1, sessionManager.getSession(authToken1), "Same session should be returned with the same authentication token");
+        Assertions
+                .assertSame(session2, sessionManager.getSession(authToken2), "Same session should be returned with the same authentication token");
+        Assertions
+                .assertNotSame(session1, sessionManager.getSession(authToken2), "Different session should be returned with a different authentication token");
+        Assertions
+                .assertNotSame(session2, sessionManager.getSession(authToken1), "Different session should be returned with a different authentication token");
+        Assertions
+                .assertNull(sessionManager.getSession(authToken3), "Getting a session with an unused authentication token should return null");
     }
 
     @Test
-    public void sessionCreaationAndDeletionTests() {
-        Session session = sessionManager.createSession("AUTH");
-        assertTrue(session.addChannel(Session.DEFAULT_CHANNEL));
-        assertFalse(session.addChannel(Session.DEFAULT_CHANNEL));
-        assertTrue(session.doesChannelExist(Session.DEFAULT_CHANNEL));
-        assertTrue(session.removeChannel(Session.DEFAULT_CHANNEL));
-        assertTrue(!session.doesChannelExist(Session.DEFAULT_CHANNEL));
+    public void sessionCreationAndDeletionTests() {
+        final SessionManager sessionManager = new SessionManager();
+
+        final Session session = sessionManager.createSession("AUTH");
+        Assertions.assertTrue(session.addChannel(Session.DEFAULT_CHANNEL));
+        Assertions.assertFalse(session.addChannel(Session.DEFAULT_CHANNEL));
+        Assertions.assertTrue(session.doesChannelExist(Session.DEFAULT_CHANNEL));
+        Assertions.assertTrue(session.removeChannel(Session.DEFAULT_CHANNEL));
+        Assertions.assertFalse(session.doesChannelExist(Session.DEFAULT_CHANNEL));
     }
 }

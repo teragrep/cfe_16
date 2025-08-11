@@ -43,71 +43,52 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.bo;
+package com.teragrep.cfe_16.event;
 
-import com.cloudbees.syslog.SDElement;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class HeaderInfo {
+public final class JsonEventImpl implements JsonEvent {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HeaderInfo.class);
-    private String xForwardedFor;
-    private String xForwardedHost;
-    private String xForwardedProto;
+    private final JsonNode jsonNode;
 
-    public HeaderInfo() {
+    public JsonEventImpl(JsonNode jsonNode) {
+        this.jsonNode = jsonNode;
     }
 
-    public HeaderInfo(String xForwardedFor, String xForwardedHost, String xForwardedProto) {
-        this.xForwardedFor = xForwardedFor;
-        this.xForwardedHost = xForwardedHost;
-        this.xForwardedProto = xForwardedProto;
-    }
-
-    public SDElement asSDElement() {
-        LOGGER.debug("Setting Structured Data headers");
-        final SDElement headerSDE = new SDElement("cfe_16-origin@48577");
-
-        if (this.xForwardedFor != null) {
-            LOGGER.debug("Adding X-Forwarded-For header to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-For", this.xForwardedFor);
+    @Override
+    public EventMessage asEvent() {
+        // Event field completely missing
+        if (!this.asNode().has("event")) {
+            return new EventMessageStub();
         }
-        if (this.xForwardedHost != null) {
-            LOGGER.debug("Adding X-Forwarder-Host to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-Host", this.xForwardedHost);
+        // Event field contains subfield "message"
+        else if (this.asNode().get("event").isObject() && this.asNode().get("event").has("message")) {
+            if (
+                this.asNode().get("event").get("message").isTextual()
+                        && !Objects.equals(this.asNode().get("event").get("message").asText(), "")
+            ) {
+                return new EventMessageImpl(this.asNode().get("event").get("message").asText());
+            }
         }
-        if (this.xForwardedProto != null) {
-            LOGGER.debug("Adding X-Forwarded-Proto to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-Proto", this.xForwardedProto);
+        // Event field has a String value
+        else if (this.asNode().get("event").isTextual() && !Objects.equals(this.asNode().get("event").asText(), "")) {
+            return new EventMessageImpl(this.jsonNode.get("event").asText());
         }
-
-        return headerSDE;
+        return new EventMessageStub();
     }
 
-    public String getxForwardedFor() {
-        return xForwardedFor;
+    @Override
+    public JsonNode asNode() {
+        if (this.jsonNode != null && this.jsonNode.isObject()) {
+            return this.jsonNode;
+        }
+        throw new IllegalStateException("jsonEvent node not valid");
     }
 
-    public void setxForwardedFor(String xForwardedFor) {
-        this.xForwardedFor = xForwardedFor;
-    }
-
-    public String getxForwardedHost() {
-        return xForwardedHost;
-    }
-
-    public void setxForwardedHost(String xForwardedHost) {
-        this.xForwardedHost = xForwardedHost;
-    }
-
-    public String getxForwardedProto() {
-        return xForwardedProto;
-    }
-
-    public void setxForwardedProto(String xForwardedProto) {
-        this.xForwardedProto = xForwardedProto;
+    @Override
+    public JsonNode asTimeNode() {
+        return this.jsonNode.get("time");
     }
 
     @Override
@@ -116,13 +97,12 @@ public class HeaderInfo {
             return false;
         }
 
-        HeaderInfo that = (HeaderInfo) o;
-        return Objects.equals(xForwardedFor, that.xForwardedFor) && Objects.equals(xForwardedHost, that.xForwardedHost)
-                && Objects.equals(xForwardedProto, that.xForwardedProto);
+        JsonEventImpl that = (JsonEventImpl) o;
+        return Objects.equals(jsonNode, that.jsonNode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(xForwardedFor, xForwardedHost, xForwardedProto);
+        return Objects.hashCode(jsonNode);
     }
 }

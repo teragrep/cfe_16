@@ -46,60 +46,29 @@
 package com.teragrep.cfe_16.it;
 
 import com.teragrep.cfe_16.config.Configuration;
-import com.teragrep.rlp_03.Server;
-import com.teragrep.rlp_03.ServerFactory;
-import com.teragrep.rlp_03.config.Config;
-import com.teragrep.rlp_03.delegate.DefaultFrameDelegate;
-import com.teragrep.rlp_03.delegate.FrameDelegate;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
-import java.util.function.Supplier;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@SpringBootTest
-public class ConfigurationIT {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationIT.class);
-    @Autowired
-    private Configuration configuration;
-
-    private static Server server;
-    private static final String hostname = "localhost";
-    private static Integer port = 1235;
-
-    @BeforeAll
-    public static void init() throws IOException, InterruptedException {
-        Supplier<FrameDelegate> frameDelegateSupplier = () -> new DefaultFrameDelegate(
-                (frame) -> LOGGER.debug(frame.relpFrame().payload().toString())
-        );
-        Config config = new Config(port, 1);
-        ServerFactory serverFactory = new ServerFactory(config, frameDelegateSupplier);
-
-        server = serverFactory.create();
-        Thread serverThread = new Thread(server);
-        serverThread.start();
-        server.startup.waitForCompletion();
-    }
-
-    @AfterAll
-    public static void cleanup() throws InterruptedException {
-        server.stop();
-    }
+public final class ConfigurationTest {
 
     @Test
     public void instantiateConfigurationTest() {
-        String expected = "Configuration [sysLogHost=127.0.0.1, sysLogProtocol=relp, sysLogPort=1235, maxAckValue=1000000, maxAckAge=20000, maxSessionAge=30000, "
-                + "maxChannels=1000000, pollTime=1000000, printTimes=true]";
-        LOGGER.debug(configuration.toString());
 
-        assertEquals(expected, configuration.toString());
+        final Configuration configuration = new Configuration(
+                "127.0.0.1",
+                "relp",
+                1234,
+                1000000,
+                20000,
+                30000,
+                1000000,
+                1000000,
+                true
+        );
+
+        final String expected = "Configuration [sysLogHost=127.0.0.1, sysLogProtocol=relp, sysLogPort=1234, maxAckValue=1000000, maxAckAge=20000, maxSessionAge=30000, "
+                + "maxChannels=1000000, pollTime=1000000, printTimes=true]";
+
+        Assertions.assertEquals(expected, configuration.toString());
     }
 }
