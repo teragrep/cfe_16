@@ -45,7 +45,9 @@
  */
 package com.teragrep.cfe_16.bo;
 
-public interface XForwardedProto {
+import com.teragrep.cfe_16.Stubable;
+
+public interface XForwardedProto extends Stubable {
 
     public abstract String value() throws UnsupportedOperationException;
 }

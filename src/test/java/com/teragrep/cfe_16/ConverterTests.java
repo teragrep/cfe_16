@@ -48,6 +48,9 @@ package com.teragrep.cfe_16;
 import com.cloudbees.syslog.*;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
+import com.teragrep.cfe_16.bo.XForwardedForStub;
+import com.teragrep.cfe_16.bo.XForwardedHostStub;
+import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -96,7 +99,9 @@ public class ConverterTests {
     @BeforeEach
     public void initialize() {
 
-        converter = new Converter(new HeaderInfo(null, null, null));
+        converter = new Converter(
+                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+        );
 
         eventData1 = new HttpEventData();
         eventData2 = new HttpEventData();

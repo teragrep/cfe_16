@@ -51,4 +51,9 @@ public class XForwardedForStub implements XForwardedFor {
     public String value() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("XForwardedForStub does not support this method");
     }
+
+    @Override
+    public boolean isStub() {
+        return true;
+    }
 }

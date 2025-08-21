@@ -59,4 +59,12 @@ class XForwardedForImplTest {
         final String returnedValue = Assertions.assertDoesNotThrow(xForwardedFor::value);
         Assertions.assertEquals("headerValue", returnedValue);
     }
+
+    @Test
+    @DisplayName("isStub returns false")
+    void isStubReturnsFalse() {
+        final XForwardedFor xForwardedFor = new XForwardedForImpl("headerValue");
+
+        Assertions.assertFalse(xForwardedFor::isStub);
+    }
 }

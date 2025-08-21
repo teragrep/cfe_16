@@ -61,4 +61,12 @@ class XForwardedProtoStubTest {
 
         Assertions.assertEquals("XForwardedProtoStub does not support this method", exception.getMessage());
     }
+
+    @Test
+    @DisplayName("isStub returns true")
+    void isStubReturnsTrue() {
+        final XForwardedProto xForwardedProto = new XForwardedProtoStub();
+
+        Assertions.assertTrue(xForwardedProto::isStub);
+    }
 }

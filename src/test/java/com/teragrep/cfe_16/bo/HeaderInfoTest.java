@@ -53,9 +53,13 @@ import org.junit.jupiter.api.Test;
 class HeaderInfoTest {
 
     @Test
-    @DisplayName("asSDElement() uses all three parameters if they are not null")
-    void asSdElementUsesAllThreeParametersIfTheyAreNotNull() {
-        final HeaderInfo headerInfo = new HeaderInfo("forwardedFor", "forwardedHost", "forwardedProto");
+    @DisplayName("asSDElement() uses all three parameters if they are not stubs")
+    void asSdElementUsesAllThreeParametersIfTheyAreNotStubs() {
+        final HeaderInfo headerInfo = new HeaderInfo(
+                new XForwardedForImpl("forwardedFor"),
+                new XForwardedHostImpl("forwardedHost"),
+                new XForwardedProtoImpl("forwardedProto")
+        );
 
         final SDElement expectedSDElement = new SDElement("cfe_16-origin@48577");
         expectedSDElement.addSDParam("X-Forwarded-For", "forwardedFor");
@@ -66,22 +70,35 @@ class HeaderInfoTest {
     }
 
     @Test
-    @DisplayName("asSDElement ignores null fields")
-    void asSdElementIgnoresNullFields() {
-        final HeaderInfo headerInfo = new HeaderInfo("forwardedFor", null, "forwardedProto");
+    @DisplayName("asSDElement ignores stubs")
+    void asSdElementIgnoresStubs() {
+        final HeaderInfo headerInfo = new HeaderInfo(
+                new XForwardedForImpl("forwardedFor"),
+                new XForwardedHostStub(),
+                new XForwardedProtoImpl("forwardedProto")
+        );
 
         final SDElement expectedSDElement = new SDElement("cfe_16-origin@48577");
         expectedSDElement.addSDParam("X-Forwarded-For", "forwardedFor");
         expectedSDElement.addSDParam("X-Forwarded-Proto", "forwardedProto");
 
+        Assertions.assertEquals(2, headerInfo.asSDElement().getSdParams().size());
         Assertions.assertEquals(expectedSDElement, headerInfo.asSDElement());
     }
 
     @Test
     @DisplayName("Happy equals test")
     void happyEqualsTest() {
-        final HeaderInfo headerInfo1 = new HeaderInfo("forwardedFor", "forwardedHost", "forwardedProto");
-        final HeaderInfo headerInfo2 = new HeaderInfo("forwardedFor", "forwardedHost", "forwardedProto");
+        final HeaderInfo headerInfo1 = new HeaderInfo(
+                new XForwardedForImpl("forwardedFor"),
+                new XForwardedHostImpl("forwardedHost"),
+                new XForwardedProtoImpl("forwardedProto")
+        );
+        final HeaderInfo headerInfo2 = new HeaderInfo(
+                new XForwardedForImpl("forwardedFor"),
+                new XForwardedHostImpl("forwardedHost"),
+                new XForwardedProtoImpl("forwardedProto")
+        );
 
         Assertions.assertEquals(headerInfo1, headerInfo2);
     }
@@ -89,8 +106,16 @@ class HeaderInfoTest {
     @Test
     @DisplayName("Unhappy equals test")
     void unhappyEqualsTest() {
-        final HeaderInfo headerInfo1 = new HeaderInfo("forwardedFor", "forwardedHost", "forwardedProto");
-        final HeaderInfo headerInfo2 = new HeaderInfo("forwardedFor1234", "forwardedHost", "forwardedProto");
+        final HeaderInfo headerInfo1 = new HeaderInfo(
+                new XForwardedForImpl("forwardedFor"),
+                new XForwardedHostImpl("forwardedHost"),
+                new XForwardedProtoImpl("forwardedProto")
+        );
+        final HeaderInfo headerInfo2 = new HeaderInfo(
+                new XForwardedForImpl("forwardedFor1234"),
+                new XForwardedHostImpl("forwardedHost"),
+                new XForwardedProtoImpl("forwardedProto")
+        );
 
         Assertions.assertNotEquals(headerInfo1, headerInfo2);
     }

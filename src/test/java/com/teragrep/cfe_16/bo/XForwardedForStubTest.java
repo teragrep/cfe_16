@@ -61,4 +61,12 @@ class XForwardedForStubTest {
 
         Assertions.assertEquals("XForwardedForStub does not support this method", exception.getMessage());
     }
+
+    @Test
+    @DisplayName("isStub returns true")
+    void isStubReturnsTrue() {
+        final XForwardedFor xForwardedFor = new XForwardedForStub();
+
+        Assertions.assertTrue(xForwardedFor::isStub);
+    }
 }

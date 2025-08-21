@@ -51,4 +51,9 @@ public final class XForwardedHostStub implements XForwardedHost {
     public String value() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("XForwardedHostStub does not support this method");
     }
+
+    @Override
+    public boolean isStub() {
+        return true;
+    }
 }

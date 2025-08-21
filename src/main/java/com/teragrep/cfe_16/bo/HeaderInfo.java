@@ -53,11 +53,15 @@ import org.slf4j.LoggerFactory;
 public final class HeaderInfo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeaderInfo.class);
-    private final String xForwardedFor;
-    private final String xForwardedHost;
-    private final String xForwardedProto;
+    private final XForwardedFor xForwardedFor;
+    private final XForwardedHost xForwardedHost;
+    private final XForwardedProto xForwardedProto;
 
-    public HeaderInfo(final String xForwardedFor, final String xForwardedHost, final String xForwardedProto) {
+    public HeaderInfo(
+            final XForwardedFor xForwardedFor,
+            final XForwardedHost xForwardedHost,
+            final XForwardedProto xForwardedProto
+    ) {
         this.xForwardedFor = xForwardedFor;
         this.xForwardedHost = xForwardedHost;
         this.xForwardedProto = xForwardedProto;
@@ -67,17 +71,17 @@ public final class HeaderInfo {
         LOGGER.debug("Setting Structured Data headers");
         final SDElement headerSDE = new SDElement("cfe_16-origin@48577");
 
-        if (this.xForwardedFor != null) {
+        if (!this.xForwardedFor.isStub()) {
             LOGGER.debug("Adding X-Forwarded-For header to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-For", this.xForwardedFor);
+            headerSDE.addSDParam("X-Forwarded-For", this.xForwardedFor.value());
         }
-        if (this.xForwardedHost != null) {
+        if (!this.xForwardedHost.isStub()) {
             LOGGER.debug("Adding X-Forwarder-Host to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-Host", this.xForwardedHost);
+            headerSDE.addSDParam("X-Forwarded-Host", this.xForwardedHost.value());
         }
-        if (this.xForwardedProto != null) {
+        if (!this.xForwardedProto.isStub()) {
             LOGGER.debug("Adding X-Forwarded-Proto to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-Proto", this.xForwardedProto);
+            headerSDE.addSDParam("X-Forwarded-Proto", this.xForwardedProto.value());
         }
 
         return headerSDE;

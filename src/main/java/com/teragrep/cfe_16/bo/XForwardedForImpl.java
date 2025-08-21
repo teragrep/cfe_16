@@ -74,4 +74,9 @@ public final class XForwardedForImpl implements XForwardedFor {
     public int hashCode() {
         return Objects.hashCode(headerValue);
     }
+
+    @Override
+    public boolean isStub() {
+        return false;
+    }
 }

@@ -61,4 +61,12 @@ class XForwardedProtoImplTest {
         final String returnedValue = Assertions.assertDoesNotThrow(xForwardedProto::value);
         Assertions.assertEquals("headerValue", returnedValue);
     }
+
+    @Test
+    @DisplayName("isStub returns false")
+    void isStubReturnsFalse() {
+        final XForwardedProto xForwardedProto = new XForwardedProtoImpl("headerValue");
+
+        Assertions.assertFalse(xForwardedProto::isStub);
+    }
 }

@@ -61,4 +61,12 @@ class XForwardedHostImplTest {
         final String returnedValue = Assertions.assertDoesNotThrow(xForwardedHost::value);
         Assertions.assertEquals("headerValue", returnedValue);
     }
+
+    @Test
+    @DisplayName("isStub returns false")
+    void isStubReturnsFalse() {
+        final XForwardedHost xForwardedHost = new XForwardedHostImpl("headerValue");
+
+        Assertions.assertFalse(xForwardedHost::isStub);
+    }
 }

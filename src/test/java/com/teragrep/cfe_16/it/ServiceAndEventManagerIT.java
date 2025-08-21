@@ -52,6 +52,9 @@ import com.teragrep.cfe_16.EventManager;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
 import com.teragrep.cfe_16.bo.Session;
+import com.teragrep.cfe_16.bo.XForwardedForStub;
+import com.teragrep.cfe_16.bo.XForwardedHostStub;
+import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import com.teragrep.cfe_16.exceptionhandling.*;
 import com.teragrep.cfe_16.service.HECService;
 import com.teragrep.rlp_03.Server;
@@ -145,7 +148,11 @@ public class ServiceAndEventManagerIT {
     @Autowired
     private EventManager eventManager;
 
-    private HeaderInfo headerInfo = new HeaderInfo(null, null, null);
+    private final HeaderInfo headerInfo = new HeaderInfo(
+            new XForwardedForStub(),
+            new XForwardedHostStub(),
+            new XForwardedProtoStub()
+    );
 
     private static ServerSocket getSocket() {
         ServerSocket socket = null;

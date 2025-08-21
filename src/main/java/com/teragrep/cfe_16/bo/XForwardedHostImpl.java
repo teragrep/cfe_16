@@ -74,4 +74,9 @@ public final class XForwardedHostImpl implements XForwardedHost {
     public int hashCode() {
         return Objects.hashCode(headerValue);
     }
+
+    @Override
+    public boolean isStub() {
+        return false;
+    }
 }

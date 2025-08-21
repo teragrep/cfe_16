@@ -43,17 +43,9 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.bo;
+package com.teragrep.cfe_16;
 
-public class XForwardedProtoStub implements XForwardedProto {
+public interface Stubable {
 
-    @Override
-    public String value() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("XForwardedProtoStub does not support this method");
-    }
-
-    @Override
-    public boolean isStub() {
-        return true;
-    }
+    public abstract boolean isStub();
 }
