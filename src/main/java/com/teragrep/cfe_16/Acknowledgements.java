@@ -63,19 +63,19 @@ import java.util.Iterator;
 import java.util.Map;
 
 /*
- * Manager that handles the acknowledgement status of the sent events (acks).
+ * Handles the acknowledgement statuses of the sent events (acks).
  * A background thread is used to clean up NRU ACK objects.
  * 
  * This class is thread safe.
  *
  */
 @Component
-public class AckManager implements Runnable, LifeCycle {
+public final class Acknowledgements implements Runnable, LifeCycle {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AckManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Acknowledgements.class);
 
     /**
-     * A class that encapsulates state of individual channels regarding to ACKs.
+     * A class that encapsulates state of individual channels regarding ACKs.
      */
     private class State {
 
@@ -137,7 +137,7 @@ public class AckManager implements Runnable, LifeCycle {
     /**
      * An empty constructor for Spring @Autowired annotation.
      */
-    public AckManager() {
+    public Acknowledgements() {
         this.objectMapper = new ObjectMapper();
         this.ackStates = Collections.synchronizedMap(new HashMap<String, State>());
     }
