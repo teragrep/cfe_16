@@ -128,8 +128,7 @@ public class RelpConnection extends AbstractConnection {
     synchronized public void sendMessages(List<SyslogMessage> syslogMessages) {
         final RelpBatch relpBatch = new RelpBatch();
         for (SyslogMessage syslogMessage : syslogMessages) {
-            relpBatch.insert(
-                syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
+            relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
         }
         doSend(relpBatch);
     }
