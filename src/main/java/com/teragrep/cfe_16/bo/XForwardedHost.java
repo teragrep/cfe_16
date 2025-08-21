@@ -49,5 +49,5 @@ import com.teragrep.cfe_16.Stubable;
 
 public interface XForwardedHost extends Stubable {
 
-    public abstract String value() throws UnsupportedOperationException;
+    public abstract String value();
 }

@@ -48,7 +48,7 @@ package com.teragrep.cfe_16.bo;
 public class XForwardedForStub implements XForwardedFor {
 
     @Override
-    public String value() throws UnsupportedOperationException {
+    public String value() {
         throw new UnsupportedOperationException("XForwardedForStub does not support this method");
     }
 

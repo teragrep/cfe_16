@@ -48,7 +48,7 @@ package com.teragrep.cfe_16.bo;
 public final class XForwardedHostStub implements XForwardedHost {
 
     @Override
-    public String value() throws UnsupportedOperationException {
+    public String value() {
         throw new UnsupportedOperationException("XForwardedHostStub does not support this method");
     }
 
