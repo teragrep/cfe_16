@@ -58,8 +58,8 @@ import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldBlankException;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldMissingException;
 import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
-import com.teragrep.cfe_16.sender.AbstractSender;
-import com.teragrep.cfe_16.sender.SenderFactory;
+import com.teragrep.cfe_16.connection.AbstractConnection;
+import com.teragrep.cfe_16.connection.ConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ public class EventManager {
     @Autowired
     private Configuration configuration;
 
-    private AbstractSender sender;
+    private AbstractConnection connection;
 
     public EventManager() {
         this.objectMapper = new ObjectMapper();
@@ -92,16 +92,16 @@ public class EventManager {
 
     @PostConstruct
     public void setupSender() {
-        LOGGER.debug("Setting up sender");
+        LOGGER.debug("Setting up connection");
         try {
-            this.sender = SenderFactory
+            this.connection = ConnectionFactory
                     .createSender(
                             this.configuration.getSysLogProtocol(), this.configuration.getSyslogHost(),
                             this.configuration.getSyslogPort()
                     );
         }
         catch (IOException e) {
-            LOGGER.error("Error creating sender", e);
+            LOGGER.error("Error creating connection", e);
             throw new InternalServerErrorException();
         }
     }
@@ -171,7 +171,7 @@ public class EventManager {
         // the SyslogMessageSender.sendMessage() is synchronized
         try {
             SyslogMessage[] messages = syslogMessages.toArray(new SyslogMessage[syslogMessages.size()]);
-            this.sender.sendMessages(messages);
+            this.connection.sendMessages(messages);
         }
         catch (IOException e) {
             throw new InternalServerErrorException(e);
