@@ -298,7 +298,6 @@ public class ServiceAndHECBatchIT {
      */
     @Test
     public void sendingMultipleEventsTest() {
-        Acknowledgements acknowledgements = new Acknowledgements();
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0,\"ackID\":0}";
         assertEquals(
@@ -314,7 +313,6 @@ public class ServiceAndHECBatchIT {
      */
     @Test
     public void sendingMultipleEventsWithDefaultChannelTest() {
-        Acknowledgements acknowledgements = new Acknowledgements();
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         String supposedResponse = "{\"text\":\"Success\",\"code\":0}";
         assertEquals(
