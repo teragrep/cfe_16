@@ -48,6 +48,7 @@ package com.teragrep.cfe_16.connection;
 import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.rlp_01.RelpBatch;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,7 +125,7 @@ public class RelpConnection extends AbstractConnection {
     }
 
     @Override
-    synchronized public void sendMessages(SyslogMessage[] syslogMessages) throws IOException {
+    synchronized public void sendMessages(List<SyslogMessage> syslogMessages) throws IOException {
         final RelpBatch relpBatch = new RelpBatch();
         for (SyslogMessage syslogMessage : syslogMessages) {
             relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));

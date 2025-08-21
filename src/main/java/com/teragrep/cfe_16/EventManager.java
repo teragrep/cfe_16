@@ -170,8 +170,7 @@ public class EventManager {
         // create a new object to avoid blocking of threads because
         // the SyslogMessageSender.sendMessage() is synchronized
         try {
-            SyslogMessage[] messages = syslogMessages.toArray(new SyslogMessage[syslogMessages.size()]);
-            this.connection.sendMessages(messages);
+            this.connection.sendMessages(syslogMessages);
         }
         catch (IOException e) {
             throw new InternalServerErrorException(e);
