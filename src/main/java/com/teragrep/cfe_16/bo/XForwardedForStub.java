@@ -45,61 +45,15 @@
  */
 package com.teragrep.cfe_16.bo;
 
-import com.cloudbees.syslog.SDElement;
-import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class XForwardedForStub implements XForwardedFor {
 
-public final class HeaderInfo {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HeaderInfo.class);
-    private final XForwardedFor xForwardedFor;
-    private final XForwardedHost xForwardedHost;
-    private final XForwardedProto xForwardedProto;
-
-    public HeaderInfo(
-            final XForwardedFor xForwardedFor,
-            final XForwardedHost xForwardedHost,
-            final XForwardedProto xForwardedProto
-    ) {
-        this.xForwardedFor = xForwardedFor;
-        this.xForwardedHost = xForwardedHost;
-        this.xForwardedProto = xForwardedProto;
-    }
-
-    public SDElement asSDElement() {
-        LOGGER.debug("Setting Structured Data headers");
-        final SDElement headerSDE = new SDElement("cfe_16-origin@48577");
-
-        if (!this.xForwardedFor.isStub()) {
-            LOGGER.debug("Adding X-Forwarded-For header to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-For", this.xForwardedFor.value());
-        }
-        if (!this.xForwardedHost.isStub()) {
-            LOGGER.debug("Adding X-Forwarder-Host to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-Host", this.xForwardedHost.value());
-        }
-        if (!this.xForwardedProto.isStub()) {
-            LOGGER.debug("Adding X-Forwarded-Proto to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-Proto", this.xForwardedProto.value());
-        }
-
-        return headerSDE;
+    @Override
+    public String value() {
+        throw new UnsupportedOperationException("XForwardedForStub does not support this method");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        HeaderInfo that = (HeaderInfo) o;
-        return Objects.equals(xForwardedFor, that.xForwardedFor) && Objects.equals(xForwardedHost, that.xForwardedHost)
-                && Objects.equals(xForwardedProto, that.xForwardedProto);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(xForwardedFor, xForwardedHost, xForwardedProto);
+    public boolean isStub() {
+        return true;
     }
 }

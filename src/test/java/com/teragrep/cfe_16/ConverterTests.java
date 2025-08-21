@@ -48,6 +48,9 @@ package com.teragrep.cfe_16;
 import com.cloudbees.syslog.*;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.HttpEventData;
+import com.teragrep.cfe_16.bo.XForwardedForStub;
+import com.teragrep.cfe_16.bo.XForwardedHostStub;
+import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -96,7 +99,9 @@ public class ConverterTests {
     @BeforeEach
     public void initialize() {
 
-        converter = new Converter();
+        converter = new Converter(
+                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+        );
 
         eventData1 = new HttpEventData();
         eventData2 = new HttpEventData();
@@ -174,11 +179,10 @@ public class ConverterTests {
                 .withFacility(supposedFacility)
                 .withSDElement(metadataSDE3)
                 .withMsg(eventData3.getEvent());
-        HeaderInfo headerInfo = new HeaderInfo();
 
-        returnedMessage1 = converter.httpToSyslog(eventData1, headerInfo);
-        returnedMessage2 = converter.httpToSyslog(eventData2, headerInfo);
-        returnedMessage3 = converter.httpToSyslog(eventData3, headerInfo);
+        returnedMessage1 = converter.httpToSyslog(eventData1);
+        returnedMessage2 = converter.httpToSyslog(eventData2);
+        returnedMessage3 = converter.httpToSyslog(eventData3);
 
         returnedSDElements1 = returnedMessage1.getSDElements();
         returnedSDElements2 = returnedMessage2.getSDElements();

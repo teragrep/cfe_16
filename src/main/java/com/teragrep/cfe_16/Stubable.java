@@ -45,46 +45,7 @@
  */
 package com.teragrep.cfe_16;
 
-import com.teragrep.cfe_16.bo.HeaderInfo;
-import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+public interface Stubable {
 
-/**
- *
- */
-@Component
-public class RequestHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
-    private String xForwardedFor;
-    private String xForwardedHost;
-    private String xForwardedProto;
-
-    public HeaderInfo createHeaderInfoObject(HttpServletRequest request) {
-        LOGGER.debug("Creating new Header Info");
-        HeaderInfo headerInfo = new HeaderInfo();
-        xForwardedFor = request.getHeader("X-Forwarded-For");
-        xForwardedHost = request.getHeader("X-Forwarded-Host");
-        xForwardedProto = request.getHeader("X-Forwarded-Proto");
-        if (xForwardedFor != null) {
-            LOGGER.debug("Setting X-Forwarded-For");
-            LOGGER.trace("Setting X-Forwarded-For to value <[{}]>", xForwardedFor);
-            headerInfo.setxForwardedFor(xForwardedFor);
-        }
-        if (xForwardedHost != null) {
-            LOGGER.debug("Setting X-Forwarded-Host");
-            LOGGER.trace("Setting X-Forwarded-Host to value <[{}]>", xForwardedHost);
-            headerInfo.setxForwardedHost(xForwardedHost);
-        }
-        if (xForwardedProto != null) {
-            LOGGER.debug("Setting X-Forwarded-Proto");
-            LOGGER.trace("Setting X-Forwarded-Proto to value <[{}]>", xForwardedProto);
-            headerInfo.setxForwardedProto(xForwardedProto);
-        }
-
-        return headerInfo;
-    }
-
+    public abstract boolean isStub();
 }

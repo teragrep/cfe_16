@@ -51,6 +51,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.teragrep.cfe_16.*;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.Session;
+import com.teragrep.cfe_16.bo.XForwardedFor;
+import com.teragrep.cfe_16.bo.XForwardedForImpl;
+import com.teragrep.cfe_16.bo.XForwardedForStub;
+import com.teragrep.cfe_16.bo.XForwardedHost;
+import com.teragrep.cfe_16.bo.XForwardedHostImpl;
+import com.teragrep.cfe_16.bo.XForwardedHostStub;
+import com.teragrep.cfe_16.bo.XForwardedProto;
+import com.teragrep.cfe_16.bo.XForwardedProtoImpl;
+import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import com.teragrep.cfe_16.exceptionhandling.AuthenticationTokenMissingException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotFoundException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotProvidedException;
@@ -82,12 +91,16 @@ public class HECServiceImpl implements HECService {
     @Autowired
     private EventManager eventManager;
 
-    @Autowired
-    private RequestHandler requestHandler;
-
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    private final XForwardedForStub xForwardedForStub;
+    private final XForwardedHostStub xForwardedHostStub;
+    private final XForwardedProtoStub xForwardedProtoStub;
+
     public HECServiceImpl() {
+        this.xForwardedForStub = new XForwardedForStub();
+        this.xForwardedHostStub = new XForwardedHostStub();
+        this.xForwardedProtoStub = new XForwardedProtoStub();
     }
 
     @Override
@@ -101,7 +114,40 @@ public class HECServiceImpl implements HECService {
         // AspectLoggerWrapper.logMetricDuration(null, "new_metric",
         // MetricDurationOptionsImpl.MetricDuration.P10S);
         String authHeader = request.getHeader("Authorization");
-        HeaderInfo headerInfo = requestHandler.createHeaderInfoObject(request);
+        LOGGER.debug("Creating new Header Info");
+
+        final XForwardedFor xForwardedFor;
+        final XForwardedHost xForwardedHost;
+        final XForwardedProto xForwardedProto;
+
+        LOGGER.debug("Setting X-Forwarded-For");
+        if (request.getHeader("X-Forwarded-For") == null) {
+            xForwardedFor = this.xForwardedForStub;
+        }
+        else {
+            xForwardedFor = new XForwardedForImpl(request.getHeader("X-Forwarded-For"));
+        }
+        LOGGER.trace("Setting X-Forwarded-For to value <[{}]>", xForwardedFor);
+
+        LOGGER.debug("Setting X-Forwarded-Host");
+        if (request.getHeader("X-Forwarded-Host") == null) {
+            xForwardedHost = this.xForwardedHostStub;
+        }
+        else {
+            xForwardedHost = new XForwardedHostImpl(request.getHeader("X-Forwarded-Host"));
+        }
+        LOGGER.trace("Setting X-Forwarded-Host to value <[{}]>", xForwardedHost);
+
+        LOGGER.debug("Setting X-Forwarded-Proto");
+        if (request.getHeader("X-Forwarded-Proto") == null) {
+            xForwardedProto = this.xForwardedProtoStub;
+        }
+        else {
+            xForwardedProto = new XForwardedProtoImpl(request.getHeader("X-Forwarded-Proto"));
+        }
+        LOGGER.trace("Setting X-Forwarded-Proto to value <[{}]>", xForwardedProto);
+
+        final HeaderInfo headerInfo = new HeaderInfo(xForwardedFor, xForwardedHost, xForwardedProto);
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {
