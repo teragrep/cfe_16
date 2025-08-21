@@ -50,6 +50,9 @@ import com.google.gson.JsonSyntaxException;
 import com.teragrep.cfe_16.bo.HECRecord;
 import com.teragrep.cfe_16.bo.HECRecordImpl;
 import com.teragrep.cfe_16.bo.HeaderInfo;
+import com.teragrep.cfe_16.bo.XForwardedForStub;
+import com.teragrep.cfe_16.bo.XForwardedHostStub;
+import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import com.teragrep.cfe_16.event.EventMessageImpl;
 import com.teragrep.cfe_16.event.time.HECTimeImpl;
 import com.teragrep.cfe_16.event.time.HECTimeImplWithFallback;
@@ -71,10 +74,15 @@ class HECBatchTest {
                 new EventMessageImpl("Hello, world!"),
                 authToken1,
                 0,
-                new HECTimeImplWithFallback(new HECTimeImpl(new ObjectMapper().createObjectNode().numberNode(123456)), new HECTimeStub()), new HeaderInfo()
+                new HECTimeImplWithFallback(new HECTimeImpl(new ObjectMapper().createObjectNode().numberNode(123456)), new HECTimeStub()), new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
         );
 
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
+        final HECBatch HECBatch = new HECBatch(
+                authToken1,
+                channel1,
+                allEventsInJson,
+                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+        );
         List<HECRecord> response = HECBatch.toHECRecordList();
 
         // Test the individual methods, since HECTimeImplWithFallback will have a stub, which does not implement equals or hashcode
@@ -95,7 +103,12 @@ class HECBatchTest {
     @Test
     public void toHECRecordListUsesAStubIfParsingFailsWithMalformedJSONTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": {{{{}}}}";
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
+        final HECBatch HECBatch = new HECBatch(
+                authToken1,
+                channel1,
+                allEventsInJson,
+                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+        );
 
         Assertions.assertThrowsExactly(JsonSyntaxException.class, () -> HECBatch.toHECRecordList().toString());
     }
@@ -107,7 +120,12 @@ class HECBatchTest {
     public void toHECRecordListUsesAStubIfParsingFailsWithEmptyJSONTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": null}";
         String supposedResponse = "EventStub does not support this";
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
+        final HECBatch HECBatch = new HECBatch(
+                authToken1,
+                channel1,
+                allEventsInJson,
+                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+        );
         Exception exception = Assertions
                 .assertThrowsExactly(UnsupportedOperationException.class, () -> HECBatch.toHECRecordList().toString());
         Assertions
@@ -119,7 +137,12 @@ class HECBatchTest {
     @Test
     public void noEventFieldInRequestTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
+        final HECBatch HECBatch = new HECBatch(
+                authToken1,
+                channel1,
+                allEventsInJson,
+                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+        );
 
         Assertions.assertThrows(UnsupportedOperationException.class, () -> HECBatch.toHECRecordList().toString());
     }
@@ -127,7 +150,12 @@ class HECBatchTest {
     @Test
     public void eventFieldBlankInRequestTest() {
         String allEventsInJson = "{\"sourcetype\": \"mysourcetype\", \"event\": \"\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\"}";
-        final HECBatch HECBatch = new HECBatch(authToken1, channel1, allEventsInJson, new HeaderInfo());
+        final HECBatch HECBatch = new HECBatch(
+                authToken1,
+                channel1,
+                allEventsInJson,
+                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+        );
 
         Assertions.assertThrows(UnsupportedOperationException.class, () -> HECBatch.toHECRecordList().toString());
     }

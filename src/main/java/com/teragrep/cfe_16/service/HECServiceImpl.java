@@ -51,6 +51,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.teragrep.cfe_16.*;
 import com.teragrep.cfe_16.bo.Ack;
+import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.Session;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.connection.AbstractConnection;
@@ -100,9 +101,6 @@ public class HECServiceImpl implements HECService {
     private final XForwardedForStub xForwardedForStub;
     private final XForwardedHostStub xForwardedHostStub;
     private final XForwardedProtoStub xForwardedProtoStub;
-
-    @Autowired
-    private RequestHandler requestHandler;
 
     @Autowired
     private Configuration configuration;
@@ -213,8 +211,9 @@ public class HECServiceImpl implements HECService {
             throw new InternalServerErrorException("Ack ID " + ackId + " couldn't be added to the Ack set.");
         }
 
-        List<SyslogMessage> syslogMessages = new SyslogBatch(
-                new HECBatch(authToken, channel, eventInJson, requestHandler.createHeaderInfoObject(request)).toHECRecordList()
+        final List<SyslogMessage> syslogMessages = new SyslogBatch(
+                new HECBatch(authToken, channel, eventInJson, headerInfo).toHECRecordList()
+
         ).asSyslogMessages();
 
         try {

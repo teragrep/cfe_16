@@ -50,11 +50,6 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cloudbees.syslog.SDElement;
-import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public final class HeaderInfo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeaderInfo.class);
@@ -90,22 +85,6 @@ public final class HeaderInfo {
         }
 
         return headerSDE;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        HeaderInfo that = (HeaderInfo) o;
-        return Objects.equals(xForwardedFor, that.xForwardedFor) && Objects.equals(xForwardedHost, that.xForwardedHost)
-                && Objects.equals(xForwardedProto, that.xForwardedProto);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(xForwardedFor, xForwardedHost, xForwardedProto);
     }
 
     @Override

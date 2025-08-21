@@ -47,13 +47,6 @@ package com.teragrep.cfe_16.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teragrep.cfe_16.Acknowledgements;
-import com.teragrep.cfe_16.EventBatch;
-import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.Session;
-import com.teragrep.cfe_16.bo.XForwardedForStub;
-import com.teragrep.cfe_16.bo.XForwardedHostStub;
-import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import com.teragrep.cfe_16.exceptionhandling.*;
 import com.teragrep.cfe_16.server.TestServer;
 import com.teragrep.cfe_16.server.TestServerFactory;
