@@ -219,7 +219,7 @@ public class HECServiceImpl implements HECService {
         try {
             // create a new object to avoid blocking of threads because
             // the SyslogMessageSender.sendMessage() is synchronized
-            this.connection.sendMessages(syslogMessages.toArray(new SyslogMessage[syslogMessages.size()]));
+            this.connection.sendMessages(syslogMessages);
         }
         catch (IOException e) {
             throw new InternalServerErrorException(e);
