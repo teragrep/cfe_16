@@ -43,13 +43,15 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16;
+package com.teragrep.cfe_16.event.time;
 
-import org.junit.jupiter.api.Test;
+import com.teragrep.cfe_16.Stubable;
 
-public class Cfe16ApplicationTests {
+public interface HECTime extends Stubable {
 
-    @Test
-    public void contextLoads() {
-    }
+    long instant(final long defaultValue);
+
+    boolean parsed();
+
+    String source();
 }

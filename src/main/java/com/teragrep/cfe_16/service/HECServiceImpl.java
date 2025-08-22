@@ -49,8 +49,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.teragrep.cfe_16.*;
+import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.Session;
+import com.teragrep.cfe_16.config.Configuration;
+import com.teragrep.cfe_16.connection.AbstractConnection;
+import com.teragrep.cfe_16.connection.ConnectionFactory;
 import com.teragrep.cfe_16.bo.XForwardedFor;
 import com.teragrep.cfe_16.bo.XForwardedForImpl;
 import com.teragrep.cfe_16.bo.XForwardedForStub;
@@ -63,8 +67,11 @@ import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import com.teragrep.cfe_16.exceptionhandling.AuthenticationTokenMissingException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotFoundException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotProvidedException;
+import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
 import com.teragrep.cfe_16.exceptionhandling.SessionNotFoundException;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +86,7 @@ import org.springframework.stereotype.Service;
 public class HECServiceImpl implements HECService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HECServiceImpl.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private Acknowledgements acknowledgements;
 
@@ -88,14 +96,14 @@ public class HECServiceImpl implements HECService {
     @Autowired
     private TokenManager tokenManager;
 
-    @Autowired
-    private EventManager eventManager;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     private final XForwardedForStub xForwardedForStub;
     private final XForwardedHostStub xForwardedHostStub;
     private final XForwardedProtoStub xForwardedProtoStub;
+
+    @Autowired
+    private Configuration configuration;
+
+    private AbstractConnection connection;
 
     public HECServiceImpl() {
         this.xForwardedForStub = new XForwardedForStub();
@@ -103,9 +111,25 @@ public class HECServiceImpl implements HECService {
         this.xForwardedProtoStub = new XForwardedProtoStub();
     }
 
+    @PostConstruct
+    void init() {
+        LOGGER.debug("Setting up connection");
+        try {
+            this.connection = ConnectionFactory
+                    .createConnection(
+                            this.configuration.getSysLogProtocol(), this.configuration.getSyslogHost(),
+                            this.configuration.getSyslogPort()
+                    );
+        }
+        catch (IOException e) {
+            LOGGER.error("Error creating connection", e);
+            throw new InternalServerErrorException();
+        }
+    }
+
     @Override
     // @LogAnnotation(type = LogType.METRIC_COUNTER)
-    public ObjectNode sendEvents(HttpServletRequest request, String channel, String eventInJson) {
+    public synchronized ObjectNode sendEvents(HttpServletRequest request, String channel, String eventInJson) {
         LOGGER.debug("Sending events to channel <{}>", channel);
         if (this.tokenManager.tokenIsMissing(request)) {
             throw new AuthenticationTokenMissingException("Authentication token must be provided");
@@ -116,38 +140,7 @@ public class HECServiceImpl implements HECService {
         String authHeader = request.getHeader("Authorization");
         LOGGER.debug("Creating new Header Info");
 
-        final XForwardedFor xForwardedFor;
-        final XForwardedHost xForwardedHost;
-        final XForwardedProto xForwardedProto;
-
-        LOGGER.debug("Setting X-Forwarded-For");
-        if (request.getHeader("X-Forwarded-For") == null) {
-            xForwardedFor = this.xForwardedForStub;
-        }
-        else {
-            xForwardedFor = new XForwardedForImpl(request.getHeader("X-Forwarded-For"));
-        }
-        LOGGER.trace("Setting X-Forwarded-For to value <[{}]>", xForwardedFor);
-
-        LOGGER.debug("Setting X-Forwarded-Host");
-        if (request.getHeader("X-Forwarded-Host") == null) {
-            xForwardedHost = this.xForwardedHostStub;
-        }
-        else {
-            xForwardedHost = new XForwardedHostImpl(request.getHeader("X-Forwarded-Host"));
-        }
-        LOGGER.trace("Setting X-Forwarded-Host to value <[{}]>", xForwardedHost);
-
-        LOGGER.debug("Setting X-Forwarded-Proto");
-        if (request.getHeader("X-Forwarded-Proto") == null) {
-            xForwardedProto = this.xForwardedProtoStub;
-        }
-        else {
-            xForwardedProto = new XForwardedProtoImpl(request.getHeader("X-Forwarded-Proto"));
-        }
-        LOGGER.trace("Setting X-Forwarded-Proto to value <[{}]>", xForwardedProto);
-
-        final HeaderInfo headerInfo = new HeaderInfo(xForwardedFor, xForwardedHost, xForwardedProto);
+        final HeaderInfo headerInfo = this.headerInfo(request);
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {
@@ -173,14 +166,50 @@ public class HECServiceImpl implements HECService {
             session.addChannel(channel);
         }
 
-        // TODO: find a nice way of not passing Acknowledgements
-        ObjectNode ackNode = this.eventManager
-                .convertData(authToken, channel, eventInJson, headerInfo, this.acknowledgements);
+        acknowledgements.initializeContext(authToken, channel);
+        int ackId = acknowledgements.getCurrentAckValue(authToken, channel);
+        boolean incremented = acknowledgements.incrementAckValue(authToken, channel);
+        if (!incremented) {
+            throw new InternalServerErrorException("Ack value couldn't be incremented.");
+        }
+        Ack ack = new Ack(ackId, false);
+        boolean addedAck = acknowledgements.addAck(authToken, channel, ack);
+        if (!addedAck) {
+            throw new InternalServerErrorException("Ack ID " + ackId + " couldn't be added to the Ack set.");
+        }
 
-        return ackNode;
+        try {
+            // create a new object to avoid blocking of threads because
+            // the SyslogMessageSender.sendMessage() is synchronized
+            this.connection
+                    .sendMessages(new SyslogBatch(new HECBatch(authToken, channel, eventInJson, headerInfo).toHECRecordList()).asSyslogMessages());
+        }
+        catch (IOException e) {
+            throw new InternalServerErrorException(e);
+        }
+
+        boolean shouldAck = !channel.equals(Session.DEFAULT_CHANNEL);
+
+        if (shouldAck) {
+            boolean acked = acknowledgements.acknowledge(authToken, channel, ackId);
+            if (!acked) {
+                throw new InternalServerErrorException("Ack ID " + ackId + " not Acked.");
+            }
+        }
+
+        ObjectNode responseNode = this.objectMapper.createObjectNode();
+
+        responseNode.put("text", "Success");
+        responseNode.put("code", 0);
+        if (shouldAck) {
+            responseNode.put("ackID", ackId);
+        }
+
+        return responseNode;
     }
 
     // @LogAnnotation(type = LogType.RESPONSE)
+
     @SuppressWarnings("deprecation")
     @Override
     public JsonNode getAcks(HttpServletRequest request, String channel, JsonNode requestedAcksInJson) {
@@ -226,13 +255,48 @@ public class HECServiceImpl implements HECService {
         responseNode.put("acks", requestedAckStatuses);
         return responseNode;
     }
-
     // @LogAnnotation(type = LogType.RESPONSE)
+
     @Override
     public ResponseEntity<String> healthCheck(HttpServletRequest request) {
         if (this.tokenManager.tokenIsMissing(request)) {
             return new ResponseEntity<String>("Invalid HEC token", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<String>("HEC is available and accepting input", HttpStatus.OK);
+    }
+
+    private HeaderInfo headerInfo(final HttpServletRequest request) {
+        final XForwardedFor xForwardedFor;
+        final XForwardedHost xForwardedHost;
+        final XForwardedProto xForwardedProto;
+
+        LOGGER.debug("Setting X-Forwarded-For");
+        if (request.getHeader("X-Forwarded-For") == null) {
+            xForwardedFor = this.xForwardedForStub;
+        }
+        else {
+            xForwardedFor = new XForwardedForImpl(request.getHeader("X-Forwarded-For"));
+        }
+        LOGGER.trace("Setting X-Forwarded-For to value <[{}]>", xForwardedFor);
+
+        LOGGER.debug("Setting X-Forwarded-Host");
+        if (request.getHeader("X-Forwarded-Host") == null) {
+            xForwardedHost = this.xForwardedHostStub;
+        }
+        else {
+            xForwardedHost = new XForwardedHostImpl(request.getHeader("X-Forwarded-Host"));
+        }
+        LOGGER.trace("Setting X-Forwarded-Host to value <[{}]>", xForwardedHost);
+
+        LOGGER.debug("Setting X-Forwarded-Proto");
+        if (request.getHeader("X-Forwarded-Proto") == null) {
+            xForwardedProto = this.xForwardedProtoStub;
+        }
+        else {
+            xForwardedProto = new XForwardedProtoImpl(request.getHeader("X-Forwarded-Proto"));
+        }
+        LOGGER.trace("Setting X-Forwarded-Proto to value <[{}]>", xForwardedProto);
+
+        return new HeaderInfo(xForwardedFor, xForwardedHost, xForwardedProto);
     }
 }

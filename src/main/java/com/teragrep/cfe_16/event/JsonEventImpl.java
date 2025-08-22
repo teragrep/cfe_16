@@ -43,50 +43,66 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.connection;
+package com.teragrep.cfe_16.event;
 
-import com.cloudbees.syslog.SyslogMessage;
-import com.cloudbees.syslog.sender.TcpSyslogMessageSender;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Objects;
 
-import java.io.IOException;
+public final class JsonEventImpl implements JsonEvent {
 
-public class TcpConnection extends AbstractConnection {
+    private final JsonNode jsonNode;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TcpConnection.class);
-    private final TcpSyslogMessageSender sender;
-
-    public TcpConnection(String hostname, int port) {
-        super(hostname, port);
-        this.sender = new TcpSyslogMessageSender();
-        this.sender.setSyslogServerHostname(this.hostname);
-        this.sender.setSyslogServerPort(this.port);
+    public JsonEventImpl(JsonNode jsonNode) {
+        this.jsonNode = jsonNode;
     }
 
     @Override
-    public void sendMessages(List<SyslogMessage> syslogMessages) throws IOException {
-        LOGGER.debug("Sending messages");
-        for (SyslogMessage syslogMessage : syslogMessages) {
-            this.sender.sendMessage(syslogMessage);
+    public EventMessage asEvent() {
+        // Event field completely missing
+        if (!this.asNode().has("event")) {
+            return new EventMessageStub();
         }
+        // Event field contains subfield "message"
+        else if (this.asNode().get("event").isObject() && this.asNode().get("event").has("message")) {
+            if (
+                this.asNode().get("event").get("message").isTextual()
+                        && !Objects.equals(this.asNode().get("event").get("message").asText(), "")
+            ) {
+                return new EventMessageImpl(this.asNode().get("event").get("message").asText());
+            }
+        }
+        // Event field has a String value
+        else if (this.asNode().get("event").isTextual() && !Objects.equals(this.asNode().get("event").asText(), "")) {
+            return new EventMessageImpl(this.jsonNode.get("event").asText());
+        }
+        return new EventMessageStub();
     }
 
     @Override
-    public void sendMessage(SyslogMessage syslogMessage) throws IOException {
-        LOGGER.debug("Sending message");
-        this.sender.sendMessage(syslogMessage);
+    public JsonNode asNode() {
+        if (this.jsonNode != null && this.jsonNode.isObject()) {
+            return this.jsonNode;
+        }
+        throw new IllegalStateException("jsonEvent node not valid");
     }
 
     @Override
-    public void close() throws IOException {
-        LOGGER.debug("Closing sender");
-        this.sender.close();
+    public JsonNode asTimeNode() {
+        return this.jsonNode.get("time");
     }
 
-    public void setSsl(boolean ssl) {
-        LOGGER.debug("Set Ssl to <{}>", ssl);
-        this.sender.setSsl(ssl);
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        JsonEventImpl that = (JsonEventImpl) o;
+        return Objects.equals(jsonNode, that.jsonNode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonNode);
     }
 }

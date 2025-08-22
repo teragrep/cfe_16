@@ -43,50 +43,52 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.connection;
+package com.teragrep.cfe_16.event;
 
-import com.cloudbees.syslog.SyslogMessage;
-import com.cloudbees.syslog.sender.TcpSyslogMessageSender;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+class EventMessageStubTest {
 
-public class TcpConnection extends AbstractConnection {
+    @Test
+    @DisplayName("isStub() returns true")
+    void isStubReturnsTrue() {
+        final EventMessageStub eventStub = new EventMessageStub();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TcpConnection.class);
-    private final TcpSyslogMessageSender sender;
-
-    public TcpConnection(String hostname, int port) {
-        super(hostname, port);
-        this.sender = new TcpSyslogMessageSender();
-        this.sender.setSyslogServerHostname(this.hostname);
-        this.sender.setSyslogServerPort(this.port);
+        Assertions.assertTrue(eventStub::isStub);
     }
 
-    @Override
-    public void sendMessages(List<SyslogMessage> syslogMessages) throws IOException {
-        LOGGER.debug("Sending messages");
-        for (SyslogMessage syslogMessage : syslogMessages) {
-            this.sender.sendMessage(syslogMessage);
-        }
+    @Test
+    @DisplayName("asString() throws UnsupportedOperationException if called")
+    void asStringThrowsUnsupportedOperationExceptionIfCalled() {
+        final EventMessageStub eventStub = new EventMessageStub();
+
+        final Exception exception = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, eventStub::asString);
+
+        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
     }
 
-    @Override
-    public void sendMessage(SyslogMessage syslogMessage) throws IOException {
-        LOGGER.debug("Sending message");
-        this.sender.sendMessage(syslogMessage);
+    @Test
+    @DisplayName("hashCode() throws UnsupportedOperationException if called")
+    void hashCodeThrowsUnsupportedOperationExceptionIfCalled() {
+        final EventMessageStub eventStub = new EventMessageStub();
+
+        final Exception exception = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, eventStub::hashCode);
+
+        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
     }
 
-    @Override
-    public void close() throws IOException {
-        LOGGER.debug("Closing sender");
-        this.sender.close();
-    }
+    @Test
+    @DisplayName("equals() throws UnsupportedOperationException if called")
+    void equalsThrowsUnsupportedOperationExceptionIfCalled() {
+        final EventMessageStub eventStub = new EventMessageStub();
 
-    public void setSsl(boolean ssl) {
-        LOGGER.debug("Set Ssl to <{}>", ssl);
-        this.sender.setSsl(ssl);
+        final Exception exception = Assertions
+                .assertThrowsExactly(UnsupportedOperationException.class, () -> eventStub.equals(new Object()));
+
+        Assertions.assertEquals("EventStub does not support this", exception.getMessage());
     }
 }

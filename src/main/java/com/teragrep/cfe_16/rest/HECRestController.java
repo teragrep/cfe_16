@@ -64,6 +64,7 @@ import org.springframework.web.bind.annotation.*;
 public class HECRestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HECRestController.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private HECService service;
 
@@ -72,8 +73,6 @@ public class HECRestController {
 
     @Autowired
     private Configuration configuration;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     @SuppressWarnings("rawtypes")
     @RequestMapping(
