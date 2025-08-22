@@ -45,7 +45,6 @@
  */
 package com.teragrep.cfe_16.service;
 
-import com.cloudbees.syslog.SyslogMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -73,7 +72,6 @@ import com.teragrep.cfe_16.exceptionhandling.SessionNotFoundException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,38 +140,7 @@ public class HECServiceImpl implements HECService {
         String authHeader = request.getHeader("Authorization");
         LOGGER.debug("Creating new Header Info");
 
-        final XForwardedFor xForwardedFor;
-        final XForwardedHost xForwardedHost;
-        final XForwardedProto xForwardedProto;
-
-        LOGGER.debug("Setting X-Forwarded-For");
-        if (request.getHeader("X-Forwarded-For") == null) {
-            xForwardedFor = this.xForwardedForStub;
-        }
-        else {
-            xForwardedFor = new XForwardedForImpl(request.getHeader("X-Forwarded-For"));
-        }
-        LOGGER.trace("Setting X-Forwarded-For to value <[{}]>", xForwardedFor);
-
-        LOGGER.debug("Setting X-Forwarded-Host");
-        if (request.getHeader("X-Forwarded-Host") == null) {
-            xForwardedHost = this.xForwardedHostStub;
-        }
-        else {
-            xForwardedHost = new XForwardedHostImpl(request.getHeader("X-Forwarded-Host"));
-        }
-        LOGGER.trace("Setting X-Forwarded-Host to value <[{}]>", xForwardedHost);
-
-        LOGGER.debug("Setting X-Forwarded-Proto");
-        if (request.getHeader("X-Forwarded-Proto") == null) {
-            xForwardedProto = this.xForwardedProtoStub;
-        }
-        else {
-            xForwardedProto = new XForwardedProtoImpl(request.getHeader("X-Forwarded-Proto"));
-        }
-        LOGGER.trace("Setting X-Forwarded-Proto to value <[{}]>", xForwardedProto);
-
-        final HeaderInfo headerInfo = new HeaderInfo(xForwardedFor, xForwardedHost, xForwardedProto);
+        final HeaderInfo headerInfo = this.headerInfo(request);
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {
@@ -211,15 +178,11 @@ public class HECServiceImpl implements HECService {
             throw new InternalServerErrorException("Ack ID " + ackId + " couldn't be added to the Ack set.");
         }
 
-        final List<SyslogMessage> syslogMessages = new SyslogBatch(
-                new HECBatch(authToken, channel, eventInJson, headerInfo).toHECRecordList()
-
-        ).asSyslogMessages();
-
         try {
             // create a new object to avoid blocking of threads because
             // the SyslogMessageSender.sendMessage() is synchronized
-            this.connection.sendMessages(syslogMessages);
+            this.connection
+                    .sendMessages(new SyslogBatch(new HECBatch(authToken, channel, eventInJson, headerInfo).toHECRecordList()).asSyslogMessages());
         }
         catch (IOException e) {
             throw new InternalServerErrorException(e);
@@ -246,6 +209,7 @@ public class HECServiceImpl implements HECService {
     }
 
     // @LogAnnotation(type = LogType.RESPONSE)
+
     @SuppressWarnings("deprecation")
     @Override
     public JsonNode getAcks(HttpServletRequest request, String channel, JsonNode requestedAcksInJson) {
@@ -291,13 +255,48 @@ public class HECServiceImpl implements HECService {
         responseNode.put("acks", requestedAckStatuses);
         return responseNode;
     }
-
     // @LogAnnotation(type = LogType.RESPONSE)
+
     @Override
     public ResponseEntity<String> healthCheck(HttpServletRequest request) {
         if (this.tokenManager.tokenIsMissing(request)) {
             return new ResponseEntity<String>("Invalid HEC token", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<String>("HEC is available and accepting input", HttpStatus.OK);
+    }
+
+    private HeaderInfo headerInfo(final HttpServletRequest request) {
+        final XForwardedFor xForwardedFor;
+        final XForwardedHost xForwardedHost;
+        final XForwardedProto xForwardedProto;
+
+        LOGGER.debug("Setting X-Forwarded-For");
+        if (request.getHeader("X-Forwarded-For") == null) {
+            xForwardedFor = this.xForwardedForStub;
+        }
+        else {
+            xForwardedFor = new XForwardedForImpl(request.getHeader("X-Forwarded-For"));
+        }
+        LOGGER.trace("Setting X-Forwarded-For to value <[{}]>", xForwardedFor);
+
+        LOGGER.debug("Setting X-Forwarded-Host");
+        if (request.getHeader("X-Forwarded-Host") == null) {
+            xForwardedHost = this.xForwardedHostStub;
+        }
+        else {
+            xForwardedHost = new XForwardedHostImpl(request.getHeader("X-Forwarded-Host"));
+        }
+        LOGGER.trace("Setting X-Forwarded-Host to value <[{}]>", xForwardedHost);
+
+        LOGGER.debug("Setting X-Forwarded-Proto");
+        if (request.getHeader("X-Forwarded-Proto") == null) {
+            xForwardedProto = this.xForwardedProtoStub;
+        }
+        else {
+            xForwardedProto = new XForwardedProtoImpl(request.getHeader("X-Forwarded-Proto"));
+        }
+        LOGGER.trace("Setting X-Forwarded-Proto to value <[{}]>", xForwardedProto);
+
+        return new HeaderInfo(xForwardedFor, xForwardedHost, xForwardedProto);
     }
 }
