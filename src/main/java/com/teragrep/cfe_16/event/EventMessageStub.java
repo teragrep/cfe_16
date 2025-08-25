@@ -43,91 +43,27 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.bo;
+package com.teragrep.cfe_16.event;
 
-import com.teragrep.cfe_16.event.EventMessage;
+public final class EventMessageStub implements EventMessage {
 
-/**
- */
-public final class HttpEventData {
-
-    private String channel;
-    private EventMessage event;
-    private String authenticationToken;
-    private String timeSource;
-    private String time;
-    private long timeAsLong;
-    private boolean timeParsed;
-    private Integer ackID;
-
-    public EventMessage getEvent() {
-        return event;
-    }
-
-    public void setEvent(final EventMessage event) {
-        this.event = event;
-    }
-
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
-    }
-
-    public String getAuthenticationToken() {
-        return authenticationToken;
-    }
-
-    public void setAuthenticationToken(String authenticationToken) {
-        this.authenticationToken = authenticationToken;
-    }
-
-    public String getTimeSource() {
-        return timeSource;
-    }
-
-    public void setTimeSource(String timeSource) {
-        this.timeSource = timeSource;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public long getTimeAsLong() {
-        return timeAsLong;
-    }
-
-    public void setTimeAsLong(long timeAsLong) {
-        this.timeAsLong = timeAsLong;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public boolean isTimeParsed() {
-        return timeParsed;
-    }
-
-    public void setTimeParsed(boolean timeParsed) {
-        this.timeParsed = timeParsed;
-    }
-
-    public Integer getAckID() {
-        return ackID;
-    }
-
-    public void setAckID(Integer ackID) {
-        this.ackID = ackID;
+    @Override
+    public String asString() {
+        throw new UnsupportedOperationException("EventStub does not support this");
     }
 
     @Override
-    public String toString() {
-        return "HttpEventData [channel=" + channel + ", event=" + event + ", authenticationToken=" + authenticationToken
-                + ", timeSource=" + timeSource + ", time=" + time + ", timeAsLong=" + timeAsLong + ", timeParsed="
-                + timeParsed + ", ackID=" + ackID + "]";
+    public boolean isStub() {
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        throw new UnsupportedOperationException("EventStub does not support this");
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        throw new UnsupportedOperationException("EventStub does not support this");
     }
 }

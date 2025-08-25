@@ -43,91 +43,66 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.bo;
+package com.teragrep.cfe_16.event;
 
-import com.teragrep.cfe_16.event.EventMessage;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Objects;
 
-/**
- */
-public final class HttpEventData {
+public final class JsonEventImpl implements JsonEvent {
 
-    private String channel;
-    private EventMessage event;
-    private String authenticationToken;
-    private String timeSource;
-    private String time;
-    private long timeAsLong;
-    private boolean timeParsed;
-    private Integer ackID;
+    private final JsonNode jsonNode;
 
-    public EventMessage getEvent() {
-        return event;
-    }
-
-    public void setEvent(final EventMessage event) {
-        this.event = event;
-    }
-
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
-    }
-
-    public String getAuthenticationToken() {
-        return authenticationToken;
-    }
-
-    public void setAuthenticationToken(String authenticationToken) {
-        this.authenticationToken = authenticationToken;
-    }
-
-    public String getTimeSource() {
-        return timeSource;
-    }
-
-    public void setTimeSource(String timeSource) {
-        this.timeSource = timeSource;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public long getTimeAsLong() {
-        return timeAsLong;
-    }
-
-    public void setTimeAsLong(long timeAsLong) {
-        this.timeAsLong = timeAsLong;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public boolean isTimeParsed() {
-        return timeParsed;
-    }
-
-    public void setTimeParsed(boolean timeParsed) {
-        this.timeParsed = timeParsed;
-    }
-
-    public Integer getAckID() {
-        return ackID;
-    }
-
-    public void setAckID(Integer ackID) {
-        this.ackID = ackID;
+    public JsonEventImpl(final JsonNode jsonNode) {
+        this.jsonNode = jsonNode;
     }
 
     @Override
-    public String toString() {
-        return "HttpEventData [channel=" + channel + ", event=" + event + ", authenticationToken=" + authenticationToken
-                + ", timeSource=" + timeSource + ", time=" + time + ", timeAsLong=" + timeAsLong + ", timeParsed="
-                + timeParsed + ", ackID=" + ackID + "]";
+    public EventMessage asEvent() {
+        // Event field completely missing
+        if (!this.asNode().has("event")) {
+            return new EventMessageStub();
+        }
+        // Event field contains subfield "message"
+        else if (this.asNode().get("event").isObject() && this.asNode().get("event").has("message")) {
+            if (
+                this.asNode().get("event").get("message").isTextual()
+                        && !Objects.equals(this.asNode().get("event").get("message").asText(), "")
+            ) {
+                return new EventMessageImpl(this.asNode().get("event").get("message").asText());
+            }
+        }
+        // Event field has a String value
+        else if (this.asNode().get("event").isTextual() && !Objects.equals(this.asNode().get("event").asText(), "")) {
+            return new EventMessageImpl(this.jsonNode.get("event").asText());
+        }
+        return new EventMessageStub();
+    }
+
+    @Override
+    public JsonNode asNode() {
+        if (this.jsonNode != null && this.jsonNode.isObject()) {
+            return this.jsonNode;
+        }
+        throw new IllegalStateException("jsonEvent node not valid");
+    }
+
+    @Override
+    public JsonNode asTimeNode() {
+        return this.jsonNode.get("time");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final JsonEventImpl that = (JsonEventImpl) o;
+        return Objects.equals(jsonNode, that.jsonNode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonNode);
     }
 }
