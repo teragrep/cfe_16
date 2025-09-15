@@ -43,13 +43,41 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16;
+package com.teragrep.cfe_16.response;
 
-import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Objects;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
-public class Cfe16ApplicationTests {
+public final class AcknowledgedJsonResponse implements Response {
 
-    @Test
-    public void contextLoads() {
+    private final String body;
+    private final int ackID;
+
+    public AcknowledgedJsonResponse(final String body, final int ackID) {
+        this.body = body;
+        this.ackID = ackID;
+    }
+
+    public ResponseEntity<JsonNode> asJsonNodeResponseEntity() {
+        final var jsonNode = new ObjectMapper().createObjectNode().put("message", body).put("ackID", ackID);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(jsonNode);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final AcknowledgedJsonResponse that = (AcknowledgedJsonResponse) o;
+        return ackID == that.ackID && Objects.equals(body, that.body);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(body, ackID);
     }
 }

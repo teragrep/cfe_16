@@ -43,26 +43,66 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.bo;
+package com.teragrep.cfe_16.event;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.teragrep.cfe_16.exceptionhandling.EventFieldException;
 import java.util.Objects;
 
-public final class XForwardedHostImpl implements XForwardedHost {
+public final class JsonEventImpl implements JsonEvent {
 
-    private final String headerValue;
+    private final JsonNode jsonNode;
 
-    public XForwardedHostImpl(final String headerValue) {
-        this.headerValue = headerValue;
+    public JsonEventImpl(final JsonNode jsonNode) {
+        this.jsonNode = jsonNode;
     }
 
     @Override
-    public String value() {
-        return this.headerValue;
+    public EventMessage asEventMessage() throws EventFieldException {
+        final EventMessage eventMessage;
+        // Event field completely missing
+        if (!this.asPayloadJsonNode().has("event")) {
+            throw new EventFieldException("Event field is missing");
+        }
+        // Event field contains subfield "message"
+        else if (
+            this.asPayloadJsonNode().get("event").isObject() && this.asPayloadJsonNode().get("event").has("message")
+        ) {
+            if (
+                this.asPayloadJsonNode().get("event").get("message").isTextual()
+                        && !Objects.equals(this.asPayloadJsonNode().get("event").get("message").asText(), "")
+            ) {
+                eventMessage = new EventMessageImpl(this.asPayloadJsonNode().get("event").get("message").asText());
+            }
+            else {
+                throw new EventFieldException("Event field was not textual");
+            }
+        }
+        // Event field has a String value
+        else if (
+            this.asPayloadJsonNode().get("event").isTextual()
+                    && !Objects.equals(this.asPayloadJsonNode().get("event").asText(), "")
+        ) {
+            eventMessage = new EventMessageImpl(this.jsonNode.get("event").asText());
+        }
+        else {
+            throw new EventFieldException("Event field was not textual");
+        }
+
+        return eventMessage;
     }
 
     @Override
-    public String toString() {
-        return "XForwardedHostImpl{" + "headerValue='" + headerValue + '\'' + '}';
+    public JsonNode asPayloadJsonNode() {
+        if (this.jsonNode != null && this.jsonNode.isObject()) {
+            return this.jsonNode;
+        }
+        throw new IllegalArgumentException("jsonEvent node not valid");
+    }
+
+    @Override
+    public JsonNode asTimeJsonNode() {
+        return this.jsonNode.get("time");
     }
 
     @Override
@@ -71,17 +111,12 @@ public final class XForwardedHostImpl implements XForwardedHost {
             return false;
         }
 
-        final XForwardedHostImpl that = (XForwardedHostImpl) o;
-        return Objects.equals(headerValue, that.headerValue);
+        final JsonEventImpl that = (JsonEventImpl) o;
+        return Objects.equals(jsonNode, that.jsonNode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(headerValue);
-    }
-
-    @Override
-    public boolean isStub() {
-        return false;
+        return Objects.hashCode(jsonNode);
     }
 }

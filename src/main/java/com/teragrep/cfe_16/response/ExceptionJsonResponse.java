@@ -43,30 +43,47 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.bo;
+package com.teragrep.cfe_16.response;
 
-public final class XForwardedProtoStub implements XForwardedProto {
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Objects;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
+public final class ExceptionJsonResponse implements Response {
+
+    private final ExceptionEvent exceptionEvent;
+
+    public ExceptionJsonResponse(final ExceptionEvent exceptionEvent) {
+        this.exceptionEvent = exceptionEvent;
+    }
+
+    public ResponseEntity<JsonNode> asJsonNodeResponseEntity() {
+        final ObjectMapper jsonObjectBuilder = new ObjectMapper();
+        final var jsonNode = jsonObjectBuilder
+                .createObjectNode()
+                .put(
+                        "message",
+                        "An error occurred while processing your Request. See event id in the technical log for details."
+                )
+                .put("id", exceptionEvent.uuid().toString());
+
+        return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON).body(jsonNode);
+    }
 
     @Override
-    public String value() {
-        throw new UnsupportedOperationException("XForwardedProtoStub does not support this method");
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final ExceptionJsonResponse that = (ExceptionJsonResponse) o;
+        return Objects.equals(exceptionEvent, that.exceptionEvent);
     }
 
     @Override
     public int hashCode() {
-        return 231987;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        return obj.getClass().equals(XForwardedProtoStub.class);
-    }
-
-    @Override
-    public boolean isStub() {
-        return true;
+        return Objects.hashCode(exceptionEvent);
     }
 }
