@@ -1,1 +1,1 @@
-var branches = ["master"]
+var branches = ["master", "refs"]
