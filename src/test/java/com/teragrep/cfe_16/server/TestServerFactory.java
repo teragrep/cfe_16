@@ -65,22 +65,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
-public class TestServerFactory {
+public final class TestServerFactory {
 
     public TestServer create(
-            int port,
-            ConcurrentLinkedDeque<byte[]> messageList,
-            AtomicLong connectionOpenCount,
-            AtomicLong connectionCleanCloseCount
+            final int port,
+            final ConcurrentLinkedDeque<byte[]> messageList,
+            final AtomicLong connectionOpenCount,
+            final AtomicLong connectionCleanCloseCount
     ) throws IOException {
-        EventLoopFactory eventLoopFactory = new EventLoopFactory();
+        final EventLoopFactory eventLoopFactory = new EventLoopFactory();
 
-        EventLoop eventLoop = eventLoopFactory.create();
-        Thread eventLoopThread = new Thread(eventLoop);
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        final EventLoop eventLoop = eventLoopFactory.create();
+        final Thread eventLoopThread = new Thread(eventLoop);
+        final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        Supplier<FrameDelegate> frameDelegateSupplier = () -> {
-            Map<String, RelpEvent> relpCommandConsumerMap = new HashMap<>();
+        final Supplier<FrameDelegate> frameDelegateSupplier = () -> {
+            final Map<String, RelpEvent> relpCommandConsumerMap = new HashMap<>();
 
             relpCommandConsumerMap.put("close", new RelpEventCloseCounting(connectionCleanCloseCount));
 
@@ -92,13 +92,13 @@ public class TestServerFactory {
             return new EventDelegate(relpCommandConsumerMap);
         };
 
-        ServerFactory serverFactory = new ServerFactory(
+        final ServerFactory serverFactory = new ServerFactory(
                 eventLoop,
                 executorService,
                 new PlainFactory(),
                 new FrameDelegationClockFactory(frameDelegateSupplier)
         );
-        Server server = serverFactory.create(port);
+        final Server server = serverFactory.create(port);
 
         return new TestServer(eventLoop, eventLoopThread, executorService, server);
     }

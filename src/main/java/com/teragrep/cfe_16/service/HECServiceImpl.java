@@ -85,32 +85,57 @@ import org.springframework.stereotype.Service;
  * Implementation of the REST Service back end.
  */
 @Service
-public class HECServiceImpl implements HECService {
+public final class HECServiceImpl implements HECService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HECServiceImpl.class);
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    @Autowired
-    private Acknowledgements acknowledgements;
-
-    @Autowired
-    private SessionManager sessionManager;
-
-    @Autowired
-    private TokenManager tokenManager;
+    private final ObjectMapper objectMapper;
+    private final Acknowledgements acknowledgements;
+    private final SessionManager sessionManager;
+    private final TokenManager tokenManager;
+    private final Configuration configuration;
+    private AbstractConnection connection;
 
     private final XForwardedForStub xForwardedForStub;
     private final XForwardedHostStub xForwardedHostStub;
     private final XForwardedProtoStub xForwardedProtoStub;
 
     @Autowired
-    private Configuration configuration;
+    public HECServiceImpl(
+            final Acknowledgements acknowledgements,
+            final SessionManager sessionManager,
+            final TokenManager tokenManager,
+            final EventManager eventManager
+    ) {
+        this(
+                acknowledgements,
+                sessionManager,
+                tokenManager,
+                eventManager,
+                new ObjectMapper(),
+                new XForwardedForStub(),
+                new XForwardedHostStub(),
+                new XForwardedProtoStub()
+        );
+    }
 
-    private AbstractConnection connection;
-
-    public HECServiceImpl() {
-        this.xForwardedForStub = new XForwardedForStub();
-        this.xForwardedHostStub = new XForwardedHostStub();
-        this.xForwardedProtoStub = new XForwardedProtoStub();
+    private HECServiceImpl(
+            final Acknowledgements acknowledgements,
+            final SessionManager sessionManager,
+            final TokenManager tokenManager,
+            final EventManager eventManager,
+            final ObjectMapper objectMapper,
+            final XForwardedForStub xForwardedForStub,
+            final XForwardedHostStub xForwardedHostStub,
+            final XForwardedProtoStub xForwardedProtoStub
+    ) {
+        this.acknowledgements = acknowledgements;
+        this.sessionManager = sessionManager;
+        this.tokenManager = tokenManager;
+        this.eventManager = eventManager;
+        this.objectMapper = objectMapper;
+        this.xForwardedForStub = xForwardedForStub;
+        this.xForwardedHostStub = xForwardedHostStub;
+        this.xForwardedProtoStub = xForwardedProtoStub;
     }
 
     @PostConstruct

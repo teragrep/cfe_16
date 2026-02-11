@@ -55,6 +55,8 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.ArrayList;
@@ -64,7 +66,6 @@ import java.util.concurrent.*;
 @TestPropertySource(properties = {
         "syslog.server.host=127.0.0.1",
         "syslog.server.port=1236",
-        "syslog.server.protocol=RELP",
         "max.channels=1000000",
         "max.ack.value=1000000",
         "max.ack.age=20000",
@@ -72,6 +73,7 @@ import java.util.concurrent.*;
         "poll.time=30000",
         "server.print.times=true"
 })
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @SpringBootTest
 public class SendMultipleEventsIT {
 

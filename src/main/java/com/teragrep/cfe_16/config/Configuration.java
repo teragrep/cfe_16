@@ -46,20 +46,17 @@
 package com.teragrep.cfe_16.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
 
 /**
  * A Spring-utilizing class for getting configuration data.
  */
 
-@Component
+@org.springframework.context.annotation.Configuration
 public class Configuration {
 
     @Value("${syslog.server.host}")
     private String syslogHost;
-
-    @Value("${syslog.server.protocol}")
-    private String syslogProtocol;
 
     @Value("${syslog.server.port}")
     private int syslogPort;
@@ -86,31 +83,18 @@ public class Configuration {
 
     }
 
-    public String getSyslogHost() {
+    @Bean
+    public String syslogHost() {
         return this.syslogHost;
     }
 
-    public String getSyslogProtocol() {
-        return this.syslogProtocol;
-    }
-
-    public void setSyslogProtocol(String syslogProtocol) {
-        this.syslogProtocol = syslogProtocol;
-    }
-
-    public void setSyslogHost(String syslogHost) {
-        this.syslogHost = syslogHost;
-    }
-
-    public int getSyslogPort() {
+    @Bean
+    public int syslogPort() {
         return this.syslogPort;
     }
 
-    public void setSyslogPort(int syslogPort) {
-        this.syslogPort = syslogPort;
-    }
-
-    public int getMaxAckValue() {
+    @Bean
+    public int maxAckValue() {
         return this.maxAckValue;
     }
 
@@ -118,32 +102,36 @@ public class Configuration {
         this.maxAckValue = maxAckValue;
     }
 
-    public int getMaxAckAge() {
+    @Bean
+    public int maxAckAge() {
         return this.maxAckAge;
     }
 
-    public int getMaxChannels() {
+    @Bean
+    public int maxChannels() {
         return this.maxChannels;
     }
 
-    public long getPollTime() {
+    @Bean
+    public long pollTime() {
         return this.pollTime;
     }
 
-    public boolean getPrintTimes() {
+    @Bean
+    public boolean printTimes() {
         return this.printTimes;
     }
 
-    public int getMaxSessionAge() {
+    @Bean
+    public int maxSessionAge() {
         return this.maxSessionAge;
     }
 
     @Override
     public String toString() {
-        return "Configuration [syslogHost=" + this.syslogHost + ", syslogProtocol=" + this.syslogProtocol
-                + ", syslogPort=" + this.syslogPort + ", maxAckValue=" + this.maxAckValue + ", maxAckAge="
-                + this.maxAckAge + ", maxSessionAge=" + this.maxSessionAge + ", maxChannels=" + this.maxChannels
-                + ", pollTime=" + this.pollTime + ", printTimes=" + this.printTimes + "]";
+        return "Configuration{" + "syslogHost=" + syslogHost + ", syslogPort=" + syslogPort + ", maxAckValue="
+                + maxAckValue + ", maxAckAge=" + maxAckAge + ", maxSessionAge=" + maxSessionAge + ", maxChannels="
+                + maxChannels + ", pollTime=" + pollTime + ", printTimes=" + printTimes + '}';
     }
 
 }

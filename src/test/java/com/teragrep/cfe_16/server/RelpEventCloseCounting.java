@@ -51,7 +51,7 @@ import com.teragrep.rlp_03.frame.delegate.event.RelpEventClose;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-class RelpEventCloseCounting extends RelpEvent {
+public final class RelpEventCloseCounting extends RelpEvent {
 
     private final AtomicLong closeCount;
     private final RelpEventClose relpEventClose;
