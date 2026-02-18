@@ -138,7 +138,7 @@ public final class HECRecordImpl implements HECRecord {
         final SDElement structuredMetadata = structuredDataParams(currentEpochMillis);
 
         final SyslogMessage syslogMessage;
-        if (this.time().parsed()) {
+        if (this.time().isParsed()) {
 
             /*
              * Creates a Syslogmessage with a time stamp
@@ -179,7 +179,7 @@ public final class HECRecordImpl implements HECRecord {
         final SDElement structuredMetadata = structuredDataParams(defaultValue);
 
         final SyslogMessage syslogMessage;
-        if (this.time().parsed()) {
+        if (this.time().isParsed()) {
 
             /*
              * Creates a Syslogmessage with a time stamp
@@ -254,9 +254,9 @@ public final class HECRecordImpl implements HECRecord {
         }
 
         LOGGER.debug("Setting time_parsed and time");
-        metadataSDE.addSDParam("time_parsed", String.valueOf(this.time().parsed()));
+        metadataSDE.addSDParam("time_parsed", String.valueOf(this.time().isParsed()));
         metadataSDE.addSDParam("time", String.valueOf(this.time().instant(fallbackEpoch)));
-        if (this.time().parsed()) {
+        if (this.time().isParsed()) {
             LOGGER.debug("TimeParsed was true");
             metadataSDE.addSDParam("generated", "false");
         }

@@ -53,7 +53,7 @@ public final class HECTimeStub implements HECTime {
     }
 
     @Override
-    public boolean parsed() {
+    public boolean isParsed() {
         throw new UnsupportedOperationException("HECTimeStub does not support this");
     }
 

@@ -127,7 +127,7 @@ public final class HECTimeImpl implements HECTime {
     }
 
     @Override
-    public boolean parsed() {
+    public boolean isParsed() {
         final boolean returnedParsed;
         JsonNode timeNode;
 

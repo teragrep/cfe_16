@@ -70,7 +70,8 @@ class HECTimeImplTest {
                         "generated", HECTime.source(),
                         "Time source should be 'generated' when it's not specified in a request"
                 );
-        Assertions.assertFalse(HECTime.parsed(), "timeParsed should be false when time is not specified in a request");
+        Assertions
+                .assertFalse(HECTime.isParsed(), "timeParsed should be false when time is not specified in a request");
         Assertions
                 .assertEquals(currentEpoch, HECTime.instant(currentEpoch), "Time as long should be the defaultValue provided when time is not specified in a request");
 
@@ -80,7 +81,6 @@ class HECTimeImplTest {
     @DisplayName("Time is reported and parsed when time is a double")
     void timeIsReportedAndParsedWhenTimeIsADouble() {
         final ObjectMapper objectMapper = new ObjectMapper();
-        ;
 
         final String content = "1433188255.253";
 
@@ -100,7 +100,7 @@ class HECTimeImplTest {
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        HECTime.parsed(),
+                                        HECTime.isParsed(),
                                         "timeParsed should be true when time is specified in a request"
                                 ),
                         () -> Assertions.assertEquals(1433188255253L, HECTime.instant(currentEpoch), "Time should be converted to epoch milliseconds when it's provided in a request in " + "epoch seconds with decimals")
@@ -111,7 +111,6 @@ class HECTimeImplTest {
     @DisplayName("Time is reported and parsed when time is exactly 13 digits")
     void timeIsReportedAndParsedWhenTimeIsExactly13Digits() {
         final ObjectMapper objectMapper = new ObjectMapper();
-        ;
 
         final String content = "1433188255253";
 
@@ -131,7 +130,7 @@ class HECTimeImplTest {
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        HECTime.parsed(),
+                                        HECTime.isParsed(),
                                         "timeParsed should be true when time is specified in a request"
                                 ),
                         () -> Assertions.assertEquals(1433188255253L, HECTime.instant(currentEpoch), "Time should be converted to epoch milliseconds when it's provided in a request in " + "epoch seconds with decimals")
@@ -142,7 +141,6 @@ class HECTimeImplTest {
     @DisplayName("Time is reported and parsed when time is a string with numbers")
     void timeIsReportedAndParsedWhenTimeIsAStringWithNumbers() {
         final ObjectMapper objectMapper = new ObjectMapper();
-        ;
 
         final String content = "\"1433188255253\"";
 
@@ -163,7 +161,7 @@ class HECTimeImplTest {
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        HECTime.parsed(),
+                                        HECTime.isParsed(),
                                         "timeParsed should be false when time is given as a string in a request"
                                 ),
                         () -> Assertions.assertEquals(1433188255253L, HECTime.instant(currentEpoch), "Time should be converted to long when time is given as a string in a request")
@@ -174,7 +172,6 @@ class HECTimeImplTest {
     @DisplayName("Time is reported and parsed with less than 13 digits")
     void timeIsReportedAndParsedWithLessThan13Digits() {
         final ObjectMapper objectMapper = new ObjectMapper();
-        ;
 
         final String content = "143318";
 
@@ -196,7 +193,7 @@ class HECTimeImplTest {
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        HECTime.parsed(),
+                                        HECTime.isParsed(),
                                         "timeParsed should be false when time is given as an integer with less than 10 "
                                                 + "digits"
                                 ),
@@ -208,7 +205,6 @@ class HECTimeImplTest {
     @DisplayName("Time is reported and parsed when time is longer than 13 digits")
     void timeIsReportedAndParsedWhenTimeIsLongerThan13Digits() {
         final ObjectMapper objectMapper = new ObjectMapper();
-        ;
 
         final String content = "14331882552523";
 
@@ -229,7 +225,7 @@ class HECTimeImplTest {
                                 ),
                         () -> Assertions
                                 .assertTrue(
-                                        HECTime.parsed(),
+                                        HECTime.isParsed(),
                                         "timeParsed should be false when time is given as an integer with more than 13 "
                                                 + "digits"
                                 ),

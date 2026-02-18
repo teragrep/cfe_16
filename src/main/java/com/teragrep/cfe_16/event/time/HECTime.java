@@ -51,7 +51,7 @@ public interface HECTime extends Stubable {
 
     long instant(final long defaultValue);
 
-    boolean parsed();
+    boolean isParsed();
 
     String source();
 }

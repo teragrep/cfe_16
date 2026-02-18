@@ -127,20 +127,22 @@ class HECTimeImplWithFallbackTest {
     }
 
     @Test
-    @DisplayName("parsed() returns false if current and fallback times are both stubs")
-    void parsedReturnsFalseIfCurrentAndFallbackTimesAreBothStubs() {
+    @DisplayName("isParsed() returns false if current and fallback times are both stubs")
+    void isParsedReturnsFalseIfCurrentAndFallbackTimesAreBothStubs() {
         final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
                 new HECTimeStub(),
                 new HECTimeStub()
         );
 
-        final boolean returnedParsed = Assertions.assertDoesNotThrow(hecTimeImplWithFallback::parsed);
+        final boolean returnedParsed = Assertions.assertDoesNotThrow(hecTimeImplWithFallback::isParsed);
         Assertions.assertFalse(returnedParsed);
     }
 
     @Test
-    @DisplayName("parsed() returns the parsed() value from currentTime if it is not a stub and fallbackTime is a stub")
-    void parsedReturnsTheParsedValueFromCurrentTimeIfItIsNotAStubAndFallbackTimeIsAStub() {
+    @DisplayName(
+        "isParsed() returns the isParsed() value from currentTime if it is not a stub and fallbackTime is a stub"
+    )
+    void isParsedReturnsTheIsParsedValueFromCurrentTimeIfItIsNotAStubAndFallbackTimeIsAStub() {
         final String content = "1433188255.253";
         final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
 
@@ -152,13 +154,13 @@ class HECTimeImplWithFallbackTest {
                 currentTimeWithTrueParsedValue,
                 new HECTimeStub()
         );
-        final boolean returnedParsed = Assertions.assertDoesNotThrow(hecTimeImplWithFallback::parsed);
+        final boolean returnedParsed = Assertions.assertDoesNotThrow(hecTimeImplWithFallback::isParsed);
         Assertions.assertTrue(returnedParsed);
     }
 
     @Test
-    @DisplayName("parsed() returns the parsed() value from the fallback time if the currentTime is a stub")
-    void parsedReturnsTheParsedValueFromTheFallbackTimeIfTheCurrentTimeIsAStub() {
+    @DisplayName("isParsed() returns the isParsed() value from the fallback time if the currentTime is a stub")
+    void isParsedReturnsTheIsParsedValueFromTheFallbackTimeIfTheCurrentTimeIsAStub() {
         final String content = "1433188255.253";
         final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
 
@@ -170,7 +172,7 @@ class HECTimeImplWithFallbackTest {
                 new HECTimeStub(),
                 fallbackTimeWithTrueParsedValue
         );
-        final boolean returnedParsed = Assertions.assertDoesNotThrow(hecTimeImplWithFallback::parsed);
+        final boolean returnedParsed = Assertions.assertDoesNotThrow(hecTimeImplWithFallback::isParsed);
         Assertions.assertTrue(returnedParsed);
     }
 
