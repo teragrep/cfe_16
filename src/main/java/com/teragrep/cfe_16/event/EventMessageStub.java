@@ -47,6 +47,16 @@ package com.teragrep.cfe_16.event;
 
 public final class EventMessageStub implements EventMessage {
 
+    private final boolean isStub;
+
+    public EventMessageStub() {
+        this(true);
+    }
+
+    private EventMessageStub(final boolean isStub) {
+        this.isStub = isStub;
+    }
+
     @Override
     public String asString() {
         throw new UnsupportedOperationException("EventMessageStub does not support this");
@@ -54,16 +64,25 @@ public final class EventMessageStub implements EventMessage {
 
     @Override
     public boolean isStub() {
-        return true;
+        return isStub;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        final boolean equals;
+        if (o == null || getClass() != o.getClass()) {
+            equals = false;
+        }
+        else {
+            final EventMessageStub that = (EventMessageStub) o;
+            equals = isStub() == that.isStub();
+        }
+
+        return equals;
     }
 
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException("EventMessageStub does not support this");
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        throw new UnsupportedOperationException("EventMessageStub does not support this");
+        return Boolean.hashCode(isStub());
     }
 }

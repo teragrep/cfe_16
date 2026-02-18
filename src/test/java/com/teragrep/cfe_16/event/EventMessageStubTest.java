@@ -45,6 +45,7 @@
  */
 package com.teragrep.cfe_16.event;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -71,24 +72,8 @@ class EventMessageStubTest {
     }
 
     @Test
-    @DisplayName("hashCode() throws UnsupportedOperationException if called")
-    void hashCodeThrowsUnsupportedOperationExceptionIfCalled() {
-        final EventMessageStub eventStub = new EventMessageStub();
-
-        final Exception exception = Assertions
-                .assertThrowsExactly(UnsupportedOperationException.class, eventStub::hashCode);
-
-        Assertions.assertEquals("EventMessageStub does not support this", exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("equals() throws UnsupportedOperationException if called")
-    void equalsThrowsUnsupportedOperationExceptionIfCalled() {
-        final EventMessageStub eventStub = new EventMessageStub();
-
-        final Exception exception = Assertions
-                .assertThrowsExactly(UnsupportedOperationException.class, () -> eventStub.equals(new Object()));
-
-        Assertions.assertEquals("EventMessageStub does not support this", exception.getMessage());
+    @DisplayName("equalsVerifier test")
+    void equalsVerifierTest() {
+        EqualsVerifier.forClass(EventMessageStub.class).verify();
     }
 }
