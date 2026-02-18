@@ -47,6 +47,16 @@ package com.teragrep.cfe_16.event.time;
 
 public final class HECTimeStub implements HECTime {
 
+    private final boolean isStub;
+
+    public HECTimeStub() {
+        this(true);
+    }
+
+    private HECTimeStub(final boolean isStub) {
+        this.isStub = isStub;
+    }
+
     @Override
     public long instant(final long defaultValue) {
         throw new UnsupportedOperationException("HECTimeStub does not support this");
@@ -64,6 +74,27 @@ public final class HECTimeStub implements HECTime {
 
     @Override
     public boolean isStub() {
-        return true;
+        return isStub;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        final boolean equals;
+
+        if (o == null || getClass() != o.getClass()) {
+            equals = false;
+        }
+        else {
+
+            final HECTimeStub that = (HECTimeStub) o;
+            equals = isStub() == that.isStub();
+        }
+
+        return equals;
+    }
+
+    @Override
+    public int hashCode() {
+        return Boolean.hashCode(isStub());
     }
 }
