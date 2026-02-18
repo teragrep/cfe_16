@@ -103,6 +103,6 @@ public class ConfigurationIT {
         assertEquals(expected, configuration.toString());
         assertEquals(0, messageList.size());
         assertEquals(1, openCount.get());
-        assertEquals(0, closeCount.get()); // FIXME: does not close
+        assertEquals(0, closeCount.get());
     }
 }
