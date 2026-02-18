@@ -57,8 +57,8 @@ import org.junit.jupiter.api.Test;
 class HECTimeImplTest {
 
     @Test
-    @DisplayName("Time is generated, not parsed and uses the defaultValue when time is missing from the event")
-    void timeIsGeneratedNotParsedAndUsesTheDefaultValueWhenTimeIsMissingFromTheEvent() {
+    @DisplayName("Time is generated, not parsed and uses the defaultValue when time is an empty object")
+    void timeIsGeneratedNotParsedAndUsesTheDefaultValueWhenTimeIsAnEmptyObject() {
         final long currentEpoch = Instant.now().toEpochMilli();
 
         final HECTime HECTime = new HECTimeImpl(
@@ -74,7 +74,26 @@ class HECTimeImplTest {
                 .assertFalse(HECTime.isParsed(), "timeParsed should be false when time is not specified in a request");
         Assertions
                 .assertEquals(currentEpoch, HECTime.instant(currentEpoch), "Time as long should be the defaultValue provided when time is not specified in a request");
+    }
 
+    @Test
+    @DisplayName("Time is generated, not parsed and uses the defaultValue when time is missing")
+    void timeIsGeneratedNotParsedAndUsesTheDefaultValueWhenTimeIsMissing() {
+        final long currentEpoch = Instant.now().toEpochMilli();
+
+        final HECTime HECTime = new HECTimeImpl(
+                new JsonEventImpl(new ObjectMapper().createObjectNode().put("notTime", "{}"))
+        );
+
+        Assertions
+                .assertEquals(
+                        "generated", HECTime.source(),
+                        "Time source should be 'generated' when it's not specified in a request"
+                );
+        Assertions
+                .assertFalse(HECTime.isParsed(), "timeParsed should be false when time is not specified in a request");
+        Assertions
+                .assertEquals(currentEpoch, HECTime.instant(currentEpoch), "Time as long should be the defaultValue provided when time is not specified in a request");
     }
 
     @Test

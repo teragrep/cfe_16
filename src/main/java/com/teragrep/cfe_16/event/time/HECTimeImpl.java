@@ -51,9 +51,12 @@ import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldException;
 import java.math.BigDecimal;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class HECTimeImpl implements HECTime {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(HECTimeImpl.class);
     private final JsonEvent jsonEvent;
 
     public HECTimeImpl(final JsonEvent jsonEvent) {
@@ -66,14 +69,14 @@ public final class HECTimeImpl implements HECTime {
         JsonNode timeNode;
 
         try {
-            if (jsonEvent.hasTime()) {
-                timeNode = jsonEvent.asTimeJsonNode();
-            }
-            else {
-                timeNode = new TextNode("");
-            }
+            timeNode = jsonEvent.asTimeJsonNode();
         }
         catch (final EventFieldException e) {
+            LOGGER
+                    .info(
+                            "Could not parse time from JsonEvent <[{}]>, so using defaultValue provided <[{}]>",
+                            jsonEvent.asPayloadJsonNode(), defaultValue
+                    );
             timeNode = new TextNode("");
         }
 
@@ -90,7 +93,6 @@ public final class HECTimeImpl implements HECTime {
         // Time is a number, no calculations required
         else if (timeNode.canConvertToLong()) {
             returnedTime = timeNode.asLong();
-
         }
         // Time is a String
         else if (timeNode.isTextual()) {
