@@ -125,7 +125,7 @@ public class HECServiceImpl implements HECService {
         try {
             this.connection = ConnectionFactory
                     .createConnection(
-                            this.configuration.getSysLogProtocol(), this.configuration.getSyslogHost(),
+                            this.configuration.getSyslogProtocol(), this.configuration.getSyslogHost(),
                             this.configuration.getSyslogPort()
                     );
         }

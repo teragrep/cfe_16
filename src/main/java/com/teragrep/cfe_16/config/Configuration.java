@@ -56,13 +56,13 @@ import org.springframework.stereotype.Component;
 public class Configuration {
 
     @Value("${syslog.server.host}")
-    private String sysLogHost;
+    private String syslogHost;
 
     @Value("${syslog.server.protocol}")
-    private String sysLogProtocol;
+    private String syslogProtocol;
 
     @Value("${syslog.server.port}")
-    private int sysLogPort;
+    private int syslogPort;
 
     @Value("${max.ack.value}")
     private int maxAckValue;
@@ -87,27 +87,27 @@ public class Configuration {
     }
 
     public String getSyslogHost() {
-        return this.sysLogHost;
+        return this.syslogHost;
     }
 
-    public String getSysLogProtocol() {
-        return this.sysLogProtocol;
+    public String getSyslogProtocol() {
+        return this.syslogProtocol;
     }
 
-    public void setSysLogProtocol(String sysLogProtocol) {
-        this.sysLogProtocol = sysLogProtocol;
+    public void setSyslogProtocol(String syslogProtocol) {
+        this.syslogProtocol = syslogProtocol;
     }
 
     public void setSyslogHost(String syslogHost) {
-        this.sysLogHost = syslogHost;
+        this.syslogHost = syslogHost;
     }
 
     public int getSyslogPort() {
-        return this.sysLogPort;
+        return this.syslogPort;
     }
 
     public void setSyslogPort(int syslogPort) {
-        this.sysLogPort = syslogPort;
+        this.syslogPort = syslogPort;
     }
 
     public int getMaxAckValue() {
@@ -140,8 +140,8 @@ public class Configuration {
 
     @Override
     public String toString() {
-        return "Configuration [sysLogHost=" + this.sysLogHost + ", sysLogProtocol=" + this.sysLogProtocol
-                + ", sysLogPort=" + this.sysLogPort + ", maxAckValue=" + this.maxAckValue + ", maxAckAge="
+        return "Configuration [syslogHost=" + this.syslogHost + ", syslogProtocol=" + this.syslogProtocol
+                + ", syslogPort=" + this.syslogPort + ", maxAckValue=" + this.maxAckValue + ", maxAckAge="
                 + this.maxAckAge + ", maxSessionAge=" + this.maxSessionAge + ", maxChannels=" + this.maxChannels
                 + ", pollTime=" + this.pollTime + ", printTimes=" + this.printTimes + "]";
     }
