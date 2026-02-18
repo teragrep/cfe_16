@@ -50,7 +50,6 @@ import com.teragrep.cfe_16.response.Response;
 import com.teragrep.cfe_16.server.TestServer;
 import com.teragrep.cfe_16.server.TestServerFactory;
 import com.teragrep.cfe_16.service.HECService;
-import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterAll;
@@ -92,24 +91,15 @@ public class SendSingleEventIT {
 
     @BeforeAll
     public static void init() {
-        TestServerFactory serverFactory = new TestServerFactory();
-        try {
-            server = serverFactory.create(SERVER_PORT, messageList, openCount, closeCount);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        final TestServerFactory serverFactory = new TestServerFactory();
+        server = Assertions
+                .assertDoesNotThrow(() -> serverFactory.create(SERVER_PORT, messageList, openCount, closeCount));
         server.run();
     }
 
     @AfterAll
     public static void close() {
-        try {
-            server.close();
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        Assertions.assertDoesNotThrow(() -> server.close());
     }
 
     @AfterEach

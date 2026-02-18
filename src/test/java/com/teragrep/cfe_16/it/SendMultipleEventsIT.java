@@ -88,7 +88,7 @@ public class SendMultipleEventsIT {
 
     @BeforeAll
     public static void init() {
-        TestServerFactory serverFactory = new TestServerFactory();
+        final TestServerFactory serverFactory = new TestServerFactory();
         server = Assertions
                 .assertDoesNotThrow(() -> serverFactory.create(SERVER_PORT, messageList, openCount, closeCount));
         server.run();
@@ -96,12 +96,7 @@ public class SendMultipleEventsIT {
 
     @AfterAll
     public static void close() {
-        try {
-            server.close();
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        Assertions.assertDoesNotThrow(() -> server.close());
     }
 
     @AfterEach
@@ -122,7 +117,7 @@ public class SendMultipleEventsIT {
     }
 
     @Test
-    public void sendEventsTest() throws InterruptedException, ExecutionException {
+    public void sendEventsTest() {
         final int NUMBER_OF_EVENTS_TO_BE_SENT = 100;
         final List<CompletableFuture<Response>> futures = new ArrayList<>();
 
@@ -138,7 +133,7 @@ public class SendMultipleEventsIT {
         }
         int countFuture = 0;
         for (final Future<Response> future : futures) {
-            final Response actualResponse = future.get();
+            final Response actualResponse = Assertions.assertDoesNotThrow(() -> future.get());
             Assertions
                     .assertTrue(supposedResponses.contains(actualResponse), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be " + countFuture + ")");
             countFuture++;

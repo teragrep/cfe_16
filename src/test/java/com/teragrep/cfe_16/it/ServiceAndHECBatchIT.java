@@ -64,8 +64,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
-import java.io.IOException;
-
 import static org.junit.Assert.*;
 
 /*
@@ -113,24 +111,14 @@ public class ServiceAndHECBatchIT {
 
     @BeforeAll
     public static void init() {
-        TestServerFactory serverFactory = new TestServerFactory();
-        try {
-            server = serverFactory.create(port, messageList, openCount, closeCount);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        final TestServerFactory serverFactory = new TestServerFactory();
+        server = Assertions.assertDoesNotThrow(() -> serverFactory.create(port, messageList, openCount, closeCount));
         server.run();
     }
 
     @AfterAll
     public static void close() {
-        try {
-            server.close();
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        Assertions.assertDoesNotThrow(() -> server.close());
     }
 
     @AfterEach
@@ -174,13 +162,7 @@ public class ServiceAndHECBatchIT {
 
         ackRequest = "{\"acks\": [1,3,4]}";
 
-        ackRequestNode = objectMapper.createObjectNode();
-        try {
-            ackRequestNode = objectMapper.readTree(ackRequest);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        ackRequestNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(ackRequest));
     }
 
     /*

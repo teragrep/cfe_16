@@ -52,14 +52,13 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -78,24 +77,14 @@ public class ConfigurationIT {
 
     @BeforeAll
     public static void init() {
-        TestServerFactory serverFactory = new TestServerFactory();
-        try {
-            server = serverFactory.create(port, messageList, openCount, closeCount);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        final TestServerFactory serverFactory = new TestServerFactory();
+        server = Assertions.assertDoesNotThrow(() -> serverFactory.create(port, messageList, openCount, closeCount));
         server.run();
     }
 
     @AfterAll
     public static void close() {
-        try {
-            server.close();
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        Assertions.assertDoesNotThrow(() -> server.close());
     }
 
     @AfterEach
