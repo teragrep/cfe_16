@@ -45,7 +45,11 @@
  */
 package com.teragrep.cfe_16;
 
-import com.cloudbees.syslog.*;
+import com.cloudbees.syslog.Facility;
+import com.cloudbees.syslog.SDElement;
+import com.cloudbees.syslog.SDParam;
+import com.cloudbees.syslog.Severity;
+import com.cloudbees.syslog.SyslogMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.XForwardedForStub;
@@ -56,12 +60,12 @@ import com.teragrep.cfe_16.event.EventMessageImpl;
 import com.teragrep.cfe_16.event.JsonEventImpl;
 import com.teragrep.cfe_16.event.time.HECTimeImpl;
 import java.time.Instant;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -70,14 +74,14 @@ import java.util.Set;
 public class EventDataToSyslogMessageTest {
 
     @Test
-    @DisplayName("fields match for the first HECRecord")
-    void fieldsMatchForTheFirstHecRecord() {
+    @DisplayName("test fields when time is provided in HECRecord")
+    void testFieldsWhenTimeIsProvidedInHECRecord() {
         // Timestamp used as fallback value for HECRecord time
-        Facility expectedFacility = Facility.USER;
-        Severity expectedSeverity = Severity.INFORMATIONAL;
-        SDElement expectedMetadataSDE1 = new SDElement("cfe_16-metadata@48577");
+        final Facility expectedFacility = Facility.USER;
+        final Severity expectedSeverity = Severity.INFORMATIONAL;
+        final SDElement expectedMetadataSDE1 = new SDElement("cfe_16-metadata@48577");
 
-        HECRecordImpl hecRecord1 = new HECRecordImpl(
+        final HECRecordImpl hecRecord1 = new HECRecordImpl(
                 "CHANNEL_11111",
                 new EventMessageImpl("Event 1"),
                 "AUTH_TOKEN_11111",
@@ -94,7 +98,7 @@ public class EventDataToSyslogMessageTest {
         expectedMetadataSDE1.addSDParam("time", "1433188255253");
         expectedMetadataSDE1.addSDParam("generated", "false");
 
-        SyslogMessage expectedSyslogMessage1 = new SyslogMessage()
+        final SyslogMessage expectedSyslogMessage1 = new SyslogMessage()
                 .withTimestamp(1433188255253L)
                 .withSeverity(expectedSeverity)
                 .withAppName("capsulated")
@@ -103,7 +107,7 @@ public class EventDataToSyslogMessageTest {
                 .withSDElement(expectedMetadataSDE1)
                 .withMsg(hecRecord1.event().asString());
 
-        SyslogMessage returnedMessage1 = hecRecord1.toSyslogMessage();
+        final SyslogMessage returnedMessage1 = hecRecord1.toSyslogMessage();
 
         Assertions
                 .assertEquals(
@@ -138,13 +142,9 @@ public class EventDataToSyslogMessageTest {
     }
 
     @Test
-    @DisplayName("SDElements match for the first HECRecord")
-    void sdElementsMatchForTheFirstHecRecord() {
-        Facility expectedFacility = Facility.USER;
-        Severity expectedSeverity = Severity.INFORMATIONAL;
-        SDElement expectedMetadataSDE1 = new SDElement("cfe_16-metadata@48577");
-
-        HECRecordImpl hecRecord1 = new HECRecordImpl(
+    @DisplayName("test SDElements when time is provided in HECRecord")
+    void testSdElementsWhenTimeIsProvidedInHECRecord() {
+        final HECRecordImpl hecRecord1 = new HECRecordImpl(
                 "CHANNEL_11111",
                 new EventMessageImpl("Event 1"),
                 "AUTH_TOKEN_11111",
@@ -153,69 +153,36 @@ public class EventDataToSyslogMessageTest {
                 new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
         );
 
-        expectedMetadataSDE1.addSDParam("authentication_token", hecRecord1.authenticationToken());
-        expectedMetadataSDE1.addSDParam("channel", hecRecord1.channel());
-        expectedMetadataSDE1.addSDParam("ack_id", String.valueOf(hecRecord1.ackID()));
-        expectedMetadataSDE1.addSDParam("time_source", hecRecord1.time().source());
-        expectedMetadataSDE1.addSDParam("time_parsed", "true");
-        expectedMetadataSDE1.addSDParam("time", "1433188255253");
-        expectedMetadataSDE1.addSDParam("generated", "false");
+        final SyslogMessage returnedSyslogMessage = hecRecord1.toSyslogMessage();
+        final Set<SDElement> sdElementSet = returnedSyslogMessage.getSDElements();
+        final Map<String, Map<String, String>> sdElementMap = sdElementSet
+                .stream()
+                .collect(Collectors.toMap((SDElement::getSdID), (sdElem) -> sdElem.getSdParams().stream().collect(Collectors.toMap(SDParam::getParamName, SDParam::getParamValue))));
 
-        SyslogMessage expectedSyslogMessage1 = new SyslogMessage()
-                .withTimestamp(1433188255253L)
-                .withSeverity(expectedSeverity)
-                .withAppName("capsulated")
-                .withHostname("cfe-16")
-                .withFacility(expectedFacility)
-                .withSDElement(expectedMetadataSDE1)
-                .withMsg(hecRecord1.event().asString());
+        Assertions.assertTrue(sdElementMap.containsKey("cfe_16-metadata@48577"));
+        Assertions.assertTrue(sdElementMap.containsKey("cfe_16-origin@48577"));
 
-        SyslogMessage returnedMessage1 = hecRecord1.toSyslogMessage();
-        Set<SDElement> returnedSDElements1 = returnedMessage1.getSDElements();
-        Set<SDElement> expectedSDElements1 = expectedSyslogMessage1.getSDElements();
-
-        List<SDParam> supposedSDParams = new ArrayList<>();
-        List<SDParam> returnedSDParams = new ArrayList<>();
-
-        // Gets the SDParams from the SDEs from the first SyslogMessage returned from
-        // Converter and saves them in a List
-        for (SDElement sdElement : returnedSDElements1) {
-            returnedSDParams.addAll(sdElement.getSdParams());
-        }
-
-        // Gets the SDParams from the SDEs from the first SyslogMessage created in
-        // initialize() and saves them in a List
-        for (SDElement sdElement : expectedSDElements1) {
-            supposedSDParams.addAll(sdElement.getSdParams());
-        }
-
-        // Goes through all the returned SDParams and checks that they are all found in
-        // supposed SDParams
-        final int expectedReturnedSDParamsAssertions = 7; // See lines 135 - 141
-        int loopedReturnedSDParamsAssertions = 0;
-        for (SDParam returnedSDParam : returnedSDParams) {
-            loopedReturnedSDParamsAssertions++;
-            Assertions
-                    .assertTrue(supposedSDParams.contains(returnedSDParam), "SDParam '" + returnedSDParam + "' should not be in returned SDElement.");
-        }
         Assertions
-                .assertEquals(
-                        expectedReturnedSDParamsAssertions, loopedReturnedSDParamsAssertions,
-                        "All returnedSDParams were looped through"
-                );
+                .assertEquals("AUTH_TOKEN_11111", sdElementMap.get("cfe_16-metadata@48577").get("authentication_token"));
+        Assertions.assertEquals("CHANNEL_11111", sdElementMap.get("cfe_16-metadata@48577").get("channel"));
+        Assertions.assertEquals("0", sdElementMap.get("cfe_16-metadata@48577").get("ack_id"));
+        Assertions.assertEquals("reported", sdElementMap.get("cfe_16-metadata@48577").get("time_source"));
+        Assertions.assertEquals("true", sdElementMap.get("cfe_16-metadata@48577").get("time_parsed"));
+        Assertions.assertEquals(String.valueOf(1433188255253L), sdElementMap.get("cfe_16-metadata@48577").get("time"));
+        Assertions.assertEquals("false", sdElementMap.get("cfe_16-metadata@48577").get("generated"));
     }
 
     @Test
-    @DisplayName("fields match for the second HECRecord")
-    void fieldsMatchForTheSecondHecRecord() {
+    @DisplayName("test fields when time is not provided in HECRecord")
+    void testFieldsWhenTimeIsNotProvidedInHECRecord() {
         // Timestamp used as fallback value for HECRecord time
         final long currentEpoch = Instant.now().toEpochMilli();
 
-        Facility expectedFacility = Facility.USER;
-        Severity expectedSeverity = Severity.INFORMATIONAL;
-        SDElement expectedMetadataSDE2 = new SDElement("cfe_16-metadata@48577");
+        final Facility expectedFacility = Facility.USER;
+        final Severity expectedSeverity = Severity.INFORMATIONAL;
+        final SDElement expectedMetadataSDE2 = new SDElement("cfe_16-metadata@48577");
 
-        HECRecordImpl hecRecord2 = new HECRecordImpl(
+        final HECRecordImpl hecRecord2 = new HECRecordImpl(
                 "CHANNEL_22222",
                 new EventMessageImpl("Event 2"),
                 "AUTH_TOKEN_22222",
@@ -231,14 +198,14 @@ public class EventDataToSyslogMessageTest {
         expectedMetadataSDE2.addSDParam("time", String.valueOf(currentEpoch));
         expectedMetadataSDE2.addSDParam("generated", "true");
 
-        SyslogMessage expectedSyslogMessage2 = new SyslogMessage()
+        final SyslogMessage expectedSyslogMessage2 = new SyslogMessage()
                 .withSeverity(expectedSeverity)
                 .withAppName("capsulated")
                 .withHostname("cfe-16")
                 .withFacility(expectedFacility)
                 .withSDElement(expectedMetadataSDE2)
                 .withMsg(hecRecord2.event().asString());
-        SyslogMessage returnedMessage2 = hecRecord2.toSyslogMessage();
+        final SyslogMessage returnedMessage2 = hecRecord2.toSyslogMessage();
 
         Assertions
                 .assertEquals(
@@ -270,16 +237,12 @@ public class EventDataToSyslogMessageTest {
     }
 
     @Test
-    @DisplayName("SDElements match for the second HECRecord")
-    void sdElementsMatchForTheSecondHecRecord() {
+    @DisplayName("test SDElements when time is not provided in HECRecord")
+    void testSdElementsWhenTimeIsNotProvidedInHECRecord() {
         // Timestamp used as fallback value for HECRecord time
         final long currentEpoch = Instant.now().toEpochMilli();
 
-        Facility expectedFacility = Facility.USER;
-        Severity expectedSeverity = Severity.INFORMATIONAL;
-        SDElement expectedMetadataSDE2 = new SDElement("cfe_16-metadata@48577");
-
-        HECRecordImpl hecRecord2 = new HECRecordImpl(
+        final HECRecordImpl hecRecord = new HECRecordImpl(
                 "CHANNEL_22222",
                 new EventMessageImpl("Event 2"),
                 "AUTH_TOKEN_22222",
@@ -287,62 +250,37 @@ public class EventDataToSyslogMessageTest {
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "null"))),
                 new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
         );
-        expectedMetadataSDE2.addSDParam("authentication_token", hecRecord2.authenticationToken());
-        expectedMetadataSDE2.addSDParam("channel", hecRecord2.channel());
-        expectedMetadataSDE2.addSDParam("ack_id", String.valueOf(hecRecord2.ackID()));
-        expectedMetadataSDE2.addSDParam("time_source", hecRecord2.time().source());
-        expectedMetadataSDE2.addSDParam("time_parsed", "false");
-        expectedMetadataSDE2.addSDParam("time", String.valueOf(currentEpoch));
-        expectedMetadataSDE2.addSDParam("generated", "true");
 
-        SyslogMessage expectedSyslogMessage2 = new SyslogMessage()
-                .withSeverity(expectedSeverity)
-                .withAppName("capsulated")
-                .withHostname("cfe-16")
-                .withFacility(expectedFacility)
-                .withSDElement(expectedMetadataSDE2)
-                .withMsg(hecRecord2.event().asString());
-        SyslogMessage returnedMessage2 = hecRecord2.toSyslogMessage(currentEpoch);
+        final SyslogMessage returnedSyslogMessage = hecRecord.toSyslogMessage(currentEpoch);
 
-        List<SDParam> expectedSDParams = new ArrayList<>();
-        List<SDParam> returnedSDParams = new ArrayList<>();
+        final Set<SDElement> sdElementSet = returnedSyslogMessage.getSDElements();
+        final Map<String, Map<String, String>> sdElementMap = sdElementSet
+                .stream()
+                .collect(Collectors.toMap((SDElement::getSdID), (sdElem) -> sdElem.getSdParams().stream().collect(Collectors.toMap(SDParam::getParamName, SDParam::getParamValue))));
 
-        // Gets the SDParams from the SDElements from the second SyslogMessage
-        for (SDElement sdElement : returnedMessage2.getSDElements()) {
-            returnedSDParams.addAll(sdElement.getSdParams());
-        }
+        Assertions.assertTrue(sdElementMap.containsKey("cfe_16-metadata@48577"));
+        Assertions.assertTrue(sdElementMap.containsKey("cfe_16-origin@48577"));
 
-        // Gets the SDParams from the SDEs from the second SyslogMessage created in initialize()
-        for (SDElement sdElement : expectedSyslogMessage2.getSDElements()) {
-            expectedSDParams.addAll(sdElement.getSdParams());
-        }
-
-        // Goes through all the returned SDParams and checks that they are all found in
-        // supposed SDParams
-        final int expectedReturnedSDParamsAssertions1 = 7; // See lines 143 - 147
-        int loopedReturnedSDParamsAssertions1 = 0;
-        for (SDParam returnedSDParam : returnedSDParams) {
-            loopedReturnedSDParamsAssertions1++;
-            Assertions
-                    .assertTrue(expectedSDParams.contains(returnedSDParam), "SDParam '" + returnedSDParam + "' should not be in returned SDElement.");
-        }
         Assertions
-                .assertEquals(
-                        expectedReturnedSDParamsAssertions1, loopedReturnedSDParamsAssertions1,
-                        "All returnedSDParams were NOT looped through"
-                );
+                .assertEquals("AUTH_TOKEN_22222", sdElementMap.get("cfe_16-metadata@48577").get("authentication_token"));
+        Assertions.assertEquals("CHANNEL_22222", sdElementMap.get("cfe_16-metadata@48577").get("channel"));
+        Assertions.assertEquals("1", sdElementMap.get("cfe_16-metadata@48577").get("ack_id"));
+        Assertions.assertEquals("generated", sdElementMap.get("cfe_16-metadata@48577").get("time_source"));
+        Assertions.assertEquals("false", sdElementMap.get("cfe_16-metadata@48577").get("time_parsed"));
+        Assertions.assertEquals(String.valueOf(currentEpoch), sdElementMap.get("cfe_16-metadata@48577").get("time"));
+        Assertions.assertEquals("true", sdElementMap.get("cfe_16-metadata@48577").get("generated"));
     }
 
     @Test
-    @DisplayName("fields match for the third HECRecord")
-    void fieldsMatchForTheThirdHecRecord() {
+    @DisplayName("test fields when time is not provided and ackID is null in HECRecord")
+    void testFieldsWhenTimeIsNotProvidedAndAckIdIsNullInHECRecord() {
         // Timestamp used as fallback value for HECRecord time
         final long currentEpoch = Instant.now().toEpochMilli();
 
-        SDElement expectedMetadataSDE3 = new SDElement("cfe_16-metadata@48577");
-        Severity expectedSeverity = Severity.INFORMATIONAL;
-        Facility expectedFacility = Facility.USER;
-        HECRecordImpl hecRecord3 = new HECRecordImpl(
+        final SDElement expectedMetadataSDE3 = new SDElement("cfe_16-metadata@48577");
+        final Severity expectedSeverity = Severity.INFORMATIONAL;
+        final Facility expectedFacility = Facility.USER;
+        final HECRecordImpl hecRecord3 = new HECRecordImpl(
                 "defaultchannel",
                 new EventMessageImpl("Event 3"),
                 "AUTH_TOKEN_33333",
@@ -357,7 +295,7 @@ public class EventDataToSyslogMessageTest {
         expectedMetadataSDE3.addSDParam("time", String.valueOf(currentEpoch));
         expectedMetadataSDE3.addSDParam("generated", "true");
 
-        SyslogMessage expectedSyslogMessage3 = new SyslogMessage()
+        final SyslogMessage expectedSyslogMessage3 = new SyslogMessage()
                 .withSeverity(expectedSeverity)
                 .withAppName("capsulated")
                 .withHostname("cfe-16")
@@ -365,7 +303,7 @@ public class EventDataToSyslogMessageTest {
                 .withSDElement(expectedMetadataSDE3)
                 .withMsg(hecRecord3.event().asString());
 
-        SyslogMessage returnedMessage3 = hecRecord3.toSyslogMessage(currentEpoch);
+        final SyslogMessage returnedMessage3 = hecRecord3.toSyslogMessage(currentEpoch);
 
         Assertions
                 .assertEquals(
@@ -395,14 +333,12 @@ public class EventDataToSyslogMessageTest {
     }
 
     @Test
-    @DisplayName("SDElements match for the third HECRecord")
-    void sdElementsMatchForTheThirdHecRecord() {
+    @DisplayName("test SDElements when time is not provided and ackID is null in HECRecord")
+    void testSdElementsWhenTimeIsNotProvidedAndAckIdIsNullInHECRecord() {
         // Timestamp used as fallback value for HECRecord time
         final long currentEpoch = Instant.now().toEpochMilli();
 
-        Severity expectedSeverity = Severity.INFORMATIONAL;
-        Facility expectedFacility = Facility.USER;
-        HECRecordImpl hecRecord3 = new HECRecordImpl(
+        final HECRecordImpl hecRecord = new HECRecordImpl(
                 "defaultchannel",
                 new EventMessageImpl("Event 3"),
                 "AUTH_TOKEN_33333",
@@ -410,53 +346,25 @@ public class EventDataToSyslogMessageTest {
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "null"))),
                 new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
         );
-        SDElement expectedMetadataSDE3 = new SDElement("cfe_16-metadata@48577");
-        expectedMetadataSDE3.addSDParam("authentication_token", hecRecord3.authenticationToken());
-        expectedMetadataSDE3.addSDParam("channel", hecRecord3.channel());
-        expectedMetadataSDE3.addSDParam("time_source", hecRecord3.time().source());
-        expectedMetadataSDE3.addSDParam("time_parsed", "false");
-        expectedMetadataSDE3.addSDParam("time", String.valueOf(currentEpoch));
-        expectedMetadataSDE3.addSDParam("generated", "true");
 
-        SDElement expectedHeaderMetadata = new SDElement("cfe_16-origin@48577");
+        final SyslogMessage returnedSyslogMessage = hecRecord.toSyslogMessage(currentEpoch);
 
-        SyslogMessage expectedSyslogMessage3 = new SyslogMessage()
-                .withSeverity(expectedSeverity)
-                .withAppName("capsulated")
-                .withHostname("cfe-16")
-                .withFacility(expectedFacility)
-                .withSDElement(expectedMetadataSDE3)
-                .withSDElement(expectedHeaderMetadata)
-                .withMsg(hecRecord3.event().asString());
+        final Set<SDElement> sdElementSet = returnedSyslogMessage.getSDElements();
+        final Map<String, Map<String, String>> sdElementMap = sdElementSet
+                .stream()
+                .collect(Collectors.toMap((SDElement::getSdID), (sdElem) -> sdElem.getSdParams().stream().collect(Collectors.toMap(SDParam::getParamName, SDParam::getParamValue))));
 
-        List<SDParam> supposedSDParams = new ArrayList<>();
-        List<SDParam> returnedSDParams = new ArrayList<>();
+        Assertions.assertTrue(sdElementMap.containsKey("cfe_16-metadata@48577"));
+        Assertions.assertTrue(sdElementMap.containsKey("cfe_16-origin@48577"));
 
-        // Gets the SDParams from the SDEs from the third SyslogMessage returned from
-        // Converter and saves them in a List
-        for (SDElement sdElement : hecRecord3.toSyslogMessage(currentEpoch).getSDElements()) {
-            returnedSDParams.addAll(sdElement.getSdParams());
-        }
-
-        // Gets the SDParams from the SDEs from the third SyslogMessage created in
-        // initialize() and saves them in a List
-        for (SDElement sdElement : expectedSyslogMessage3.getSDElements()) {
-            supposedSDParams.addAll(sdElement.getSdParams());
-        }
-
-        // Goes through all the returned SDParams and checks that they are all found in
-        // supposed SDParams
-        final int expectedReturnedSDParamsAssertions2 = 6;
-        int loopedReturnedSDParamsAssertions2 = 0;
-        for (SDParam returnedSDParam : returnedSDParams) {
-            loopedReturnedSDParamsAssertions2++;
-            Assertions
-                    .assertTrue(supposedSDParams.contains(returnedSDParam), "SDParam '" + returnedSDParam + "' should not be in returned SDElement.");
-        }
         Assertions
-                .assertEquals(
-                        expectedReturnedSDParamsAssertions2, loopedReturnedSDParamsAssertions2,
-                        "All returnedSDParams were NOT looped through"
-                );
+                .assertEquals("AUTH_TOKEN_33333", sdElementMap.get("cfe_16-metadata@48577").get("authentication_token"));
+        Assertions.assertEquals("defaultchannel", sdElementMap.get("cfe_16-metadata@48577").get("channel"));
+        Assertions
+                .assertFalse(sdElementMap.get("cfe_16-metadata@48577").containsKey("ack_id"), "ack_id should not be in SDElements since it is null");
+        Assertions.assertEquals("generated", sdElementMap.get("cfe_16-metadata@48577").get("time_source"));
+        Assertions.assertEquals("false", sdElementMap.get("cfe_16-metadata@48577").get("time_parsed"));
+        Assertions.assertEquals(String.valueOf(currentEpoch), sdElementMap.get("cfe_16-metadata@48577").get("time"));
+        Assertions.assertEquals("true", sdElementMap.get("cfe_16-metadata@48577").get("generated"));
     }
 }
