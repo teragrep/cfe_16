@@ -48,7 +48,6 @@ package com.teragrep.cfe_16.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.JsonSyntaxException;
 import com.teragrep.cfe_16.*;
 import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.HeaderInfo;
@@ -204,7 +203,7 @@ public class HECServiceImpl implements HECService {
                 responseToReturn = new JsonResponse("Success");
             }
         }
-        catch (final JsonSyntaxException | IOException e) {
+        catch (final RuntimeException | IOException e) {
             final ExceptionEventContext exceptionEventContext = new ExceptionEventContext(
                     headerInfo,
                     request.getHeader("user-agent"),

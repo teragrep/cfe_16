@@ -45,9 +45,11 @@
  */
 package com.teragrep.cfe_16;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonStreamParser;
 import com.teragrep.cfe_16.bo.HECRecord;
 import com.teragrep.cfe_16.bo.HECRecordImpl;
 import com.teragrep.cfe_16.bo.HECRecordStub;
@@ -56,8 +58,8 @@ import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.event.JsonEventImpl;
 import com.teragrep.cfe_16.event.time.HECTimeImpl;
 import com.teragrep.cfe_16.event.time.HECTimeImplWithFallback;
-import com.teragrep.cfe_16.exceptionhandling.EventFieldException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +69,7 @@ public final class HECBatch {
     private final String channel;
     private final String allEventInJSON;
     private final HeaderInfo headerInfo;
+    private final ObjectMapper objectMapper;
 
     public HECBatch(
             final String authToken,
@@ -74,54 +77,67 @@ public final class HECBatch {
             final String allEventInJSON,
             final HeaderInfo headerInfo
     ) {
+        this(authToken, channel, allEventInJSON, headerInfo, new ObjectMapper());
+    }
+
+    private HECBatch(
+            final String authToken,
+            final String channel,
+            final String allEventInJSON,
+            final HeaderInfo headerInfo,
+            final ObjectMapper objectMapper
+    ) {
         this.authToken = authToken;
         this.channel = channel;
         this.allEventInJSON = allEventInJSON;
         this.headerInfo = headerInfo;
+        this.objectMapper = objectMapper;
     }
 
     /**
      * Method used when converting data and the channel is specified in the request
      */
-    public List<HECRecord> toHECRecordList() throws EventFieldException, JsonProcessingException {
+    public List<HECRecord> toHECRecordList() throws IOException, RuntimeException {
+        final List<HECRecord> returnedList;
         // Init the HECRecord as a Stub
         HECRecord previousEvent = new HECRecordStub();
 
-        final JsonStreamParser parser = new JsonStreamParser(this.allEventInJSON);
-
         /*
          * There can be multiple events in one request. Here they are handled one by
-         * one. The event is saved in a string variable and is converted into
-         * HECRecord object. Metadata is assigned to the object.
+         * one. The event is converted into HECRecord object and then to HECRecordImpl.
+         * Metadata is assigned to the HECRecordImpl.
          * After the event is handled, it is assigned as a value to previousEvent
          * variable.
          */
+        try (final JsonParser jsonParser = objectMapper.createParser(this.allEventInJSON)) {
+            if (jsonParser.nextToken() != JsonToken.START_OBJECT) {
+                returnedList = new ArrayList<>();
+            }
+            else {
+                final MappingIterator<JsonNode> mappingIterator = objectMapper.readValues(jsonParser, JsonNode.class);
+                final List<HECRecord> syslogMessages = new ArrayList<>();
+                HECRecord eventData;
 
-        HECRecord eventData;
-        final List<HECRecord> syslogMessages = new ArrayList<>();
-        while (parser.hasNext()) {
+                while (mappingIterator.hasNext()) {
+                    // mappingIterator.next() will throw a RuntimeException if JSON is malformed
+                    final JsonEvent jsonEvent = new JsonEventImpl(mappingIterator.next());
 
-            final String jsonObjectStr = parser.next().toString();
-            /*
-             * Event field cannot be missing or blank. Throws an exception if this is the
-             * case.
-             */
-            final JsonEvent jsonEvent = new JsonEventImpl(new ObjectMapper().readTree(jsonObjectStr));
+                    eventData = new HECRecordImpl(
+                            this.channel,
+                            jsonEvent.asEventMessage(),
+                            this.authToken,
+                            0,
+                            new HECTimeImplWithFallback(new HECTimeImpl(jsonEvent), previousEvent.time()),
+                            this.headerInfo
+                    );
+                    // Set the previous event if the "current" event was parsed without an exception
+                    previousEvent = eventData;
 
-            eventData = new HECRecordImpl(
-                    this.channel,
-                    jsonEvent.asEventMessage(),
-                    this.authToken,
-                    0,
-                    new HECTimeImplWithFallback(new HECTimeImpl(jsonEvent), previousEvent.time()),
-                    this.headerInfo
-            );
-            // Set the previous event if the "current" event was parsed without an exception
-            previousEvent = eventData;
-
-            syslogMessages.add(eventData);
+                    syslogMessages.add(eventData);
+                }
+                returnedList = syslogMessages;
+            }
         }
-
-        return syslogMessages;
+        return returnedList;
     }
 }
