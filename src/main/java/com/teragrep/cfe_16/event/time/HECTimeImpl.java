@@ -54,10 +54,10 @@ import java.util.Objects;
 
 public final class HECTimeImpl implements HECTime {
 
-    private final JsonEvent timeNode1;
+    private final JsonEvent jsonEvent;
 
-    public HECTimeImpl(final JsonEvent timeNode) {
-        this.timeNode1 = timeNode;
+    public HECTimeImpl(final JsonEvent jsonEvent) {
+        this.jsonEvent = jsonEvent;
     }
 
     @Override
@@ -66,8 +66,8 @@ public final class HECTimeImpl implements HECTime {
         JsonNode timeNode;
 
         try {
-            if (timeNode1.hasTime()) {
-                timeNode = timeNode1.asTimeJsonNode();
+            if (jsonEvent.hasTime()) {
+                timeNode = jsonEvent.asTimeJsonNode();
             }
             else {
                 timeNode = new TextNode("");
@@ -132,8 +132,8 @@ public final class HECTimeImpl implements HECTime {
         JsonNode timeNode;
 
         try {
-            if (timeNode1.hasTime()) {
-                timeNode = timeNode1.asTimeJsonNode();
+            if (jsonEvent.hasTime()) {
+                timeNode = jsonEvent.asTimeJsonNode();
             }
             else {
                 timeNode = new TextNode("");
@@ -176,8 +176,8 @@ public final class HECTimeImpl implements HECTime {
         JsonNode timeNode;
 
         try {
-            if (timeNode1.hasTime()) {
-                timeNode = timeNode1.asTimeJsonNode();
+            if (jsonEvent.hasTime()) {
+                timeNode = jsonEvent.asTimeJsonNode();
             }
             else {
                 timeNode = new TextNode("");
@@ -230,12 +230,12 @@ public final class HECTimeImpl implements HECTime {
         }
 
         final HECTimeImpl hecTime = (HECTimeImpl) o;
-        return Objects.equals(timeNode1, hecTime.timeNode1);
+        return Objects.equals(jsonEvent, hecTime.jsonEvent);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(timeNode1);
+        return Objects.hashCode(jsonEvent);
     }
 
     @Override
