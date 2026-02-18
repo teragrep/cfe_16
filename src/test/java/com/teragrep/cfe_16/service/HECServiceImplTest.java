@@ -45,6 +45,9 @@
  */
 package com.teragrep.cfe_16.service;
 
+import com.teragrep.cfe_16.response.AcknowledgedJsonResponse;
+import com.teragrep.cfe_16.response.ExceptionJsonResponse;
+import com.teragrep.cfe_16.response.Response;
 import com.teragrep.cfe_16.server.TestServer;
 import com.teragrep.cfe_16.server.TestServerFactory;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -58,8 +61,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
+@TestPropertySource(properties = {
+        "syslog.server.host=127.0.0.1",
+        "syslog.server.port=1239",
+        "syslog.server.protocol=RELP",
+        "max.channels=1000000",
+        "max.ack.value=1000000",
+        "max.ack.age=20000",
+        "max.session.age=30000",
+        "poll.time=30000",
+        "server.print.times=true"
+})
 class HECServiceImplTest {
 
     private static final int SERVER_PORT = 1239;
@@ -82,9 +97,7 @@ class HECServiceImplTest {
 
     @AfterAll
     public static void close() {
-
         Assertions.assertDoesNotThrow(() -> server.close());
-
     }
 
     @AfterEach
@@ -102,7 +115,23 @@ class HECServiceImplTest {
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         final String channel = "CHANNEL_11111";
 
-        final var returnedResponse = Assertions
+        final Response returnedResponse = Assertions
                 .assertDoesNotThrow(() -> service.sendEvents(request1, channel, allEventsInJson));
+
+        Assertions.assertEquals(ExceptionJsonResponse.class, returnedResponse.getClass());
+    }
+
+    @Test
+    @DisplayName("test the SendEvents when JSON is not malformed")
+    void testTheSendEventsWhenJsonIsNotMalformed() {
+        final String allEventsInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": {\"message\":\"Access log test message 1\"}} {\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": {\"message\":\"Access log test message 2\"}}";
+        final MockHttpServletRequest request1 = new MockHttpServletRequest();
+        request1.addHeader("Authorization", "AUTH_TOKEN_11111");
+        final String channel = "CHANNEL_11111";
+
+        final Response returnedResponse = Assertions
+                .assertDoesNotThrow(() -> service.sendEvents(request1, channel, allEventsInJson));
+
+        Assertions.assertEquals(AcknowledgedJsonResponse.class, returnedResponse.getClass());
     }
 }
