@@ -50,14 +50,19 @@ import com.teragrep.net_01.server.Server;
 
 import java.util.concurrent.ExecutorService;
 
-public class TestServer implements Runnable, AutoCloseable {
+public final class TestServer implements Runnable, AutoCloseable {
 
     private final EventLoop eventLoop;
     private final Thread eventLoopThread;
     private final ExecutorService executorService;
     private final Server server;
 
-    public TestServer(EventLoop eventLoop, Thread eventLoopThread, ExecutorService executorService, Server server) {
+    public TestServer(
+            final EventLoop eventLoop,
+            final Thread eventLoopThread,
+            final ExecutorService executorService,
+            final Server server
+    ) {
         this.eventLoop = eventLoop;
         this.eventLoopThread = eventLoopThread;
         this.executorService = executorService;
