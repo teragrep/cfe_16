@@ -136,15 +136,12 @@ public class HECServiceImpl implements HECService {
     }
 
     @Override
-    // @LogAnnotation(type = LogType.METRIC_COUNTER)
     public Response sendEvents(HttpServletRequest request, String channel, String eventInJson) {
         LOGGER.debug("Sending events to channel <{}>", channel);
         if (this.tokenManager.tokenIsMissing(request)) {
             throw new AuthenticationTokenMissingException("Authentication token must be provided");
         }
-        // AspectLoggerWrapper.logMetricCounter(null, "metric_counter", 10);
-        // AspectLoggerWrapper.logMetricDuration(null, "new_metric",
-        // MetricDurationOptionsImpl.MetricDuration.P10S);
+
         String authHeader = request.getHeader("Authorization");
         LOGGER.debug("Creating new Header Info");
 
@@ -222,8 +219,6 @@ public class HECServiceImpl implements HECService {
         return responseToReturn;
     }
 
-    // @LogAnnotation(type = LogType.RESPONSE)
-
     @SuppressWarnings("deprecation")
     @Override
     public JsonNode getAcks(HttpServletRequest request, String channel, JsonNode requestedAcksInJson) {
@@ -269,7 +264,6 @@ public class HECServiceImpl implements HECService {
         responseNode.put("acks", requestedAckStatuses);
         return responseNode;
     }
-    // @LogAnnotation(type = LogType.RESPONSE)
 
     @Override
     public ResponseEntity<String> healthCheck(HttpServletRequest request) {
