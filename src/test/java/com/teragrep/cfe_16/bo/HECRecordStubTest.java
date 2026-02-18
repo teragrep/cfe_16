@@ -46,6 +46,7 @@
 package com.teragrep.cfe_16.bo;
 
 import com.teragrep.cfe_16.event.time.HECTime;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -127,33 +128,9 @@ class HECRecordStubTest {
     }
 
     @Test
-    @DisplayName("hashCode() throws UnsupportedOperationException if called")
-    void hashCodeThrowsUnsupportedOperationExceptionIfCalled() {
-        final HECRecordStub stub = new HECRecordStub();
-
-        final UnsupportedOperationException unsupportedOperationException = Assertions
-                .assertThrowsExactly(UnsupportedOperationException.class, stub::hashCode);
-
-        Assertions
-                .assertEquals(
-                        "HECRecordStub does not support this", unsupportedOperationException.getMessage(),
-                        "Exception message was not what was expected"
-                );
-    }
-
-    @Test
-    @DisplayName("equals() throws UnsupportedOperationException if called")
-    void equalsThrowsUnsupportedOperationExceptionIfCalled() {
-        final HECRecordStub stub = new HECRecordStub();
-
-        final UnsupportedOperationException unsupportedOperationException = Assertions
-                .assertThrowsExactly(UnsupportedOperationException.class, () -> stub.equals(new Object()));
-
-        Assertions
-                .assertEquals(
-                        "HECRecordStub does not support this", unsupportedOperationException.getMessage(),
-                        "Exception message was not what was expected"
-                );
+    @DisplayName("equalsVerifier test")
+    void equalsVerifierTest() {
+        EqualsVerifier.forClass(HECRecordStub.class).verify();
     }
 
     @Test

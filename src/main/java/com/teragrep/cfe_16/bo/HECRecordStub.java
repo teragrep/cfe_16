@@ -52,6 +52,16 @@ import com.teragrep.cfe_16.event.time.HECTimeStub;
 
 public final class HECRecordStub implements HECRecord {
 
+    private final boolean isStub;
+
+    public HECRecordStub() {
+        this(true);
+    }
+
+    private HECRecordStub(final boolean isStub) {
+        this.isStub = isStub;
+    }
+
     @Override
     public EventMessage event() {
         throw new UnsupportedOperationException("HECRecordStub does not support this");
@@ -89,16 +99,25 @@ public final class HECRecordStub implements HECRecord {
 
     @Override
     public boolean isStub() {
-        return true;
+        return isStub;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        final boolean equals;
+        if (o == null || getClass() != o.getClass()) {
+            equals = false;
+        }
+        else {
+            final HECRecordStub that = (HECRecordStub) o;
+            equals = isStub() == that.isStub();
+        }
+
+        return equals;
     }
 
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException("HECRecordStub does not support this");
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        throw new UnsupportedOperationException("HECRecordStub does not support this");
+        return Boolean.hashCode(isStub());
     }
 }
