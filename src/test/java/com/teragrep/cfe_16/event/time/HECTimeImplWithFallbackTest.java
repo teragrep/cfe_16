@@ -100,9 +100,9 @@ class HECTimeImplWithFallbackTest {
 
     @Test
     @DisplayName(
-        "instant() returns the instant() value from the fallbackTime is currentTime.instant() is teh defaultValue"
+        "instant() returns the instant() value from the fallbackTime is currentTime.instant() is the defaultValue"
     )
-    void instantReturnsTheInstantValueFromTheFallbackTimeIsCurrentTimeInstantIsTehDefaultValue() {
+    void instantReturnsTheInstantValueFromTheFallbackTimeIsCurrentTimeInstantIsTheDefaultValue() {
         final String jsonThatWillBeDefaultTime = "{}";
         final String usableJsonTime = "1433188255.253";
 
