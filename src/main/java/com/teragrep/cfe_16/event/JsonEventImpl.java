@@ -114,15 +114,7 @@ public final class JsonEventImpl implements JsonEvent {
 
     @Override
     public boolean hasTime() {
-        final boolean hasTime;
-
-        if (this.jsonNode.has("time")) {
-            hasTime = true;
-        }
-        else {
-            hasTime = false;
-        }
-        return hasTime;
+        return this.jsonNode.has("time");
     }
 
     @Override
