@@ -45,12 +45,7 @@
  */
 package com.teragrep.cfe_16.response;
 
-import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.XForwardedForStub;
-import com.teragrep.cfe_16.bo.XForwardedHostStub;
-import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -60,20 +55,5 @@ class ExceptionEventContextTest {
     @DisplayName("equalsVerifier")
     void equalsVerifier() {
         EqualsVerifier.forClass(ExceptionEventContext.class).verify();
-    }
-
-    @Test
-    @DisplayName("toString returns expected String")
-    void toStringReturnsExpectedString() {
-        final String expectedValue = "ExceptionEventContext{headerInfo=HeaderInfo{xForwardedFor=com.teragrep.cfe_16.bo.XForwardedForStub@f10da, xForwardedHost=com.teragrep.cfe_16.bo.XForwardedHostStub@3b90c, xForwardedProto=com.teragrep.cfe_16.bo.XForwardedProtoStub@38a33}, userAgent='user agent 1', uriPath='uri/path', host='localhost'}";
-
-        final ExceptionEventContext exceptionEventContext = new ExceptionEventContext(
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub()),
-                "user agent 1",
-                "uri/path",
-                "localhost"
-        );
-
-        Assertions.assertEquals(expectedValue, exceptionEventContext.toString());
     }
 }

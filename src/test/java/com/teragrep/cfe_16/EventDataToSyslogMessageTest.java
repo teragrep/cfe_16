@@ -52,9 +52,6 @@ import com.cloudbees.syslog.Severity;
 import com.cloudbees.syslog.SyslogMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.XForwardedForStub;
-import com.teragrep.cfe_16.bo.XForwardedHostStub;
-import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import com.teragrep.cfe_16.bo.HECRecordImpl;
 import com.teragrep.cfe_16.event.EventMessageImpl;
 import com.teragrep.cfe_16.event.JsonEventImpl;
@@ -67,6 +64,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * Tests the functionality of the eventData.toSyslogMessage method
@@ -87,7 +85,7 @@ public class EventDataToSyslogMessageTest {
                 "AUTH_TOKEN_11111",
                 0,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "1433188255253"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         expectedMetadataSDE1.addSDParam("authentication_token", hecRecord1.authenticationToken());
@@ -150,7 +148,7 @@ public class EventDataToSyslogMessageTest {
                 "AUTH_TOKEN_11111",
                 0,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "1433188255253"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         final SyslogMessage returnedSyslogMessage = hecRecord1.toSyslogMessage();
@@ -188,7 +186,7 @@ public class EventDataToSyslogMessageTest {
                 "AUTH_TOKEN_22222",
                 1,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "null"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
         expectedMetadataSDE2.addSDParam("authentication_token", hecRecord2.authenticationToken());
         expectedMetadataSDE2.addSDParam("channel", hecRecord2.channel());
@@ -248,7 +246,7 @@ public class EventDataToSyslogMessageTest {
                 "AUTH_TOKEN_22222",
                 1,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "null"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         final SyslogMessage returnedSyslogMessage = hecRecord.toSyslogMessage(currentEpoch);
@@ -286,7 +284,7 @@ public class EventDataToSyslogMessageTest {
                 "AUTH_TOKEN_33333",
                 null,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "null"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
         expectedMetadataSDE3.addSDParam("authentication_token", hecRecord3.authenticationToken());
         expectedMetadataSDE3.addSDParam("channel", hecRecord3.channel());
@@ -344,7 +342,7 @@ public class EventDataToSyslogMessageTest {
                 "AUTH_TOKEN_33333",
                 null,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "null"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         final SyslogMessage returnedSyslogMessage = hecRecord.toSyslogMessage(currentEpoch);

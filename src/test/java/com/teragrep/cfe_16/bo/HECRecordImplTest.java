@@ -55,6 +55,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 class HECRecordImplTest {
 
@@ -67,7 +68,7 @@ class HECRecordImplTest {
                 "authToken",
                 1,
                 new HECTimeImpl(new JsonEventFake()),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         Assertions.assertEquals("generated", hecRecord.time().source());
@@ -82,7 +83,7 @@ class HECRecordImplTest {
                 "authToken",
                 1,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "123456"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         Assertions.assertEquals("reported", hecRecord.time().source());
@@ -97,7 +98,7 @@ class HECRecordImplTest {
                 "authToken",
                 1,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "12345678901234"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         Assertions.assertEquals("reported", hecRecord.time().source());
@@ -112,7 +113,7 @@ class HECRecordImplTest {
                 "authToken",
                 1,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "1234567890123"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         Assertions.assertEquals("reported", hecRecord.time().source());
@@ -133,7 +134,7 @@ class HECRecordImplTest {
                 "authToken",
                 1,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "1234567890123"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         final EventMessage expectedResult = new EventMessageImpl("event");
@@ -150,7 +151,7 @@ class HECRecordImplTest {
                 "authToken",
                 1,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "1234567890123"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         final String expectedResult = "channel";
@@ -167,7 +168,7 @@ class HECRecordImplTest {
                 "authToken",
                 1,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "1234567890123"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         final String expectedResult = "authToken";
@@ -184,7 +185,7 @@ class HECRecordImplTest {
                 "authToken",
                 123,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "1234567890123"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         final Integer expectedResult = 123;
@@ -201,7 +202,7 @@ class HECRecordImplTest {
                 "authToken",
                 null,
                 new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "1234567890123"))),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         Assertions.assertNull(hecRecord.ackID());

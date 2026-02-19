@@ -49,9 +49,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.bo.HECRecord;
 import com.teragrep.cfe_16.bo.HECRecordImpl;
 import com.teragrep.cfe_16.bo.HeaderInfo;
-import com.teragrep.cfe_16.bo.XForwardedForStub;
-import com.teragrep.cfe_16.bo.XForwardedHostStub;
-import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import com.teragrep.cfe_16.event.EventMessageImpl;
 import com.teragrep.cfe_16.event.JsonEventImpl;
 import com.teragrep.cfe_16.event.time.HECTimeImpl;
@@ -61,6 +58,7 @@ import com.teragrep.cfe_16.exceptionhandling.EventFieldException;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 class HECBatchTest {
 
@@ -79,14 +77,14 @@ class HECBatchTest {
                         new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", 123456))),
                         new HECTimeStub()
                 ),
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         final HECBatch HECBatch = new HECBatch(
                 authToken1,
                 channel1,
                 allEventsInJson,
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
         final List<HECRecord> response = Assertions.assertDoesNotThrow(HECBatch::toHECRecordList);
 
@@ -112,7 +110,7 @@ class HECBatchTest {
                 authToken1,
                 channel1,
                 allEventsInJson,
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         Assertions.assertThrowsExactly(RuntimeException.class, () -> HECBatch.toHECRecordList().toString());
@@ -129,7 +127,7 @@ class HECBatchTest {
                 authToken1,
                 channel1,
                 allEventsInJson,
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
         final Exception exception = Assertions
                 .assertThrowsExactly(EventFieldException.class, () -> HECBatch.toHECRecordList().toString());
@@ -146,7 +144,7 @@ class HECBatchTest {
                 authToken1,
                 channel1,
                 allEventsInJson,
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         Assertions.assertThrows(EventFieldException.class, () -> HECBatch.toHECRecordList().toString());
@@ -159,7 +157,7 @@ class HECBatchTest {
                 authToken1,
                 channel1,
                 allEventsInJson,
-                new HeaderInfo(new XForwardedForStub(), new XForwardedHostStub(), new XForwardedProtoStub())
+                new HeaderInfo(new MockHttpServletRequest())
         );
 
         Assertions.assertThrows(EventFieldException.class, () -> HECBatch.toHECRecordList().toString());

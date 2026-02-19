@@ -46,20 +46,22 @@
 package com.teragrep.cfe_16.bo;
 
 import com.cloudbees.syslog.SDElement;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 class HeaderInfoTest {
 
     @Test
     @DisplayName("asSDElement() uses all three parameters if they are not stubs")
     void asSdElementUsesAllThreeParametersIfTheyAreNotStubs() {
-        final HeaderInfo headerInfo = new HeaderInfo(
-                new XForwardedForImpl("forwardedFor"),
-                new XForwardedHostImpl("forwardedHost"),
-                new XForwardedProtoImpl("forwardedProto")
-        );
+        final MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        mockHttpServletRequest.addHeader("X-Forwarded-For", "forwardedFor");
+        mockHttpServletRequest.addHeader("X-Forwarded-Host", "forwardedHost");
+        mockHttpServletRequest.addHeader("X-Forwarded-Proto", "forwardedProto");
+        final HeaderInfo headerInfo = new HeaderInfo(mockHttpServletRequest);
 
         final SDElement expectedSDElement = new SDElement("cfe_16-origin@48577");
         expectedSDElement.addSDParam("X-Forwarded-For", "forwardedFor");
@@ -72,11 +74,10 @@ class HeaderInfoTest {
     @Test
     @DisplayName("asSDElement ignores stubs")
     void asSdElementIgnoresStubs() {
-        final HeaderInfo headerInfo = new HeaderInfo(
-                new XForwardedForImpl("forwardedFor"),
-                new XForwardedHostStub(),
-                new XForwardedProtoImpl("forwardedProto")
-        );
+        final MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        mockHttpServletRequest.addHeader("X-Forwarded-For", "forwardedFor");
+        mockHttpServletRequest.addHeader("X-Forwarded-Proto", "forwardedProto");
+        final HeaderInfo headerInfo = new HeaderInfo(mockHttpServletRequest);
 
         final SDElement expectedSDElement = new SDElement("cfe_16-origin@48577");
         expectedSDElement.addSDParam("X-Forwarded-For", "forwardedFor");
@@ -87,36 +88,8 @@ class HeaderInfoTest {
     }
 
     @Test
-    @DisplayName("Happy equals test")
-    void happyEqualsTest() {
-        final HeaderInfo headerInfo1 = new HeaderInfo(
-                new XForwardedForImpl("forwardedFor"),
-                new XForwardedHostImpl("forwardedHost"),
-                new XForwardedProtoImpl("forwardedProto")
-        );
-        final HeaderInfo headerInfo2 = new HeaderInfo(
-                new XForwardedForImpl("forwardedFor"),
-                new XForwardedHostImpl("forwardedHost"),
-                new XForwardedProtoImpl("forwardedProto")
-        );
-
-        Assertions.assertEquals(headerInfo1, headerInfo2);
-    }
-
-    @Test
-    @DisplayName("Unhappy equals test")
-    void unhappyEqualsTest() {
-        final HeaderInfo headerInfo1 = new HeaderInfo(
-                new XForwardedForImpl("forwardedFor"),
-                new XForwardedHostImpl("forwardedHost"),
-                new XForwardedProtoImpl("forwardedProto")
-        );
-        final HeaderInfo headerInfo2 = new HeaderInfo(
-                new XForwardedForImpl("forwardedFor1234"),
-                new XForwardedHostImpl("forwardedHost"),
-                new XForwardedProtoImpl("forwardedProto")
-        );
-
-        Assertions.assertNotEquals(headerInfo1, headerInfo2);
+    @DisplayName("EqualsVerifier")
+    void equalsVerifier() {
+        EqualsVerifier.forClass(HeaderInfo.class).verify();
     }
 }
