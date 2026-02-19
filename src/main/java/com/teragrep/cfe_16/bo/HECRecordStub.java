@@ -118,6 +118,6 @@ public final class HECRecordStub implements HECRecord {
 
     @Override
     public int hashCode() {
-        return Boolean.hashCode(isStub());
+        return Boolean.hashCode(isStub);
     }
 }

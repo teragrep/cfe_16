@@ -95,6 +95,6 @@ public final class HECTimeStub implements HECTime {
 
     @Override
     public int hashCode() {
-        return Boolean.hashCode(isStub());
+        return Boolean.hashCode(isStub);
     }
 }

@@ -83,6 +83,6 @@ public final class EventMessageStub implements EventMessage {
 
     @Override
     public int hashCode() {
-        return Boolean.hashCode(isStub());
+        return Boolean.hashCode(isStub);
     }
 }
