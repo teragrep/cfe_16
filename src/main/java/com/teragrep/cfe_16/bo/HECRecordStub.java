@@ -49,6 +49,7 @@ import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.cfe_16.event.EventMessage;
 import com.teragrep.cfe_16.event.time.HECTime;
 import com.teragrep.cfe_16.event.time.HECTimeStub;
+import java.util.Objects;
 
 public final class HECRecordStub implements HECRecord {
 
@@ -118,6 +119,6 @@ public final class HECRecordStub implements HECRecord {
 
     @Override
     public int hashCode() {
-        return Boolean.hashCode(isStub);
+        return Objects.hashCode(isStub);
     }
 }

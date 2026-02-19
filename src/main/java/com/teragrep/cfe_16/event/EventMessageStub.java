@@ -45,6 +45,8 @@
  */
 package com.teragrep.cfe_16.event;
 
+import java.util.Objects;
+
 public final class EventMessageStub implements EventMessage {
 
     private final boolean isStub;
@@ -83,6 +85,6 @@ public final class EventMessageStub implements EventMessage {
 
     @Override
     public int hashCode() {
-        return Boolean.hashCode(isStub);
+        return Objects.hashCode(isStub);
     }
 }

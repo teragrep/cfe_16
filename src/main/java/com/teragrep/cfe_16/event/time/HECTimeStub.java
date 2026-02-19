@@ -45,6 +45,8 @@
  */
 package com.teragrep.cfe_16.event.time;
 
+import java.util.Objects;
+
 public final class HECTimeStub implements HECTime {
 
     private final boolean isStub;
@@ -95,6 +97,6 @@ public final class HECTimeStub implements HECTime {
 
     @Override
     public int hashCode() {
-        return Boolean.hashCode(isStub);
+        return Objects.hashCode(isStub);
     }
 }
