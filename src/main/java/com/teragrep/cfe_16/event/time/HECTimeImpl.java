@@ -72,11 +72,7 @@ public final class HECTimeImpl implements HECTime {
             timeNode = jsonEvent.asTimeJsonNode();
         }
         catch (final EventFieldException e) {
-            LOGGER
-                    .info(
-                            "Could not parse time from JsonEvent <[{}]>, so using defaultValue provided <[{}]>",
-                            jsonEvent.asPayloadJsonNode(), defaultValue
-                    );
+            LOGGER.info("Could not parse time from JSON, so using defaultValue provided <[{}]>", defaultValue);
             timeNode = new TextNode("");
         }
 
