@@ -45,40 +45,55 @@
  */
 package com.teragrep.cfe_16.it;
 
-import com.teragrep.cfe_16.config.Configuration;
+import com.teragrep.cfe_16.response.AcknowledgedJsonResponse;
+import com.teragrep.cfe_16.response.Response;
 import com.teragrep.cfe_16.server.TestServer;
 import com.teragrep.cfe_16.server.TestServerFactory;
+import com.teragrep.cfe_16.service.HECService;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+@TestPropertySource(properties = {
+        "syslog.server.host=127.0.0.1",
+        "syslog.server.port=1238",
+        "syslog.server.protocol=RELP",
+        "max.channels=1000000",
+        "max.ack.value=1000000",
+        "max.ack.age=20000",
+        "max.session.age=30000",
+        "poll.time=30000",
+        "spring.devtools.add-properties=false",
+        "server.print.times=true"
+})
 @SpringBootTest
-public class ConfigurationIT {
+public class SendSingleEventIT {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationIT.class);
-    private static final String hostname = "localhost";
-    private static final Integer port = 1235;
+    private static final int SERVER_PORT = 1238;
     private static final ConcurrentLinkedDeque<byte[]> messageList = new ConcurrentLinkedDeque<>();
     private static final AtomicLong openCount = new AtomicLong();
     private static final AtomicLong closeCount = new AtomicLong();
     private static TestServer server;
     @Autowired
-    private Configuration configuration;
+    private HECService service;
+    private MockHttpServletRequest request1;
+    private String eventInJson;
+    private String channel1;
 
     @BeforeAll
     public static void init() {
         final TestServerFactory serverFactory = new TestServerFactory();
-        server = Assertions.assertDoesNotThrow(() -> serverFactory.create(port, messageList, openCount, closeCount));
+        server = Assertions
+                .assertDoesNotThrow(() -> serverFactory.create(SERVER_PORT, messageList, openCount, closeCount));
         server.run();
     }
 
@@ -94,15 +109,24 @@ public class ConfigurationIT {
         messageList.clear();
     }
 
-    @Test
-    public void instantiateConfigurationTest() {
-        String expected = "Configuration [syslogHost=127.0.0.1, syslogProtocol=relp, syslogPort=1235, maxAckValue=1000000, maxAckAge=20000, maxSessionAge=30000, "
-                + "maxChannels=1000000, pollTime=1000000, printTimes=true]";
-        LOGGER.debug(configuration.toString());
+    @BeforeEach
+    public void initEach() {
+        this.request1 = new MockHttpServletRequest();
+        this.request1.addHeader("Authorization", "AUTH_TOKEN_11111");
+        this.channel1 = "CHANNEL_11111";
+        this.eventInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
+                + "\"event\": {\"message\":\"Access log test message 1\"}} "
+                + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
+                + "{\"message\":\"Access log test message 2\"}}";
+    }
 
-        assertEquals(expected, configuration.toString());
-        assertEquals(0, messageList.size());
-        assertEquals(1, openCount.get());
-        assertEquals(0, closeCount.get());
+    @Test
+    public void send1EventTest() {
+        final Response supposedResponse = new AcknowledgedJsonResponse("Success", 0);
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request1, channel1, eventInJson), "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID " + "should be " + 0 + ")");
+
+        Assertions
+                .assertEquals(2, messageList.size(), "Number of events received should match the number of sent ones");
     }
 }

@@ -1,0 +1,238 @@
+/*
+ * HTTP Event Capture to RFC5424 CFE_16
+ * Copyright (C) 2021-2025 Suomen Kanuuna Oy
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ *
+ * Additional permission under GNU Affero General Public License version 3
+ * section 7
+ *
+ * If you modify this Program, or any covered work, by linking or combining it
+ * with other code, such other code is not for that reason alone subject to any
+ * of the requirements of the GNU Affero GPL version 3 as long as this Program
+ * is the same Program as licensed from Suomen Kanuuna Oy without any additional
+ * modifications.
+ *
+ * Supplemented terms under GNU Affero General Public License version 3
+ * section 7
+ *
+ * Origin of the software must be attributed to Suomen Kanuuna Oy. Any modified
+ * versions must be marked as "Modified version of" The Program.
+ *
+ * Names of the licensors and authors may not be used for publicity purposes.
+ *
+ * No rights are granted for use of trade names, trademarks, or service marks
+ * which are in The Program if any.
+ *
+ * Licensee must indemnify licensors and authors for any liability that these
+ * contractual assumptions impose on licensors and authors.
+ *
+ * To the extent this program is licensed as part of the Commercial versions of
+ * Teragrep, the applicable Commercial License may apply to this file if you as
+ * a licensee so wish it.
+ */
+package com.teragrep.cfe_16.event.time;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teragrep.cfe_16.event.JsonEvent;
+import com.teragrep.cfe_16.event.JsonEventImpl;
+import java.time.Instant;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+class HECTimeImplWithFallbackTest {
+
+    @Test
+    @DisplayName("instant() returns the defaultValue if currentTime uses the defaultValue and fallbackTime is a stub")
+    void instantReturnsTheDefaultValueIfCurrentTimeUsesTheDefaultValueAndFallbackTimeIsAStub() {
+        final String content = "{}";
+        final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
+        final JsonEvent jsonEvent = new JsonEventImpl(new ObjectMapper().createObjectNode().set("time", jsonNode));
+
+        final HECTime currentTimeWithTrueParsedValue = new HECTimeImpl(jsonEvent);
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                currentTimeWithTrueParsedValue,
+                new HECTimeStub()
+        );
+        final long currentEpoch = Instant.now().toEpochMilli();
+        final long returnedInstant = Assertions.assertDoesNotThrow(() -> hecTimeImplWithFallback.instant(currentEpoch));
+
+        Assertions.assertEquals(currentEpoch, returnedInstant);
+    }
+
+    @Test
+    @DisplayName("instant() returns the non-default value from currentTime")
+    void instantReturnsTheNonDefaultValueFromCurrentTime() {
+        final String content = "1433188255.253";
+        final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
+
+        final HECTime currentTimeWithTrueParsedValue = new HECTimeImpl(
+                new JsonEventImpl(new ObjectMapper().createObjectNode().set("time", jsonNode))
+        );
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                currentTimeWithTrueParsedValue,
+                new HECTimeStub()
+        );
+
+        final long currentEpoch = Instant.now().toEpochMilli();
+        final long expectedTime = 1433188255253L;
+        final long returnedInstant = Assertions.assertDoesNotThrow(() -> hecTimeImplWithFallback.instant(currentEpoch));
+
+        Assertions.assertEquals(expectedTime, returnedInstant);
+    }
+
+    @Test
+    @DisplayName(
+        "instant() returns the instant() value from the fallbackTime is currentTime.instant() is the defaultValue"
+    )
+    void instantReturnsTheInstantValueFromTheFallbackTimeIsCurrentTimeInstantIsTheDefaultValue() {
+        final String jsonThatWillBeDefaultTime = "{}";
+        final String usableJsonTime = "1433188255.253";
+
+        final JsonNode jsonNode1 = Assertions
+                .assertDoesNotThrow(() -> new ObjectMapper().readTree(jsonThatWillBeDefaultTime));
+        final JsonNode jsonNode2 = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(usableJsonTime));
+
+        final HECTime currentTime = new HECTimeImpl(
+                new JsonEventImpl(new ObjectMapper().createObjectNode().set("time", jsonNode1))
+        );
+        final HECTime fallbackTime = new HECTimeImpl(
+                new JsonEventImpl(new ObjectMapper().createObjectNode().set("time", jsonNode2))
+        );
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(currentTime, fallbackTime);
+
+        final long currentEpoch = Instant.now().toEpochMilli();
+        final long expectedTime = 1433188255253L;
+        final long returnedInstant = Assertions.assertDoesNotThrow(() -> hecTimeImplWithFallback.instant(currentEpoch));
+
+        Assertions.assertEquals(expectedTime, returnedInstant);
+    }
+
+    @Test
+    @DisplayName("isParsed() returns false if current and fallback times are both stubs")
+    void isParsedReturnsFalseIfCurrentAndFallbackTimesAreBothStubs() {
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                new HECTimeStub(),
+                new HECTimeStub()
+        );
+
+        final boolean returnedParsed = Assertions.assertDoesNotThrow(hecTimeImplWithFallback::isParsed);
+        Assertions.assertFalse(returnedParsed);
+    }
+
+    @Test
+    @DisplayName(
+        "isParsed() returns the isParsed() value from currentTime if it is not a stub and fallbackTime is a stub"
+    )
+    void isParsedReturnsTheIsParsedValueFromCurrentTimeIfItIsNotAStubAndFallbackTimeIsAStub() {
+        final String content = "1433188255.253";
+        final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
+
+        final HECTime currentTimeWithTrueParsedValue = new HECTimeImpl(
+                new JsonEventImpl(new ObjectMapper().createObjectNode().set("time", jsonNode))
+        );
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                currentTimeWithTrueParsedValue,
+                new HECTimeStub()
+        );
+        final boolean returnedParsed = Assertions.assertDoesNotThrow(hecTimeImplWithFallback::isParsed);
+        Assertions.assertTrue(returnedParsed);
+    }
+
+    @Test
+    @DisplayName("isParsed() returns the isParsed() value from the fallback time if the currentTime is a stub")
+    void isParsedReturnsTheIsParsedValueFromTheFallbackTimeIfTheCurrentTimeIsAStub() {
+        final String content = "1433188255.253";
+        final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
+
+        final HECTime fallbackTimeWithTrueParsedValue = new HECTimeImpl(
+                new JsonEventImpl(new ObjectMapper().createObjectNode().set("time", jsonNode))
+        );
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                new HECTimeStub(),
+                fallbackTimeWithTrueParsedValue
+        );
+        final boolean returnedParsed = Assertions.assertDoesNotThrow(hecTimeImplWithFallback::isParsed);
+        Assertions.assertTrue(returnedParsed);
+    }
+
+    @Test
+    @DisplayName("source() returns \"generated\" if current and fallback times are both stubs")
+    void sourceReturnsGeneratedIfCurrentAndFallbackTimesAreBothStubs() {
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                new HECTimeStub(),
+                new HECTimeStub()
+        );
+
+        final String returnedSource = Assertions.assertDoesNotThrow(hecTimeImplWithFallback::source);
+        Assertions.assertEquals("generated", returnedSource);
+    }
+
+    @Test
+    @DisplayName(
+        "source() returns the source() value from the current time if it is not a stub and the fallback time is a stub"
+    )
+    void sourceReturnsTheSourceValueFromTheCurrentTimeIfItIsNotAStubAndTheFallbackTimeIsAStub() {
+        final String content = "1433188255.253";
+        final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
+
+        final HECTime currentTime = new HECTimeImpl(
+                new JsonEventImpl(new ObjectMapper().createObjectNode().set("time", jsonNode))
+        );
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                currentTime,
+                new HECTimeStub()
+        );
+
+        final String returnedSource = Assertions.assertDoesNotThrow(hecTimeImplWithFallback::source);
+
+        Assertions.assertEquals("reported", returnedSource);
+    }
+
+    @Test
+    @DisplayName("source() returns the source() value from the fallback time if the current time is a stub")
+    void sourceReturnsTheSourceValueFromTheFallbackTimeIfTheCurrentTimeIsAStub() {
+        final String content = "1433188255.253";
+        final JsonNode jsonNode = Assertions.assertDoesNotThrow(() -> new ObjectMapper().readTree(content));
+
+        final HECTime fallbackTime = new HECTimeImpl(
+                new JsonEventImpl(new ObjectMapper().createObjectNode().set("time", jsonNode))
+        );
+
+        final HECTimeImplWithFallback hecTimeImplWithFallback = new HECTimeImplWithFallback(
+                new HECTimeStub(),
+                fallbackTime
+        );
+
+        final String returnedSource = Assertions.assertDoesNotThrow(hecTimeImplWithFallback::source);
+
+        Assertions.assertEquals("reported", returnedSource);
+    }
+
+    @Test
+    @DisplayName("equalsVerifier")
+    void equalsVerifier() {
+        EqualsVerifier.forClass(HECTimeImplWithFallback.class).verify();
+    }
+}

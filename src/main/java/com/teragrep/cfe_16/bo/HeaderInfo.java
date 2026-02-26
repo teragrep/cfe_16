@@ -46,6 +46,7 @@
 package com.teragrep.cfe_16.bo;
 
 import com.cloudbees.syslog.SDElement;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,59 +54,96 @@ import org.slf4j.LoggerFactory;
 public final class HeaderInfo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeaderInfo.class);
-    private final XForwardedFor xForwardedFor;
-    private final XForwardedHost xForwardedHost;
-    private final XForwardedProto xForwardedProto;
+    private final static XForwardedForStub xForwardedForStub = new XForwardedForStub();
+    private final static XForwardedHostStub xForwardedHostStub = new XForwardedHostStub();
+    private final static XForwardedProtoStub xForwardedProtoStub = new XForwardedProtoStub();
+    private final HttpServletRequest httpServletRequest;
 
-    public HeaderInfo(
-            final XForwardedFor xForwardedFor,
-            final XForwardedHost xForwardedHost,
-            final XForwardedProto xForwardedProto
-    ) {
-        this.xForwardedFor = xForwardedFor;
-        this.xForwardedHost = xForwardedHost;
-        this.xForwardedProto = xForwardedProto;
+    public HeaderInfo(final HttpServletRequest httpServletRequest) {
+        this.httpServletRequest = httpServletRequest;
     }
 
     public SDElement asSDElement() {
         LOGGER.debug("Setting Structured Data headers");
         final SDElement headerSDE = new SDElement("cfe_16-origin@48577");
 
-        if (!this.xForwardedFor.isStub()) {
+        final XForwardedFor xForwardedFor = this.xForwardedFor();
+        final XForwardedHost xForwardedHost = this.xForwardedHost();
+        final XForwardedProto xForwardedProto = this.xForwardedProto();
+
+        if (!xForwardedFor.isStub()) {
             LOGGER.debug("Adding X-Forwarded-For header to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-For", this.xForwardedFor.value());
+            headerSDE.addSDParam("X-Forwarded-For", xForwardedFor.value());
         }
-        if (!this.xForwardedHost.isStub()) {
+        if (!xForwardedHost.isStub()) {
             LOGGER.debug("Adding X-Forwarder-Host to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-Host", this.xForwardedHost.value());
+            headerSDE.addSDParam("X-Forwarded-Host", xForwardedHost.value());
         }
-        if (!this.xForwardedProto.isStub()) {
+        if (!xForwardedProto.isStub()) {
             LOGGER.debug("Adding X-Forwarded-Proto to headerSDE");
-            headerSDE.addSDParam("X-Forwarded-Proto", this.xForwardedProto.value());
+            headerSDE.addSDParam("X-Forwarded-Proto", xForwardedProto.value());
         }
 
         return headerSDE;
     }
 
-    @Override
-    public String toString() {
-        return "HeaderInfo{" + "xForwardedFor=" + xForwardedFor + ", xForwardedHost=" + xForwardedHost
-                + ", xForwardedProto=" + xForwardedProto + '}';
+    private XForwardedFor xForwardedFor() {
+        final XForwardedFor xForwardedFor;
+        LOGGER.debug("Setting X-Forwarded-For");
+        if (httpServletRequest.getHeader("X-Forwarded-For") == null) {
+            xForwardedFor = xForwardedForStub;
+        }
+        else {
+            xForwardedFor = new XForwardedForImpl(httpServletRequest.getHeader("X-Forwarded-For"));
+        }
+        LOGGER.trace("Setting X-Forwarded-For to value <[{}]>", xForwardedFor);
+
+        return xForwardedFor;
+    }
+
+    private XForwardedHost xForwardedHost() {
+        final XForwardedHost xForwardedHost;
+        LOGGER.debug("Setting X-Forwarded-Host");
+        if (httpServletRequest.getHeader("X-Forwarded-Host") == null) {
+            xForwardedHost = xForwardedHostStub;
+        }
+        else {
+            xForwardedHost = new XForwardedHostImpl(httpServletRequest.getHeader("X-Forwarded-Host"));
+        }
+        LOGGER.trace("Setting X-Forwarded-Host to value <[{}]>", xForwardedHost);
+        return xForwardedHost;
+    }
+
+    private XForwardedProto xForwardedProto() {
+        final XForwardedProto xForwardedProto;
+        LOGGER.debug("Setting X-Forwarded-Proto");
+        if (httpServletRequest.getHeader("X-Forwarded-Proto") == null) {
+            xForwardedProto = xForwardedProtoStub;
+        }
+        else {
+            xForwardedProto = new XForwardedProtoImpl(httpServletRequest.getHeader("X-Forwarded-Proto"));
+        }
+        LOGGER.trace("Setting X-Forwarded-Proto to value <[{}]>", xForwardedProto);
+        return xForwardedProto;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
-        HeaderInfo that = (HeaderInfo) o;
-        return Objects.equals(xForwardedFor, that.xForwardedFor) && Objects.equals(xForwardedHost, that.xForwardedHost)
-                && Objects.equals(xForwardedProto, that.xForwardedProto);
+        final HeaderInfo that = (HeaderInfo) o;
+        return Objects.equals(httpServletRequest, that.httpServletRequest);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(xForwardedFor, xForwardedHost, xForwardedProto);
+        return Objects.hashCode(httpServletRequest);
+    }
+
+    @Override
+    public String toString() {
+        return "HeaderInfo{" + "httpServletRequest=" + httpServletRequest + '}';
     }
 }

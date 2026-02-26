@@ -55,15 +55,12 @@ import com.teragrep.cfe_16.exceptionhandling.ServerIsBusyException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -86,7 +83,6 @@ import static org.junit.Assert.*;
 })
 public class AcknowledgementsIT {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AcknowledgementsIT.class);
     private String authToken1;
     private String authToken2;
 
@@ -183,43 +179,33 @@ public class AcknowledgementsIT {
      */
     @Test
     public void getRequestedAckStatusesTest() {
-        String requestAsString = "{\"acks\": [1,3,4]}";
-        String notIntRequestAsString = "{\"acks\": [\"a\",\"b\",\"c\"]}";
-        String faultyRequestAsString = "{\"test\": [1,3,4]}";
-        String supposedResponseAsStringOneTrue = "{\"1\":true,\"3\":false,\"4\":false}";
-        String supposedResponseAsStringAllFalse = "{\"1\":false,\"3\":false,\"4\":false}";
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode emptyJsonNode = mapper.createObjectNode();
-        JsonNode queryNode = mapper.createObjectNode();
-        JsonNode faultyNode = mapper.createObjectNode();
-        JsonNode notIntNode = mapper.createObjectNode();
+        final String requestAsString = "{\"acks\": [1,3,4]}";
+        final String notIntRequestAsString = "{\"acks\": [\"a\",\"b\",\"c\"]}";
+        final String faultyRequestAsString = "{\"test\": [1,3,4]}";
+        final String supposedResponseAsStringOneTrue = "{\"1\":true,\"3\":false,\"4\":false}";
+        final String supposedResponseAsStringAllFalse = "{\"1\":false,\"3\":false,\"4\":false}";
+        final ObjectMapper mapper = new ObjectMapper();
+        final JsonNode emptyJsonNode = mapper.createObjectNode();
+        final JsonNode queryNode;
+        final JsonNode faultyNode;
+        final JsonNode notIntNode;
         acknowledgements.initializeContext(this.authToken1, this.channel1);
         assertTrue(acknowledgements.addAck(this.authToken1, this.channel1, new Ack(1, false)));
         assertTrue(acknowledgements.acknowledge(this.authToken1, this.channel1, 1));
-        try {
-            queryNode = mapper.readTree(requestAsString);
-            faultyNode = mapper.readTree(faultyRequestAsString);
-            notIntNode = mapper.readTree(notIntRequestAsString);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        queryNode = Assertions.assertDoesNotThrow(() -> mapper.readTree(requestAsString));
+        faultyNode = Assertions.assertDoesNotThrow(() -> mapper.readTree(faultyRequestAsString));
+        notIntNode = Assertions.assertDoesNotThrow(() -> mapper.readTree(notIntRequestAsString));
+
         assertEquals(
                 "getRequestedAckStatuses should return null, when providing a null value as a parameter", emptyJsonNode,
                 acknowledgements.getRequestedAckStatuses(this.authToken1, "", null)
         );
 
-        try {
-            assertEquals(
-                    "ackId 1 status should be true on channel1, others should be false.",
-                    supposedResponseAsStringOneTrue,
-                    acknowledgements.getRequestedAckStatuses(this.authToken1, this.channel1, queryNode).toString()
-            );
-        }
-        catch (Throwable e1) {
-            // TODO Auto-generated catch block
-            LOGGER.warn("Failed to handle ack request: ", e1);
-        }
+        assertEquals(
+                "ackId 1 status should be true on channel1, others should be false.", supposedResponseAsStringOneTrue,
+                acknowledgements.getRequestedAckStatuses(this.authToken1, this.channel1, queryNode).toString()
+        );
 
         assertEquals(
                 "ackId 1 status should be false on channel1 after requesting it's status once. All others should be false as well",
@@ -242,15 +228,12 @@ public class AcknowledgementsIT {
                 "An empty JsonNode should be returned when querying with a JsonNode that has no \"acks\" field in it.",
                 emptyJsonNode, acknowledgements.getRequestedAckStatuses(this.authToken1, this.channel1, faultyNode)
         );
-        try {
-            assertEquals(
-                    "An empty JsonNode should be returned when querying with a JsonNode that has \"acks\" field in it, but it has something else than integers as it's values",
-                    emptyJsonNode, acknowledgements.getRequestedAckStatuses(this.authToken1, this.channel1, notIntNode)
-            );
-            fail("Expected IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e) {
-        }
+
+        Assertions
+                .assertThrowsExactly(
+                        IllegalArgumentException.class,
+                        () -> acknowledgements.getRequestedAckStatuses(this.authToken1, this.channel1, notIntNode)
+                );
     }
 
     public void getCurrentAckValueAndIncrementTest() {

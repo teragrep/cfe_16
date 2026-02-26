@@ -45,33 +45,33 @@
  */
 package com.teragrep.cfe_16.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.JsonSyntaxException;
 import com.teragrep.cfe_16.*;
+import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.Session;
-import com.teragrep.cfe_16.bo.XForwardedFor;
-import com.teragrep.cfe_16.bo.XForwardedForImpl;
+import com.teragrep.cfe_16.config.Configuration;
+import com.teragrep.cfe_16.connection.AbstractConnection;
+import com.teragrep.cfe_16.connection.ConnectionFactory;
 import com.teragrep.cfe_16.bo.XForwardedForStub;
-import com.teragrep.cfe_16.bo.XForwardedHost;
-import com.teragrep.cfe_16.bo.XForwardedHostImpl;
 import com.teragrep.cfe_16.bo.XForwardedHostStub;
-import com.teragrep.cfe_16.bo.XForwardedProto;
-import com.teragrep.cfe_16.bo.XForwardedProtoImpl;
 import com.teragrep.cfe_16.bo.XForwardedProtoStub;
 import com.teragrep.cfe_16.exceptionhandling.AuthenticationTokenMissingException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotFoundException;
 import com.teragrep.cfe_16.exceptionhandling.ChannelNotProvidedException;
-import com.teragrep.cfe_16.exceptionhandling.EventFieldException;
+import com.teragrep.cfe_16.exceptionhandling.InternalServerErrorException;
 import com.teragrep.cfe_16.exceptionhandling.SessionNotFoundException;
+import com.teragrep.cfe_16.response.AcknowledgedJsonResponse;
 import com.teragrep.cfe_16.response.ExceptionEvent;
 import com.teragrep.cfe_16.response.ExceptionEventContext;
 import com.teragrep.cfe_16.response.ExceptionJsonResponse;
+import com.teragrep.cfe_16.response.JsonResponse;
 import com.teragrep.cfe_16.response.Response;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +87,7 @@ import org.springframework.stereotype.Service;
 public class HECServiceImpl implements HECService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HECServiceImpl.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private Acknowledgements acknowledgements;
 
@@ -96,14 +97,14 @@ public class HECServiceImpl implements HECService {
     @Autowired
     private TokenManager tokenManager;
 
-    @Autowired
-    private EventManager eventManager;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     private final XForwardedForStub xForwardedForStub;
     private final XForwardedHostStub xForwardedHostStub;
     private final XForwardedProtoStub xForwardedProtoStub;
+
+    @Autowired
+    private Configuration configuration;
+
+    private AbstractConnection connection;
 
     public HECServiceImpl() {
         this.xForwardedForStub = new XForwardedForStub();
@@ -111,51 +112,31 @@ public class HECServiceImpl implements HECService {
         this.xForwardedProtoStub = new XForwardedProtoStub();
     }
 
+    @PostConstruct
+    void init() {
+        LOGGER.debug("Setting up connection");
+        try {
+            this.connection = ConnectionFactory
+                    .createConnection(
+                            this.configuration.getSyslogProtocol(), this.configuration.getSyslogHost(),
+                            this.configuration.getSyslogPort()
+                    );
+        }
+        catch (IOException e) {
+            LOGGER.error("Error creating connection", e);
+            throw new InternalServerErrorException();
+        }
+    }
+
     @Override
-    // @LogAnnotation(type = LogType.METRIC_COUNTER)
     public Response sendEvents(HttpServletRequest request, String channel, String eventInJson) {
         LOGGER.debug("Sending events to channel <{}>", channel);
         if (this.tokenManager.tokenIsMissing(request)) {
             throw new AuthenticationTokenMissingException("Authentication token must be provided");
         }
-        // AspectLoggerWrapper.logMetricCounter(null, "metric_counter", 10);
-        // AspectLoggerWrapper.logMetricDuration(null, "new_metric",
-        // MetricDurationOptionsImpl.MetricDuration.P10S);
+
         String authHeader = request.getHeader("Authorization");
         LOGGER.debug("Creating new Header Info");
-
-        final XForwardedFor xForwardedFor;
-        final XForwardedHost xForwardedHost;
-        final XForwardedProto xForwardedProto;
-
-        LOGGER.debug("Setting X-Forwarded-For");
-        if (request.getHeader("X-Forwarded-For") == null) {
-            xForwardedFor = this.xForwardedForStub;
-        }
-        else {
-            xForwardedFor = new XForwardedForImpl(request.getHeader("X-Forwarded-For"));
-        }
-        LOGGER.trace("Setting X-Forwarded-For to value <[{}]>", xForwardedFor);
-
-        LOGGER.debug("Setting X-Forwarded-Host");
-        if (request.getHeader("X-Forwarded-Host") == null) {
-            xForwardedHost = this.xForwardedHostStub;
-        }
-        else {
-            xForwardedHost = new XForwardedHostImpl(request.getHeader("X-Forwarded-Host"));
-        }
-        LOGGER.trace("Setting X-Forwarded-Host to value <[{}]>", xForwardedHost);
-
-        LOGGER.debug("Setting X-Forwarded-Proto");
-        if (request.getHeader("X-Forwarded-Proto") == null) {
-            xForwardedProto = this.xForwardedProtoStub;
-        }
-        else {
-            xForwardedProto = new XForwardedProtoImpl(request.getHeader("X-Forwarded-Proto"));
-        }
-        LOGGER.trace("Setting X-Forwarded-Proto to value <[{}]>", xForwardedProto);
-
-        final HeaderInfo headerInfo = new HeaderInfo(xForwardedFor, xForwardedHost, xForwardedProto);
 
         String authToken;
         if (tokenManager.isTokenInBasic(authHeader)) {
@@ -181,13 +162,42 @@ public class HECServiceImpl implements HECService {
             session.addChannel(channel);
         }
 
-        Response response;
-        // TODO: find a nice way of not passing Acknowledgements
-        try {
-            response = this.eventManager
-                    .convertData(authToken, channel, eventInJson, headerInfo, this.acknowledgements);
+        acknowledgements.initializeContext(authToken, channel);
+        final int ackId = acknowledgements.getCurrentAckValue(authToken, channel);
+        final boolean incremented = acknowledgements.incrementAckValue(authToken, channel);
+        if (!incremented) {
+            throw new InternalServerErrorException("Ack value couldn't be incremented.");
         }
-        catch (final JsonProcessingException | JsonSyntaxException | EventFieldException e) {
+        final Ack ack = new Ack(ackId, false);
+        final boolean addedAck = acknowledgements.addAck(authToken, channel, ack);
+        if (!addedAck) {
+            throw new InternalServerErrorException("Ack ID " + ackId + " couldn't be added to the Ack set.");
+        }
+
+        final HeaderInfo headerInfo = new HeaderInfo(request);
+
+        Response responseToReturn;
+
+        try {
+            this.connection
+                    .sendMessages(new SyslogBatch(new HECBatch(authToken, channel, eventInJson, headerInfo).toHECRecordList()).asSyslogMessages());
+
+            final boolean shouldAck = !channel.equals(Session.DEFAULT_CHANNEL);
+
+            if (shouldAck) {
+                final boolean acked = acknowledgements.acknowledge(authToken, channel, ackId);
+                if (!acked) {
+                    throw new InternalServerErrorException("Ack ID " + ackId + " not Acked.");
+                }
+                else {
+                    responseToReturn = new AcknowledgedJsonResponse("Success", ackId);
+                }
+            }
+            else {
+                responseToReturn = new JsonResponse("Success");
+            }
+        }
+        catch (final RuntimeException | IOException e) {
             final ExceptionEventContext exceptionEventContext = new ExceptionEventContext(
                     headerInfo,
                     request.getHeader("user-agent"),
@@ -196,13 +206,12 @@ public class HECServiceImpl implements HECService {
             );
             final ExceptionEvent event = new ExceptionEvent(exceptionEventContext, UUID.randomUUID(), e);
             event.logException();
-            response = new ExceptionJsonResponse(event);
+            responseToReturn = new ExceptionJsonResponse(event);
         }
 
-        return response;
+        return responseToReturn;
     }
 
-    // @LogAnnotation(type = LogType.RESPONSE)
     @SuppressWarnings("deprecation")
     @Override
     public JsonNode getAcks(HttpServletRequest request, String channel, JsonNode requestedAcksInJson) {
@@ -249,7 +258,6 @@ public class HECServiceImpl implements HECService {
         return responseNode;
     }
 
-    // @LogAnnotation(type = LogType.RESPONSE)
     @Override
     public ResponseEntity<String> healthCheck(HttpServletRequest request) {
         if (this.tokenManager.tokenIsMissing(request)) {

@@ -43,50 +43,60 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16.connection;
+package com.teragrep.cfe_16.event.time;
 
-import com.cloudbees.syslog.SyslogMessage;
-import com.cloudbees.syslog.sender.TcpSyslogMessageSender;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Objects;
 
-import java.io.IOException;
+public final class HECTimeStub implements HECTime {
 
-public class TcpConnection extends AbstractConnection {
+    private final boolean isStub;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TcpConnection.class);
-    private final TcpSyslogMessageSender sender;
+    public HECTimeStub() {
+        this(true);
+    }
 
-    public TcpConnection(String hostname, int port) {
-        super(hostname, port);
-        this.sender = new TcpSyslogMessageSender();
-        this.sender.setSyslogServerHostname(this.hostname);
-        this.sender.setSyslogServerPort(this.port);
+    private HECTimeStub(final boolean isStub) {
+        this.isStub = isStub;
     }
 
     @Override
-    public void sendMessages(List<SyslogMessage> syslogMessages) throws IOException {
-        LOGGER.debug("Sending messages");
-        for (SyslogMessage syslogMessage : syslogMessages) {
-            this.sender.sendMessage(syslogMessage);
+    public long instant(final long defaultValue) {
+        throw new UnsupportedOperationException("HECTimeStub does not support this");
+    }
+
+    @Override
+    public boolean isParsed() {
+        throw new UnsupportedOperationException("HECTimeStub does not support this");
+    }
+
+    @Override
+    public String source() {
+        throw new UnsupportedOperationException("HECTimeStub does not support this");
+    }
+
+    @Override
+    public boolean isStub() {
+        return isStub;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        final boolean equals;
+
+        if (o == null || getClass() != o.getClass()) {
+            equals = false;
         }
+        else {
+
+            final HECTimeStub that = (HECTimeStub) o;
+            equals = isStub() == that.isStub();
+        }
+
+        return equals;
     }
 
     @Override
-    public void sendMessage(SyslogMessage syslogMessage) throws IOException {
-        LOGGER.debug("Sending message");
-        this.sender.sendMessage(syslogMessage);
-    }
-
-    @Override
-    public void close() throws IOException {
-        LOGGER.debug("Closing sender");
-        this.sender.close();
-    }
-
-    public void setSsl(boolean ssl) {
-        LOGGER.debug("Set Ssl to <{}>", ssl);
-        this.sender.setSsl(ssl);
+    public int hashCode() {
+        return Objects.hashCode(isStub);
     }
 }
