@@ -59,7 +59,7 @@
     </repository>
   </distributionManagement>
   <properties>
-    <aspectj.version>1.9.21.1</aspectj.version>
+    <aspectj.version>1.9.25.1</aspectj.version>
     <changelist>-SNAPSHOT</changelist>
     <jackson.version>3.0.4</jackson.version>
     <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
