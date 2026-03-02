@@ -74,7 +74,7 @@
     <rlp_03.version>10.0.0</rlp_03.version>
     <sha1></sha1>
     <spring.boot.version>4.0.3</spring.boot.version>
-    <spring.session.version>3.4.2</spring.session.version>
+    <spring.session.version>4.0.2</spring.session.version>
   </properties>
   <dependencies>
     <dependency>
