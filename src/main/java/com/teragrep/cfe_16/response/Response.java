@@ -45,8 +45,8 @@
  */
 package com.teragrep.cfe_16.response;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.http.ResponseEntity;
+import tools.jackson.databind.JsonNode;
 
 public interface Response {
 

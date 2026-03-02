@@ -45,7 +45,7 @@
  */
 package com.teragrep.cfe_16.event;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldException;
 import java.util.Objects;
 

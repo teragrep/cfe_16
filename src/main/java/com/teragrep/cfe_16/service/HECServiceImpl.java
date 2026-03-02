@@ -45,9 +45,10 @@
  */
 package com.teragrep.cfe_16.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 import com.teragrep.cfe_16.*;
 import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.HeaderInfo;
@@ -197,7 +198,7 @@ public class HECServiceImpl implements HECService {
                 responseToReturn = new JsonResponse("Success");
             }
         }
-        catch (final RuntimeException | IOException e) {
+        catch (final StreamReadException | IOException e) {
             final ExceptionEventContext exceptionEventContext = new ExceptionEventContext(
                     headerInfo,
                     request.getHeader("user-agent"),
@@ -254,7 +255,7 @@ public class HECServiceImpl implements HECService {
         ObjectNode responseNode = objectMapper.createObjectNode();
         JsonNode requestedAckStatuses = this.acknowledgements
                 .getRequestedAckStatuses(authToken, channel, requestedAcksInJson);
-        responseNode.put("acks", requestedAckStatuses);
+        responseNode.set("acks", requestedAckStatuses);
         return responseNode;
     }
 

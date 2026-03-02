@@ -45,11 +45,12 @@
  */
 package com.teragrep.cfe_16;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.MappingIterator;
+import tools.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.bo.HECRecord;
 import com.teragrep.cfe_16.bo.HECRecordImpl;
 import com.teragrep.cfe_16.bo.HECRecordStub;
@@ -97,7 +98,7 @@ public final class HECBatch {
     /**
      * Method used when converting data and the channel is specified in the request
      */
-    public List<HECRecord> toHECRecordList() throws IOException, RuntimeException {
+    public List<HECRecord> toHECRecordList() throws IOException, StreamReadException {
         final List<HECRecord> returnedList;
         // Init the HECRecord as a Stub
         HECRecord previousEvent = new HECRecordStub();
@@ -119,7 +120,7 @@ public final class HECBatch {
                 HECRecord eventData;
 
                 while (mappingIterator.hasNext()) {
-                    // mappingIterator.next() will throw a RuntimeException if JSON is malformed
+                    // mappingIterator.next() will throw a StreamReadException if JSON is malformed
                     final JsonEvent jsonEvent = new JsonEventImpl(mappingIterator.next());
 
                     eventData = new HECRecordImpl(
