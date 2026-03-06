@@ -45,7 +45,7 @@
  */
 package com.teragrep.cfe_16.bo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.event.EventMessage;
 import com.teragrep.cfe_16.event.EventMessageImpl;
 import com.teragrep.cfe_16.event.JsonEventImpl;

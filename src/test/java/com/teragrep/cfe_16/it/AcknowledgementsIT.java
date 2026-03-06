@@ -45,8 +45,8 @@
  */
 package com.teragrep.cfe_16.it;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.Acknowledgements;
 import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.Session;
@@ -62,6 +62,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
+import tools.jackson.databind.exc.InvalidFormatException;
 
 import static org.junit.Assert.*;
 
@@ -231,7 +232,7 @@ public class AcknowledgementsIT {
 
         Assertions
                 .assertThrowsExactly(
-                        IllegalArgumentException.class,
+                        InvalidFormatException.class,
                         () -> acknowledgements.getRequestedAckStatuses(this.authToken1, this.channel1, notIntNode)
                 );
     }

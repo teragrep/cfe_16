@@ -45,9 +45,9 @@
  */
 package com.teragrep.cfe_16.event;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.TextNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.StringNode;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldException;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
@@ -185,7 +185,7 @@ class JsonEventImplTest {
                 new ObjectMapper().createObjectNode().put("time", "notATime")
         );
 
-        final JsonNode expectedJsonNode = new TextNode("notATime");
+        final JsonNode expectedJsonNode = new StringNode("notATime");
 
         final JsonNode returnedJsonNode = Assertions.assertDoesNotThrow(jsonEventImpl::asTimeJsonNode);
 

@@ -45,8 +45,8 @@
  */
 package com.teragrep.cfe_16.fakes;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.event.EventMessage;
 import com.teragrep.cfe_16.event.EventMessageStub;
 import com.teragrep.cfe_16.event.JsonEvent;

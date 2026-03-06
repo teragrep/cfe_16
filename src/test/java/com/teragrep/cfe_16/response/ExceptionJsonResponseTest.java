@@ -45,7 +45,7 @@
  */
 package com.teragrep.cfe_16.response;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import java.util.List;
 import java.util.UUID;

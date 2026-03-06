@@ -45,7 +45,8 @@
  */
 package com.teragrep.cfe_16;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.bo.HECRecord;
 import com.teragrep.cfe_16.bo.HECRecordImpl;
 import com.teragrep.cfe_16.bo.HeaderInfo;
@@ -113,7 +114,7 @@ class HECBatchTest {
                 new HeaderInfo(new MockHttpServletRequest())
         );
 
-        Assertions.assertThrowsExactly(RuntimeException.class, () -> HECBatch.toHECRecordList().toString());
+        Assertions.assertThrowsExactly(StreamReadException.class, () -> HECBatch.toHECRecordList().toString());
     }
 
     /**

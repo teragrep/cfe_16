@@ -45,14 +45,14 @@
  */
 package com.teragrep.cfe_16.event.time;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import tools.jackson.databind.JsonNode;
 import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldException;
 import java.math.BigDecimal;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.node.StringNode;
 
 public final class HECTimeImpl implements HECTime {
 
@@ -73,11 +73,12 @@ public final class HECTimeImpl implements HECTime {
         }
         catch (final EventFieldException e) {
             LOGGER.info("Could not parse time from JSON, so using defaultValue provided <[{}]>", defaultValue);
-            timeNode = new TextNode("");
+            timeNode = new StringNode("");
         }
 
         // No time provided in the event
-        if (timeNode == null || timeNode.asText().isEmpty()) {
+        // Use the unchecked timeNode.toString() method, since we're validating the returnValue from there
+        if (timeNode == null || timeNode.toString().isEmpty()) {
             // Use default value
             returnedTime = defaultValue;
         }
@@ -91,7 +92,7 @@ public final class HECTimeImpl implements HECTime {
             returnedTime = timeNode.asLong();
         }
         // Time is a String
-        else if (timeNode.isTextual()) {
+        else if (timeNode.isString()) {
             // Try to convert the String to a long (if not convertable, default to 0L)
             final long tryAsLong = timeNode.asLong(0L);
             if (tryAsLong != 0L) {
@@ -134,14 +135,15 @@ public final class HECTimeImpl implements HECTime {
                 timeNode = jsonEvent.asTimeJsonNode();
             }
             else {
-                timeNode = new TextNode("");
+                timeNode = new StringNode("");
             }
         }
         catch (final EventFieldException e) {
-            timeNode = new TextNode("");
+            timeNode = new StringNode("");
         }
         // No time provided in the event
-        if (timeNode == null || timeNode.asText().isEmpty()) {
+        // Use the unchecked timeNode.toString() method, since we're validating the returnValue from there
+        if (timeNode == null || timeNode.toString().isEmpty()) {
             returnedParsed = false;
         }
         // Check if time is a double and convert to long
@@ -150,7 +152,7 @@ public final class HECTimeImpl implements HECTime {
 
         }
         // Time is a String
-        else if (timeNode.isTextual()) {
+        else if (timeNode.isString()) {
             // Try to convert the String to a long (if not convertable, default to 0L)
             final long tryAsLong = timeNode.asLong(0L);
             if (tryAsLong != 0L) {
