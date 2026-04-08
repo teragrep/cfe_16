@@ -52,12 +52,6 @@
   <packaging>jar</packaging>
   <name>cfe_16</name>
   <description>cfe_16</description>
-  <distributionManagement>
-    <repository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
-    </repository>
-  </distributionManagement>
   <properties>
     <aspectj.version>1.9.25.1</aspectj.version>
     <changelist>-SNAPSHOT</changelist>
@@ -477,4 +471,16 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>publish-github-packages</id>
+      <distributionManagement>
+        <repository>
+          <id>github</id>
+          <name>GitHub Packages</name>
+          <url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
+        </repository>
+      </distributionManagement>
+    </profile>
+  </profiles>
 </project>
