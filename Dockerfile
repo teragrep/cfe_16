@@ -1,4 +1,5 @@
 FROM rockylinux/rockylinux:9
+COPY rpm/com.teragrep-cfe_16-*.rpm /rpm/
 RUN yum -y localinstall /rpm/*.rpm && yum clean all
 
 COPY entrypoint.sh /entrypoint.sh
