@@ -45,6 +45,7 @@
  */
 package com.teragrep.cfe_16.it;
 
+import com.teragrep.cfe_16.response.AcknowledgementResponse;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.exceptionhandling.*;
@@ -63,6 +64,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import tools.jackson.databind.node.ObjectNode;
 
 import static org.junit.Assert.*;
 
@@ -205,8 +207,12 @@ public class ServiceAndHECBatchIT {
                         "Service should return JSON object with fields 'text', 'code' and 'ackID' (ackID should be 0)"
                 );
 
-        final String supposedResponse5 = "{\"acks\":{\"1\":true,\"3\":false,\"4\":false}}";
-        final String returnedResponse5 = service.getAcks(request1, channel3, ackRequestNode).toString();
+        final ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("1", true);
+        objectNode.put("3", false);
+        objectNode.put("4", false);
+        final Response supposedResponse5 = new AcknowledgementResponse(objectNode);
+        final Response returnedResponse5 = service.getAcks(request1, channel3, ackRequestNode);
 
         Assertions
                 .assertEquals(supposedResponse5, returnedResponse5, "JSON object should be returned with ack statuses.");

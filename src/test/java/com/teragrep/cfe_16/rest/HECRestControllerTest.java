@@ -187,7 +187,7 @@ class HECRestControllerTest {
 
         final ResponseEntity<JsonNode> variable = Assertions
                 .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, multiValueMap, null));
-        final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
+        final JsonResponse expectedResponse = new JsonResponse("Success");
         final ResponseEntity<JsonNode> jsonNodeResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
         Assertions.assertEquals(jsonNodeResponseEntity, variable);

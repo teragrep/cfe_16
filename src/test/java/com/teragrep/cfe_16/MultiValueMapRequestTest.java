@@ -47,6 +47,7 @@ package com.teragrep.cfe_16;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -69,5 +70,46 @@ class MultiValueMapRequestTest {
                         "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}", cleaned,
                         "Did not clean channel properly"
                 );
+    }
+
+    @Test
+    @DisplayName("test MultiValueMapRequest without channel present")
+    void testMultiValueMapRequestWithoutChannelPresent() {
+        final MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.add("{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}", null);
+        final MultiValueMapRequest multiValueMapRequest = new MultiValueMapRequest(multiValueMap);
+
+        final String cleaned = multiValueMapRequest.asCleanedJsonString();
+        Assertions
+                .assertEquals(
+                        "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}", cleaned,
+                        "Did not clean channel properly"
+                );
+    }
+
+    @Test
+    @DisplayName("asCleanedJsonString with more than 2 keys")
+    void asCleanedJsonStringWithMoreThan2Keys() {
+        final MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.add("channel", "CHANNEL_11111");
+        multiValueMap.add("somethingElse", "asdfg");
+        multiValueMap.add("{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}", null);
+        final MultiValueMapRequest multiValueMapRequest = new MultiValueMapRequest(multiValueMap);
+
+        final IllegalStateException illegalStateException = assertThrowsExactly(
+                IllegalStateException.class, multiValueMapRequest::asCleanedJsonString
+        );
+
+        Assertions
+                .assertEquals(
+                        "application/x-www-form-urlencoded request contains more parameters than expected",
+                        illegalStateException.getMessage()
+                );
+    }
+
+    @Test
+    @DisplayName("equalsVerifier test")
+    void equalsVerifierTest() {
+        EqualsVerifier.forClass(MultiValueMapRequest.class).verify();
     }
 }

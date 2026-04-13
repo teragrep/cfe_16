@@ -45,10 +45,10 @@
  */
 package com.teragrep.cfe_16.service;
 
+import com.teragrep.cfe_16.response.AcknowledgementResponse;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.node.ObjectNode;
 import com.teragrep.cfe_16.*;
 import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.HeaderInfo;
@@ -215,7 +215,11 @@ public class HECServiceImpl implements HECService {
 
     @SuppressWarnings("deprecation")
     @Override
-    public JsonNode getAcks(HttpServletRequest request, String channel, JsonNode requestedAcksInJson) {
+    public Response getAcks(
+            final HttpServletRequest request,
+            final String channel,
+            final JsonNode requestedAcksInJson
+    ) {
 
         // filter out error cases
         // authentication header is required always
@@ -252,11 +256,9 @@ public class HECServiceImpl implements HECService {
         }
         session.touch();
 
-        ObjectNode responseNode = objectMapper.createObjectNode();
-        JsonNode requestedAckStatuses = this.acknowledgements
+        final JsonNode requestedAckStatuses = this.acknowledgements
                 .getRequestedAckStatuses(authToken, channel, requestedAcksInJson);
-        responseNode.set("acks", requestedAckStatuses);
-        return responseNode;
+        return new AcknowledgementResponse(requestedAckStatuses);
     }
 
     @Override

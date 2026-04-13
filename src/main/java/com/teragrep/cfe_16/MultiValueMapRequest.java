@@ -49,6 +49,13 @@ import java.util.Objects;
 import java.util.Set;
 import org.springframework.util.MultiValueMap;
 
+/**
+ * Cleans the request body so, that only the body of the request is left in the string. This is needed when calling the
+ * endpoint that consumes MediaType.APPLICATION_FORM_URLENCODED_VALUE <b>The actual body needed is stored as a key, and
+ * not a value for a key</b> Example of body sent as a parameter: {channel=[CHANNEL_11111], {"sourcetype":
+ * "mysourcetype", "event": "Hello, world!"}=[]} Example of cleaned body returned by the cleanAckRequestBody():
+ * {"sourcetype": "mysourcetype", "event": "Hello, world!"}
+ */
 public final class MultiValueMapRequest {
 
     private final MultiValueMap<String, String> multiValueMap;
@@ -57,25 +64,24 @@ public final class MultiValueMapRequest {
         this.multiValueMap = multiValueMap;
     }
 
-    public String asCleanedJsonString() {
+    public String asCleanedJsonString() throws IllegalStateException {
         final String valueToReturn;
         // Remove the channel, if it is present
         multiValueMap.remove("channel");
         final Set<String> keys = multiValueMap.keySet();
 
-        if (keys.size() == 1) {
-            valueToReturn = keys.iterator().next();
+        // Check if the parameters contains more entries than expected from the request
+        if (keys.size() != 1) {
+            throw new IllegalStateException(
+                    "application/x-www-form-urlencoded request contains more parameters than expected"
+            );
         }
         else {
-            final String multiValueMapString = multiValueMap.toString();
-            valueToReturn = this.removeFirstAndLastCharacters(multiValueMapString);
+            // Get the value of the first key
+            valueToReturn = keys.iterator().next();
         }
 
         return valueToReturn;
-    }
-
-    private String removeFirstAndLastCharacters(final String string) {
-        return string.substring(1, string.length() - 1);
     }
 
     @Override
