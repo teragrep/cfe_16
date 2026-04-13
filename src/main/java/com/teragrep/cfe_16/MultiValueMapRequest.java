@@ -53,8 +53,7 @@ import org.springframework.util.MultiValueMap;
  * Cleans the request body so, that only the body of the request is left in the string. This is needed when calling the
  * endpoint that consumes MediaType.APPLICATION_FORM_URLENCODED_VALUE <b>The actual body needed is stored as a key, and
  * not a value for a key</b> Example of body sent as a parameter: {channel=[CHANNEL_11111], {"sourcetype":
- * "mysourcetype", "event": "Hello, world!"}=[]} Example of cleaned body returned by the cleanAckRequestBody():
- * {"sourcetype": "mysourcetype", "event": "Hello, world!"}
+ * "mysourcetype", "event": "Hello, world!"}=[]}
  */
 public final class MultiValueMapRequest {
 
@@ -64,6 +63,10 @@ public final class MultiValueMapRequest {
         this.multiValueMap = multiValueMap;
     }
 
+    /**
+     * @return Example of cleaned body: {"sourcetype": "mysourcetype", "event": "Hello, world!"}
+     * @throws IllegalStateException if the MultiValueMap contains more than one key after the channel has been removed
+     */
     public String asCleanedJsonString() throws IllegalStateException {
         final String valueToReturn;
         // Remove the channel, if it is present
