@@ -108,6 +108,29 @@ class MultiValueMapRequestTest {
     }
 
     @Test
+    @DisplayName("test that asCleanedJsonString does not modify multiValueMap field")
+    void testThatAsCleanedJsonStringDoesNotModifyMultiValueMapField() {
+        final MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.add("channel", "CHANNEL_11111");
+        multiValueMap.add("{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}", null);
+        final MultiValueMapRequest multiValueMapRequest = new MultiValueMapRequest(multiValueMap);
+
+        final String cleaned = multiValueMapRequest.asCleanedJsonString();
+        Assertions
+                .assertEquals(
+                        "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}", cleaned,
+                        "Did not clean channel properly"
+                );
+
+        final MultiValueMap<String, String> nonModifiedMultiValueMap = new LinkedMultiValueMap<>();
+        nonModifiedMultiValueMap.add("channel", "CHANNEL_11111");
+        nonModifiedMultiValueMap.add("{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}", null);
+        final MultiValueMapRequest nonModifiedMultiValueMapRequest = new MultiValueMapRequest(nonModifiedMultiValueMap);
+
+        Assertions.assertEquals(nonModifiedMultiValueMapRequest, multiValueMapRequest);
+    }
+
+    @Test
     @DisplayName("equalsVerifier test")
     void equalsVerifierTest() {
         EqualsVerifier.forClass(MultiValueMapRequest.class).verify();

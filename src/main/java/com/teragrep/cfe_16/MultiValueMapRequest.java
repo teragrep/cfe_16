@@ -47,6 +47,7 @@ package com.teragrep.cfe_16;
 
 import java.util.Objects;
 import java.util.Set;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 /**
@@ -69,9 +70,11 @@ public final class MultiValueMapRequest {
      */
     public String asCleanedJsonString() throws IllegalStateException {
         final String valueToReturn;
+        //
+        final MultiValueMap<String, String> copyOfMultiValueMap = new LinkedMultiValueMap<>(multiValueMap);
         // Remove the channel, if it is present
-        multiValueMap.remove("channel");
-        final Set<String> keys = multiValueMap.keySet();
+        copyOfMultiValueMap.remove("channel");
+        final Set<String> keys = copyOfMultiValueMap.keySet();
 
         // Check if the parameters contains more entries than expected from the request
         if (keys.size() != 1) {
