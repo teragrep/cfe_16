@@ -123,12 +123,12 @@ class HECRestControllerTest {
                 + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
                 + "{\"message\":\"Access log test message 2\"}}";
 
-        final ResponseEntity<JsonNode> variable = Assertions
+        final ResponseEntity<JsonNode> responseEntity = Assertions
                 .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, eventInJson, channel1));
         final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
-        final ResponseEntity<JsonNode> jsonNodeResponseEntity = expectedResponse.asJsonNodeResponseEntity();
+        final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
-        Assertions.assertEquals(jsonNodeResponseEntity, variable);
+        Assertions.assertEquals(expectedResponseEntity, responseEntity);
     }
 
     @Test
@@ -164,12 +164,12 @@ class HECRestControllerTest {
         multiValueMap.add("channel", channel1);
         multiValueMap.add(eventInJson, null);
 
-        final ResponseEntity<JsonNode> variable = Assertions
+        final ResponseEntity<JsonNode> responseEntity = Assertions
                 .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, multiValueMap, channel1));
         final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
-        final ResponseEntity<JsonNode> jsonNodeResponseEntity = expectedResponse.asJsonNodeResponseEntity();
+        final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
-        Assertions.assertEquals(jsonNodeResponseEntity, variable);
+        Assertions.assertEquals(expectedResponseEntity, responseEntity);
     }
 
     @Test
@@ -185,11 +185,11 @@ class HECRestControllerTest {
         final MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add(eventInJson, null);
 
-        final ResponseEntity<JsonNode> variable = Assertions
+        final ResponseEntity<JsonNode> responseEntity = Assertions
                 .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, multiValueMap, null));
         final JsonResponse expectedResponse = new JsonResponse("Success");
-        final ResponseEntity<JsonNode> jsonNodeResponseEntity = expectedResponse.asJsonNodeResponseEntity();
+        final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
-        Assertions.assertEquals(jsonNodeResponseEntity, variable);
+        Assertions.assertEquals(expectedResponseEntity, responseEntity);
     }
 }
