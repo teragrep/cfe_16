@@ -71,7 +71,7 @@ public interface HECService {
      * @param requestedAcksInJson
      * @return
      */
-    public JsonNode getAcks(HttpServletRequest request, String channel, JsonNode requestedAcksInJson);
+    public Response getAcks(HttpServletRequest request, String channel, JsonNode requestedAcksInJson);
 
     /**
      * Ping.

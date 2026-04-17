@@ -43,39 +43,44 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16;
+package com.teragrep.cfe_16.response;
 
-import org.springframework.stereotype.Component;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
-import java.util.regex.Pattern;
+class AcknowledgementResponseTest {
 
-/*
- * Cleans the request body so, that only the body of the request is left in the string.
- * This is needed when calling the endpoint that consumes MediaType.APPLICATION_FORM_URLENCODED_VALUE
- * Example of body sent as a parameter: {channel=[CHANNEL_11111], {"sourcetype": "mysourcetype", "event": "Hello, world!"}=[]}
- * Example of cleaned body returned by the cleanAckRequestBody(): {"sourcetype": "mysourcetype", "event": "Hello, world!"}
- * TODO: Try to implement a better way to get the body of the request.
- *
- */
-@Component
-public class RequestBodyCleaner {
+    @Test
+    @DisplayName("test that asJsonNodeResponseEntity has acks key")
+    void testThatAsJsonNodeResponseEntityHasAcksKey() {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final ObjectNode objectNode = objectMapper.createObjectNode();
 
-    public String cleanAckRequestBody(String body, String channel) {
-        String bodyWithoutChannel = body.replaceAll("channel=\\[" + Pattern.quote(channel) + "\\]\\, ", "");
-        String bodywithoutChannelLastCharRemoved = removeLastChar(bodyWithoutChannel);
+        final AcknowledgementResponse acknowledgementResponse = new AcknowledgementResponse(objectNode);
+        final ResponseEntity<JsonNode> jsonNodeResponseEntity = acknowledgementResponse.asJsonNodeResponseEntity();
 
-        String cleanedBody = bodywithoutChannelLastCharRemoved.substring(1);
+        Assertions.assertTrue(jsonNodeResponseEntity.hasBody());
 
-        cleanedBody = removeEqualsArrayFromEnd(cleanedBody);
+        final ObjectNode expectedObjectNode = objectMapper.createObjectNode();
+        expectedObjectNode.set("acks", objectNode);
+        final ResponseEntity<JsonNode> expectedResponseEntity = ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(expectedObjectNode);
 
-        return cleanedBody;
+        Assertions.assertEquals(expectedResponseEntity, jsonNodeResponseEntity);
     }
 
-    private String removeLastChar(String str) {
-        return str.substring(0, str.length() - 1);
-    }
-
-    private String removeEqualsArrayFromEnd(String str) {
-        return str.replace("=[]", "");
+    @Test
+    @DisplayName("equalsVerifier test")
+    void equalsVerifierTest() {
+        EqualsVerifier.forClass(AcknowledgementResponse.class).verify();
     }
 }

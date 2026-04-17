@@ -45,9 +45,16 @@
  */
 package com.teragrep.cfe_16.rest;
 
+import com.teragrep.cfe_16.MultiValueMapRequest;
+import com.teragrep.cfe_16.bo.HeaderInfo;
+import com.teragrep.cfe_16.response.ExceptionEvent;
+import com.teragrep.cfe_16.response.ExceptionEventContext;
+import com.teragrep.cfe_16.response.ExceptionJsonResponse;
+import com.teragrep.cfe_16.response.JsonResponse;
+import java.util.UUID;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import com.teragrep.cfe_16.RequestBodyCleaner;
 import com.teragrep.cfe_16.config.Configuration;
 import com.teragrep.cfe_16.response.Response;
 import com.teragrep.cfe_16.service.HECService;
@@ -70,12 +77,8 @@ public class HECRestController {
     private HECService service;
 
     @Autowired
-    private RequestBodyCleaner requestBodyCleaner;
-
-    @Autowired
     private Configuration configuration;
 
-    @SuppressWarnings("rawtypes")
     @RequestMapping(
             value = "services/collector",
             method = RequestMethod.POST,
@@ -83,23 +86,42 @@ public class HECRestController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<JsonNode> sendEvents(
-            HttpServletRequest request,
-            @RequestBody MultiValueMap body,
-            @RequestParam(required = false) String channel
+            final HttpServletRequest request,
+            @RequestBody final MultiValueMap<String, String> body,
+            @RequestParam(required = false) final String channel
     ) {
-        // TODO: Try to think an alternative way to implement getting the body of the
-        // call
-        final String eventInJson = requestBodyCleaner.cleanAckRequestBody(body.toString(), channel);
-
-        long t1 = System.nanoTime();
-        final Response response = service.sendEvents(request, channel, eventInJson);
-        long t2 = System.nanoTime();
-        long dt = t2 - t1;
-        double us = (double) dt / 1000.0;
-        if (this.configuration.getPrintTimes()) {
-            LOGGER.info("sendEvents took <{}> nanoseconds, that is <{}> microseconds", dt, us);
+        ResponseEntity<JsonNode> responseEntity;
+        try {
+            final MultiValueMapRequest eventInJson = new MultiValueMapRequest(body);
+            final long t1 = System.nanoTime();
+            final Response response = service.sendEvents(request, channel, eventInJson.asCleanedJsonString());
+            final long t2 = System.nanoTime();
+            final long dt = t2 - t1;
+            final double us = (double) dt / 1000.0;
+            if (this.configuration.getPrintTimes()) {
+                LOGGER.info("sendEvents took <{}> nanoseconds, that is <{}> microseconds", dt, us);
+            }
+            responseEntity = response.asJsonNodeResponseEntity();
         }
-        return response.asJsonNodeResponseEntity();
+        catch (final IllegalStateException illegalStateException) {
+            final HeaderInfo headerInfo = new HeaderInfo(request);
+            final ExceptionEventContext exceptionEventContext = new ExceptionEventContext(
+                    headerInfo,
+                    request.getHeader("user-agent"),
+                    request.getRequestURI(),
+                    request.getRemoteHost()
+            );
+            final ExceptionEvent event = new ExceptionEvent(
+                    exceptionEventContext,
+                    UUID.randomUUID(),
+                    illegalStateException
+            );
+            event.logException();
+            final Response response = new ExceptionJsonResponse(event);
+            responseEntity = response.asJsonNodeResponseEntity();
+        }
+
+        return responseEntity;
     }
 
     @RequestMapping(
@@ -132,25 +154,23 @@ public class HECRestController {
             },
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public JsonNode getAcksWithPostMethod(
+    public ResponseEntity<JsonNode> getAcksWithPostMethod(
             @RequestBody JsonNode requestedAcksInJson,
             HttpServletRequest request,
             @RequestParam(required = false) String channel
     ) {
 
         long t1 = System.nanoTime();
-        JsonNode response = service.getAcks(request, channel, requestedAcksInJson);
+        final Response response = service.getAcks(request, channel, requestedAcksInJson);
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double) dt / 1000.0;
         if (this.configuration.getPrintTimes()) {
             LOGGER.info("getAcks took <{}> nanoseconds, that is <{}> microseconds", dt, us);
         }
-        return response;
+        return response.asJsonNodeResponseEntity();
     }
 
-    // @LogAnnotation(type = LogType.METRIC_DURATION)
-    @SuppressWarnings("rawtypes")
     @RequestMapping(
             value = "services/collector/ack",
             method = {
@@ -158,53 +178,60 @@ public class HECRestController {
             },
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
     )
-    public @ResponseBody JsonNode getAcks(
-            @RequestBody MultiValueMap body,
-            HttpServletRequest request,
-            @RequestParam(required = false) String channel
+    public ResponseEntity<JsonNode> getAcks(
+            @RequestBody final MultiValueMap<String, String> body,
+            final HttpServletRequest request,
+            @RequestParam(required = false) final String channel
     ) {
-        // TODO: Try to think an alternative way to implement getting the body of the
-        // call
-        String bodyString = requestBodyCleaner.cleanAckRequestBody(body.toString(), channel);
+        ResponseEntity<JsonNode> responseEntity;
 
-        JsonNode requestedAcksInJson = null;
         try {
-            requestedAcksInJson = objectMapper.readValue(bodyString, JsonNode.class);
+            final MultiValueMapRequest multiValueMapRequest = new MultiValueMapRequest(body);
+
+            final JsonNode requestedAcksInJson = objectMapper
+                    .readValue(multiValueMapRequest.asCleanedJsonString(), JsonNode.class);
+
+            final long t1 = System.nanoTime();
+            final Response response = service.getAcks(request, channel, requestedAcksInJson);
+            final long t2 = System.nanoTime();
+            final long dt = t2 - t1;
+            final double us = (double) dt / 1000.0;
+            if (this.configuration.getPrintTimes()) {
+                LOGGER.info("getAcks took <{}> nanoseconds, that is <{}> microseconds", dt, us);
+            }
+            responseEntity = new JsonResponse(response.toString()).asJsonNodeResponseEntity();
         }
-        catch (Exception e) {
-            // TODO: handle the error in a proper way
-            LOGGER.warn("Failed to handle response: ", e);
+        catch (final IllegalStateException | JacksonException exception) {
+            final HeaderInfo headerInfo = new HeaderInfo(request);
+            final ExceptionEventContext exceptionEventContext = new ExceptionEventContext(
+                    headerInfo,
+                    request.getHeader("user-agent"),
+                    request.getRequestURI(),
+                    request.getRemoteHost()
+            );
+            final ExceptionEvent event = new ExceptionEvent(exceptionEventContext, UUID.randomUUID(), exception);
+            event.logException();
+            final Response response = new ExceptionJsonResponse(event);
+            responseEntity = response.asJsonNodeResponseEntity();
         }
 
-        long t1 = System.nanoTime();
-        JsonNode response = service.getAcks(request, channel, requestedAcksInJson);
-        long t2 = System.nanoTime();
-        long dt = t2 - t1;
-        double us = (double) dt / 1000.0;
-        if (this.configuration.getPrintTimes()) {
-            LOGGER.info("getAcks took <{}> nanoseconds, that is <{}> microseconds", dt, us);
-        }
-        return response;
+        return responseEntity;
     }
 
-    @SuppressWarnings("rawtypes")
     @RequestMapping(
             value = "services/collector/event",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
     )
     public ResponseEntity<JsonNode> sendEventsWithFormatOption(
-            HttpServletRequest request,
-            @RequestBody MultiValueMap body,
-            @RequestParam(required = false) String channel
+            final HttpServletRequest request,
+            @RequestBody final MultiValueMap<String, String> body,
+            @RequestParam(required = false) final String channel
     ) {
-
-        // TODO: Try to think an alternative way to implement getting the body of the
-        // call
-        String eventInJson = requestBodyCleaner.cleanAckRequestBody(body.toString(), channel);
+        final MultiValueMapRequest multiValueMapRequest = new MultiValueMapRequest(body);
 
         long t1 = System.nanoTime();
-        final Response response = service.sendEvents(request, channel, eventInJson);
+        final Response response = service.sendEvents(request, channel, multiValueMapRequest.asCleanedJsonString());
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double) dt / 1000.0;

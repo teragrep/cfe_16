@@ -43,23 +43,47 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_16;
+package com.teragrep.cfe_16.response;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import java.util.Objects;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
-public class CleanRequestBodyTests {
+public final class AcknowledgementResponse implements Response {
 
-    @Test
-    public void testCleanRequestBodyNormal() {
-        String input = "{channel=[CHANNEL_11111], {\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}=[]}";
-        String channel = "CHANNEL_11111";
-        RequestBodyCleaner requestBodyCleaner = new RequestBodyCleaner();
-        String cleaned = requestBodyCleaner.cleanAckRequestBody(input, channel);
-        Assertions
-                .assertEquals(
-                        "{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\"}", cleaned,
-                        "Did not clean channel properly"
-                );
+    /**
+     * This field is expected to be in a format provided by
+     * {@link com.teragrep.cfe_16.Acknowledgements#getRequestedAckStatuses(String, String, JsonNode)}
+     */
+    private final JsonNode acknowledgementsJsonNode;
+
+    public AcknowledgementResponse(final JsonNode acknowledgementsJsonNode) {
+        this.acknowledgementsJsonNode = acknowledgementsJsonNode;
+    }
+
+    @Override
+    public ResponseEntity<JsonNode> asJsonNodeResponseEntity() {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final ObjectNode jsonNode = objectMapper.createObjectNode();
+        jsonNode.set("acks", this.acknowledgementsJsonNode);
+
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(jsonNode);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final AcknowledgementResponse that = (AcknowledgementResponse) o;
+        return Objects.equals(acknowledgementsJsonNode, that.acknowledgementsJsonNode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(acknowledgementsJsonNode);
     }
 }
