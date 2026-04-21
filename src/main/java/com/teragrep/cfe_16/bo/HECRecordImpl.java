@@ -231,7 +231,7 @@ public final class HECRecordImpl implements HECRecord {
      */
     private SDElement structuredDataParams(final long fallbackEpoch) {
         LOGGER.debug("Setting Structured Data params");
-        final SDElement metadataSDE = new SDElement("cfe_16-metadata@48577");
+        final SDElement metadataSDE = new SDElement("CFE-16-metadata@48577");
 
         if (this.authenticationToken() != null) {
             LOGGER.debug("Setting authentication token");

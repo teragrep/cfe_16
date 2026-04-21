@@ -77,7 +77,7 @@ public class EventDataToSyslogMessageTest {
         // Timestamp used as fallback value for HECRecord time
         final Facility expectedFacility = Facility.USER;
         final Severity expectedSeverity = Severity.INFORMATIONAL;
-        final SDElement expectedMetadataSDE1 = new SDElement("cfe_16-metadata@48577");
+        final SDElement expectedMetadataSDE1 = new SDElement("CFE-16-metadata@48577");
 
         final HECRecordImpl hecRecord1 = new HECRecordImpl(
                 "CHANNEL_11111",
@@ -157,17 +157,17 @@ public class EventDataToSyslogMessageTest {
                 .stream()
                 .collect(Collectors.toMap((SDElement::getSdID), (sdElem) -> sdElem.getSdParams().stream().collect(Collectors.toMap(SDParam::getParamName, SDParam::getParamValue))));
 
-        Assertions.assertTrue(sdElementMap.containsKey("cfe_16-metadata@48577"));
+        Assertions.assertTrue(sdElementMap.containsKey("CFE-16-metadata@48577"));
         Assertions.assertTrue(sdElementMap.containsKey("cfe_16-origin@48577"));
 
         Assertions
-                .assertEquals("AUTH_TOKEN_11111", sdElementMap.get("cfe_16-metadata@48577").get("authentication_token"));
-        Assertions.assertEquals("CHANNEL_11111", sdElementMap.get("cfe_16-metadata@48577").get("channel"));
-        Assertions.assertEquals("0", sdElementMap.get("cfe_16-metadata@48577").get("ack_id"));
-        Assertions.assertEquals("reported", sdElementMap.get("cfe_16-metadata@48577").get("time_source"));
-        Assertions.assertEquals("true", sdElementMap.get("cfe_16-metadata@48577").get("time_parsed"));
-        Assertions.assertEquals(String.valueOf(1433188255253L), sdElementMap.get("cfe_16-metadata@48577").get("time"));
-        Assertions.assertEquals("false", sdElementMap.get("cfe_16-metadata@48577").get("generated"));
+                .assertEquals("AUTH_TOKEN_11111", sdElementMap.get("CFE-16-metadata@48577").get("authentication_token"));
+        Assertions.assertEquals("CHANNEL_11111", sdElementMap.get("CFE-16-metadata@48577").get("channel"));
+        Assertions.assertEquals("0", sdElementMap.get("CFE-16-metadata@48577").get("ack_id"));
+        Assertions.assertEquals("reported", sdElementMap.get("CFE-16-metadata@48577").get("time_source"));
+        Assertions.assertEquals("true", sdElementMap.get("CFE-16-metadata@48577").get("time_parsed"));
+        Assertions.assertEquals(String.valueOf(1433188255253L), sdElementMap.get("CFE-16-metadata@48577").get("time"));
+        Assertions.assertEquals("false", sdElementMap.get("CFE-16-metadata@48577").get("generated"));
     }
 
     @Test
@@ -178,7 +178,7 @@ public class EventDataToSyslogMessageTest {
 
         final Facility expectedFacility = Facility.USER;
         final Severity expectedSeverity = Severity.INFORMATIONAL;
-        final SDElement expectedMetadataSDE2 = new SDElement("cfe_16-metadata@48577");
+        final SDElement expectedMetadataSDE2 = new SDElement("CFE-16-metadata@48577");
 
         final HECRecordImpl hecRecord2 = new HECRecordImpl(
                 "CHANNEL_22222",
@@ -256,17 +256,17 @@ public class EventDataToSyslogMessageTest {
                 .stream()
                 .collect(Collectors.toMap((SDElement::getSdID), (sdElem) -> sdElem.getSdParams().stream().collect(Collectors.toMap(SDParam::getParamName, SDParam::getParamValue))));
 
-        Assertions.assertTrue(sdElementMap.containsKey("cfe_16-metadata@48577"));
+        Assertions.assertTrue(sdElementMap.containsKey("CFE-16-metadata@48577"));
         Assertions.assertTrue(sdElementMap.containsKey("cfe_16-origin@48577"));
 
         Assertions
-                .assertEquals("AUTH_TOKEN_22222", sdElementMap.get("cfe_16-metadata@48577").get("authentication_token"));
-        Assertions.assertEquals("CHANNEL_22222", sdElementMap.get("cfe_16-metadata@48577").get("channel"));
-        Assertions.assertEquals("1", sdElementMap.get("cfe_16-metadata@48577").get("ack_id"));
-        Assertions.assertEquals("generated", sdElementMap.get("cfe_16-metadata@48577").get("time_source"));
-        Assertions.assertEquals("false", sdElementMap.get("cfe_16-metadata@48577").get("time_parsed"));
-        Assertions.assertEquals(String.valueOf(currentEpoch), sdElementMap.get("cfe_16-metadata@48577").get("time"));
-        Assertions.assertEquals("true", sdElementMap.get("cfe_16-metadata@48577").get("generated"));
+                .assertEquals("AUTH_TOKEN_22222", sdElementMap.get("CFE-16-metadata@48577").get("authentication_token"));
+        Assertions.assertEquals("CHANNEL_22222", sdElementMap.get("CFE-16-metadata@48577").get("channel"));
+        Assertions.assertEquals("1", sdElementMap.get("CFE-16-metadata@48577").get("ack_id"));
+        Assertions.assertEquals("generated", sdElementMap.get("CFE-16-metadata@48577").get("time_source"));
+        Assertions.assertEquals("false", sdElementMap.get("CFE-16-metadata@48577").get("time_parsed"));
+        Assertions.assertEquals(String.valueOf(currentEpoch), sdElementMap.get("CFE-16-metadata@48577").get("time"));
+        Assertions.assertEquals("true", sdElementMap.get("CFE-16-metadata@48577").get("generated"));
     }
 
     @Test
@@ -275,7 +275,7 @@ public class EventDataToSyslogMessageTest {
         // Timestamp used as fallback value for HECRecord time
         final long currentEpoch = Instant.now().toEpochMilli();
 
-        final SDElement expectedMetadataSDE3 = new SDElement("cfe_16-metadata@48577");
+        final SDElement expectedMetadataSDE3 = new SDElement("CFE-16-metadata@48577");
         final Severity expectedSeverity = Severity.INFORMATIONAL;
         final Facility expectedFacility = Facility.USER;
         final HECRecordImpl hecRecord3 = new HECRecordImpl(
@@ -352,17 +352,17 @@ public class EventDataToSyslogMessageTest {
                 .stream()
                 .collect(Collectors.toMap((SDElement::getSdID), (sdElem) -> sdElem.getSdParams().stream().collect(Collectors.toMap(SDParam::getParamName, SDParam::getParamValue))));
 
-        Assertions.assertTrue(sdElementMap.containsKey("cfe_16-metadata@48577"));
+        Assertions.assertTrue(sdElementMap.containsKey("CFE-16-metadata@48577"));
         Assertions.assertTrue(sdElementMap.containsKey("cfe_16-origin@48577"));
 
         Assertions
-                .assertEquals("AUTH_TOKEN_33333", sdElementMap.get("cfe_16-metadata@48577").get("authentication_token"));
-        Assertions.assertEquals("defaultchannel", sdElementMap.get("cfe_16-metadata@48577").get("channel"));
+                .assertEquals("AUTH_TOKEN_33333", sdElementMap.get("CFE-16-metadata@48577").get("authentication_token"));
+        Assertions.assertEquals("defaultchannel", sdElementMap.get("CFE-16-metadata@48577").get("channel"));
         Assertions
-                .assertFalse(sdElementMap.get("cfe_16-metadata@48577").containsKey("ack_id"), "ack_id should not be in SDElements since it is null");
-        Assertions.assertEquals("generated", sdElementMap.get("cfe_16-metadata@48577").get("time_source"));
-        Assertions.assertEquals("false", sdElementMap.get("cfe_16-metadata@48577").get("time_parsed"));
-        Assertions.assertEquals(String.valueOf(currentEpoch), sdElementMap.get("cfe_16-metadata@48577").get("time"));
-        Assertions.assertEquals("true", sdElementMap.get("cfe_16-metadata@48577").get("generated"));
+                .assertFalse(sdElementMap.get("CFE-16-metadata@48577").containsKey("ack_id"), "ack_id should not be in SDElements since it is null");
+        Assertions.assertEquals("generated", sdElementMap.get("CFE-16-metadata@48577").get("time_source"));
+        Assertions.assertEquals("false", sdElementMap.get("CFE-16-metadata@48577").get("time_parsed"));
+        Assertions.assertEquals(String.valueOf(currentEpoch), sdElementMap.get("CFE-16-metadata@48577").get("time"));
+        Assertions.assertEquals("true", sdElementMap.get("CFE-16-metadata@48577").get("generated"));
     }
 }
