@@ -50,7 +50,7 @@ java -jar target/cfe_16.jar
 === Performance
 Performance test client execution
 
-Test client is located in class com.teragrep.cfe_16.TestClient
+Test client is located in `src/test/java/com/teragrep/cfe_16/TestClient.java`
 
 TestClient parameters:
 
@@ -64,7 +64,7 @@ doing the HTTP requests.
 
 [source, shell script]
 ----
-java -classpath target/classes com.teragrep.cfe_16.TestClient localhost 8080 1 4
+java -classpath target/test-classes com.teragrep.cfe_16.TestClient localhost 8080 1 4
 ----
 
 NOTE: It is advised to warm up the JVM before reporting the results by running
