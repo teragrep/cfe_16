@@ -133,9 +133,6 @@ public final class Acknowledgements implements Runnable, LifeCycle {
 
     private final Configuration configuration;
 
-    /**
-     * An empty constructor for Spring @Autowired annotation.
-     */
     @Autowired
     public Acknowledgements(final Configuration configuration) {
         this.configuration = configuration;
