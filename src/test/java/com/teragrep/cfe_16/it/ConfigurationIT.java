@@ -100,8 +100,8 @@ public class ConfigurationIT {
 
     @Test
     public void instantiateConfigurationTest() {
-        String expected = "Configuration [syslogHost=127.0.0.1, syslogProtocol=relp, syslogPort=1235, maxAckValue=1000000, maxAckAge=20000, maxSessionAge=30000, "
-                + "maxChannels=1000000, pollTime=1000000, printTimes=true]";
+        final String expected = "Configuration{syslogHost=127.0.0.1, syslogPort=1235, maxAckValue=1000000, maxAckAge=20000, maxSessionAge=30000, "
+                + "maxChannels=1000000, pollTime=1000000, printTimes=true}";
         LOGGER.debug(configuration.toString());
 
         assertEquals(expected, configuration.toString());
