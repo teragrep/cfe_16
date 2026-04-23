@@ -64,8 +64,8 @@ public final class RelpConnection extends AbstractSyslogMessageSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RelpConnection.class);
     private final com.teragrep.rlp_01.RelpConnection connection;
-    private String hostname;
-    private int port;
+    private final String hostname;
+    private final int port;
 
     // Unfortunately Spring requires an additional annotation here, since the Configuration class has multiple methods that return a String
     public RelpConnection(@Qualifier("syslogHost") final String syslogHost, final int syslogPort) {
@@ -136,12 +136,10 @@ public final class RelpConnection extends AbstractSyslogMessageSender {
 
     @Override
     public void setSyslogServerHostname(final String syslogServerHostname) {
-        this.hostname = syslogServerHostname;
     }
 
     @Override
     public void setSyslogServerPort(final int syslogServerPort) {
-        this.port = syslogServerPort;
     }
 
     synchronized public void sendMessages(List<SyslogMessage> syslogMessages) {
