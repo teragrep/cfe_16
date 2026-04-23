@@ -66,8 +66,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.node.ObjectNode;
 
-import static org.junit.Assert.*;
-
 /*
  * Tests the functionality of HECServiceImpl
  */
@@ -237,7 +235,10 @@ public class ServiceAndHECBatchIT {
     public void sendEventsWithoutChannelTest() {
         final Response supposedResponse = new JsonResponse("Success");
         final Response response = service.sendEvents(request1, null, eventInJson);
-        assertEquals("Service should return JSON object with fields 'text' and 'code'", supposedResponse, response);
+        Assertions
+                .assertEquals(
+                        supposedResponse, response, "Service should return JSON object with fields 'text' and 'code'"
+                );
     }
 
     /*
@@ -294,10 +295,8 @@ public class ServiceAndHECBatchIT {
     public void sendingMultipleEventsTest() {
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         final Response supposedResponse = new AcknowledgedJsonResponse("Success", 0);
-        assertEquals(
-                "Should get a JSON with fields text, code and ackID", supposedResponse,
-                service.sendEvents(request1, channel1, allEventsInJson)
-        );
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request1, channel1, allEventsInJson), "Should get a JSON with fields text, code and ackID");
 
     }
 
@@ -309,9 +308,7 @@ public class ServiceAndHECBatchIT {
     public void sendingMultipleEventsWithDefaultChannelTest() {
         String allEventsInJson = "{\"event\": \"Pony 1 has left the barn\", \"sourcetype\": \"mysourcetype\", \"time\": 1426279439}{\"event\": \"Pony 2 has left the barn\"}{\"event\": \"Pony 3 has left the barn\", \"sourcetype\": \"newsourcetype\"}{\"event\": \"Pony 4 has left the barn\"}";
         final Response supposedResponse = new JsonResponse("Success");
-        assertEquals(
-                "Should get a JSON with fields text, code and ackID", supposedResponse,
-                service.sendEvents(request1, null, allEventsInJson)
-        );
+        Assertions
+                .assertEquals(supposedResponse, service.sendEvents(request1, null, allEventsInJson), "Should get a JSON with fields text, code and ackID");
     }
 }
