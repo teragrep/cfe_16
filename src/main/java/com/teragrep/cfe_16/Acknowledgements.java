@@ -133,12 +133,20 @@ public final class Acknowledgements implements Runnable, LifeCycle {
 
     private final Configuration configuration;
 
+    private Acknowledgements(
+            final ObjectMapper objectMapper,
+            final Map<String, State> ackStates,
+            final Configuration configuration
+    ) {
+        this.objectMapper = objectMapper;
+        this.ackStates = ackStates;
+        this.configuration = configuration;
+        this.cleanerThread = new Thread(this); // Cannot create a new thread in the secondary ctor
+    }
+
     @Autowired
     public Acknowledgements(final Configuration configuration) {
-        this.configuration = configuration;
-        this.objectMapper = new ObjectMapper();
-        this.ackStates = Collections.synchronizedMap(new HashMap<>());
-        this.cleanerThread = new Thread(this);
+        this(new ObjectMapper(), Collections.synchronizedMap(new HashMap<>()), configuration);
     }
 
     @Override
