@@ -51,8 +51,8 @@ import com.teragrep.cfe_16.server.TestServerFactory;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -60,9 +60,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class ConfigurationIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationIT.class);
@@ -96,8 +100,8 @@ public class ConfigurationIT {
 
     @Test
     public void instantiateConfigurationTest() {
-        String expected = "Configuration [syslogHost=127.0.0.1, syslogProtocol=relp, syslogPort=1235, maxAckValue=1000000, maxAckAge=20000, maxSessionAge=30000, "
-                + "maxChannels=1000000, pollTime=1000000, printTimes=true]";
+        final String expected = "Configuration{syslogHost=127.0.0.1, syslogPort=1235, maxAckValue=1000000, maxAckAge=20000, maxSessionAge=30000, "
+                + "maxChannels=1000000, pollTime=1000000, printTimes=true}";
         LOGGER.debug(configuration.toString());
 
         assertEquals(expected, configuration.toString());

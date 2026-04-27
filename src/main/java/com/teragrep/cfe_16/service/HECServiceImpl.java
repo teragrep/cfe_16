@@ -45,17 +45,14 @@
  */
 package com.teragrep.cfe_16.service;
 
+import com.teragrep.cfe_16.connection.RelpConnection;
 import com.teragrep.cfe_16.response.AcknowledgementResponse;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.*;
 import com.teragrep.cfe_16.bo.Ack;
 import com.teragrep.cfe_16.bo.HeaderInfo;
 import com.teragrep.cfe_16.bo.Session;
-import com.teragrep.cfe_16.config.Configuration;
-import com.teragrep.cfe_16.connection.AbstractConnection;
-import com.teragrep.cfe_16.connection.ConnectionFactory;
 import com.teragrep.cfe_16.bo.XForwardedForStub;
 import com.teragrep.cfe_16.bo.XForwardedHostStub;
 import com.teragrep.cfe_16.bo.XForwardedProtoStub;
@@ -70,7 +67,6 @@ import com.teragrep.cfe_16.response.ExceptionEventContext;
 import com.teragrep.cfe_16.response.ExceptionJsonResponse;
 import com.teragrep.cfe_16.response.JsonResponse;
 import com.teragrep.cfe_16.response.Response;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.UUID;
@@ -85,48 +81,52 @@ import org.springframework.stereotype.Service;
  * Implementation of the REST Service back end.
  */
 @Service
-public class HECServiceImpl implements HECService {
+public final class HECServiceImpl implements HECService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HECServiceImpl.class);
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    @Autowired
-    private Acknowledgements acknowledgements;
-
-    @Autowired
-    private SessionManager sessionManager;
-
-    @Autowired
-    private TokenManager tokenManager;
+    private final Acknowledgements acknowledgements;
+    private final SessionManager sessionManager;
+    private final TokenManager tokenManager;
+    private final RelpConnection relpConnection;
 
     private final XForwardedForStub xForwardedForStub;
     private final XForwardedHostStub xForwardedHostStub;
     private final XForwardedProtoStub xForwardedProtoStub;
 
     @Autowired
-    private Configuration configuration;
-
-    private AbstractConnection connection;
-
-    public HECServiceImpl() {
-        this.xForwardedForStub = new XForwardedForStub();
-        this.xForwardedHostStub = new XForwardedHostStub();
-        this.xForwardedProtoStub = new XForwardedProtoStub();
+    public HECServiceImpl(
+            final Acknowledgements acknowledgements,
+            final SessionManager sessionManager,
+            final TokenManager tokenManager,
+            final RelpConnection relpConnection
+    ) {
+        this(
+                acknowledgements,
+                sessionManager,
+                tokenManager,
+                relpConnection,
+                new XForwardedForStub(),
+                new XForwardedHostStub(),
+                new XForwardedProtoStub()
+        );
     }
 
-    @PostConstruct
-    void init() {
-        LOGGER.debug("Setting up connection");
-        try {
-            this.connection = ConnectionFactory
-                    .createConnection(
-                            this.configuration.getSyslogProtocol(), this.configuration.getSyslogHost(),
-                            this.configuration.getSyslogPort()
-                    );
-        }
-        catch (IOException e) {
-            LOGGER.error("Error creating connection", e);
-            throw new InternalServerErrorException();
-        }
+    private HECServiceImpl(
+            final Acknowledgements acknowledgements,
+            final SessionManager sessionManager,
+            final TokenManager tokenManager,
+            final RelpConnection relpConnection,
+            final XForwardedForStub xForwardedForStub,
+            final XForwardedHostStub xForwardedHostStub,
+            final XForwardedProtoStub xForwardedProtoStub
+    ) {
+        this.acknowledgements = acknowledgements;
+        this.sessionManager = sessionManager;
+        this.tokenManager = tokenManager;
+        this.relpConnection = relpConnection;
+        this.xForwardedForStub = xForwardedForStub;
+        this.xForwardedHostStub = xForwardedHostStub;
+        this.xForwardedProtoStub = xForwardedProtoStub;
     }
 
     @Override
@@ -180,7 +180,7 @@ public class HECServiceImpl implements HECService {
         Response responseToReturn;
 
         try {
-            this.connection
+            this.relpConnection
                     .sendMessages(new SyslogBatch(new HECBatch(authToken, channel, eventInJson, headerInfo).toHECRecordList()).asSyslogMessages());
 
             final boolean shouldAck = !channel.equals(Session.DEFAULT_CHANNEL);

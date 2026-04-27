@@ -47,6 +47,8 @@ package com.teragrep.cfe_16.connection;
 
 import com.cloudbees.syslog.SyslogMessage;
 import com.teragrep.rlp_01.RelpBatch;
+import jakarta.annotation.PostConstruct;
+import java.io.Closeable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.slf4j.Logger;
@@ -54,25 +56,32 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
-public class RelpConnection extends AbstractConnection {
+@Component
+public final class RelpConnection implements Closeable {
 
-    private final com.teragrep.rlp_01.RelpConnection connection;
     private static final Logger LOGGER = LoggerFactory.getLogger(RelpConnection.class);
-    //settings for timeouts, if they are 0 that we skip them
-    //default are 0
-    private int connectionTimeout = 10000;
-    private int readTimeout = 15000;
-    private int writeTimeout = 5000;
-    private int reconnectInterval = 500;
+    private final com.teragrep.rlp_01.RelpConnection connection;
+    private final String hostname;
+    private final int port;
 
-    public RelpConnection(String hostname, int port) {
-        super(hostname, port);
+    // Unfortunately Spring requires an additional annotation here, since the Configuration class has multiple methods that return a String
+    public RelpConnection(@Qualifier("syslogHost") final String syslogHost, final int syslogPort) {
+        this.hostname = syslogHost;
+        this.port = syslogPort;
         this.connection = new com.teragrep.rlp_01.RelpConnection();
-        this.connection.setConnectionTimeout(connectionTimeout);
-        this.connection.setReadTimeout(this.readTimeout);
-        this.connection.setWriteTimeout(this.writeTimeout);
-        connect();
+        //settings for timeouts, if they are 0 that we skip them
+        //default are 0
+        this.connection.setConnectionTimeout(10000);
+        this.connection.setReadTimeout(15000);
+        this.connection.setWriteTimeout(5000);
+    }
+
+    @PostConstruct
+    synchronized private void autoConnect() {
+        this.connect();
     }
 
     synchronized private void connect() {
@@ -91,8 +100,9 @@ public class RelpConnection extends AbstractConnection {
             }
             else {
                 try {
-                    LOGGER.debug("Sleeping for <[{}]> before reconnecting", this.reconnectInterval);
-                    Thread.sleep(this.reconnectInterval);
+                    final int reconnectInterval = 500;
+                    LOGGER.debug("Sleeping for <[{}]> before reconnecting", reconnectInterval);
+                    Thread.sleep(reconnectInterval);
                 }
                 catch (InterruptedException e) {
                     LOGGER.warn("Sleep interrupted: ", e);
@@ -124,7 +134,6 @@ public class RelpConnection extends AbstractConnection {
         this.disconnect();
     }
 
-    @Override
     synchronized public void sendMessages(List<SyslogMessage> syslogMessages) {
         final RelpBatch relpBatch = new RelpBatch();
         for (SyslogMessage syslogMessage : syslogMessages) {
@@ -133,7 +142,6 @@ public class RelpConnection extends AbstractConnection {
         doSend(relpBatch);
     }
 
-    @Override
     synchronized public void sendMessage(SyslogMessage syslogMessage) {
         final RelpBatch relpBatch = new RelpBatch();
         relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));

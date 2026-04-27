@@ -98,7 +98,7 @@ public class HECRestController {
             final long t2 = System.nanoTime();
             final long dt = t2 - t1;
             final double us = (double) dt / 1000.0;
-            if (this.configuration.getPrintTimes()) {
+            if (this.configuration.printTimes()) {
                 LOGGER.info("sendEvents took <{}> nanoseconds, that is <{}> microseconds", dt, us);
             }
             responseEntity = response.asJsonNodeResponseEntity();
@@ -140,7 +140,7 @@ public class HECRestController {
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double) dt / 1000.0;
-        if (this.configuration.getPrintTimes()) {
+        if (this.configuration.printTimes()) {
             LOGGER.info("sendEvents took <{}> nanoseconds, that is <{}> microseconds", dt, us);
         }
         return response.asJsonNodeResponseEntity();
@@ -165,7 +165,7 @@ public class HECRestController {
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double) dt / 1000.0;
-        if (this.configuration.getPrintTimes()) {
+        if (this.configuration.printTimes()) {
             LOGGER.info("getAcks took <{}> nanoseconds, that is <{}> microseconds", dt, us);
         }
         return response.asJsonNodeResponseEntity();
@@ -196,7 +196,7 @@ public class HECRestController {
             final long t2 = System.nanoTime();
             final long dt = t2 - t1;
             final double us = (double) dt / 1000.0;
-            if (this.configuration.getPrintTimes()) {
+            if (this.configuration.printTimes()) {
                 LOGGER.info("getAcks took <{}> nanoseconds, that is <{}> microseconds", dt, us);
             }
             responseEntity = new JsonResponse(response.toString()).asJsonNodeResponseEntity();
@@ -235,7 +235,7 @@ public class HECRestController {
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double) dt / 1000.0;
-        if (this.configuration.getPrintTimes()) {
+        if (this.configuration.printTimes()) {
             LOGGER.info("sendEvents took <{}> nanoseconds, that is <{}> microseconds", dt, us);
         }
         return response.asJsonNodeResponseEntity();
@@ -259,7 +259,7 @@ public class HECRestController {
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double) dt / 1000.0;
-        if (this.configuration.getPrintTimes()) {
+        if (this.configuration.printTimes()) {
             LOGGER.info("sendEvents took <{}> nanoseconds, that is <{}> microseconds", dt, us);
         }
         return response.asJsonNodeResponseEntity();
@@ -280,7 +280,7 @@ public class HECRestController {
         long t2 = System.nanoTime();
         long dt = t2 - t1;
         double us = (double) dt / 1000.0;
-        if (this.configuration.getPrintTimes()) {
+        if (this.configuration.printTimes()) {
             LOGGER.info("sendEvents took <{}¦ nanoseconds, that is <{}> microseconds", dt, us);
         }
         return response.asJsonNodeResponseEntity();
