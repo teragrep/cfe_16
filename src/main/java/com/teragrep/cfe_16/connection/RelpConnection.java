@@ -46,9 +46,9 @@
 package com.teragrep.cfe_16.connection;
 
 import com.cloudbees.syslog.SyslogMessage;
-import com.cloudbees.syslog.sender.AbstractSyslogMessageSender;
 import com.teragrep.rlp_01.RelpBatch;
 import jakarta.annotation.PostConstruct;
+import java.io.Closeable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class RelpConnection extends AbstractSyslogMessageSender {
+public final class RelpConnection implements Closeable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RelpConnection.class);
     private final com.teragrep.rlp_01.RelpConnection connection;
@@ -134,14 +134,6 @@ public final class RelpConnection extends AbstractSyslogMessageSender {
         this.disconnect();
     }
 
-    @Override
-    public void setSyslogServerHostname(final String syslogServerHostname) {
-    }
-
-    @Override
-    public void setSyslogServerPort(final int syslogServerPort) {
-    }
-
     synchronized public void sendMessages(List<SyslogMessage> syslogMessages) {
         final RelpBatch relpBatch = new RelpBatch();
         for (SyslogMessage syslogMessage : syslogMessages) {
@@ -150,7 +142,6 @@ public final class RelpConnection extends AbstractSyslogMessageSender {
         doSend(relpBatch);
     }
 
-    @Override
     synchronized public void sendMessage(SyslogMessage syslogMessage) {
         final RelpBatch relpBatch = new RelpBatch();
         relpBatch.insert(syslogMessage.toRfc5424SyslogMessage().getBytes(StandardCharsets.UTF_8));
