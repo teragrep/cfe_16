@@ -289,7 +289,6 @@ public class HECRestController {
     // @LogAnnotation(type = LogType.METRIC_DURATION)
     @GetMapping("services/collector/health")
     public ResponseEntity<String> getHealth(final HttpServletRequest ignoredRequest) {
-        // FIXME: Fix implementation to known standards
         return service.healthCheck();
     }
 
