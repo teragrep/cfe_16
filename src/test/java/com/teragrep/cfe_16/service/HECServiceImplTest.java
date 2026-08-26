@@ -60,6 +60,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -133,5 +135,13 @@ class HECServiceImplTest {
                 .assertDoesNotThrow(() -> service.sendEvents(request1, channel, allEventsInJson));
 
         Assertions.assertEquals(AcknowledgedJsonResponse.class, returnedResponse.getClass());
+    }
+
+    @Test
+    @DisplayName("Test the healthCheck return value")
+    void testTheHealthCheckReturnValue() {
+        final ResponseEntity<String> returnedResponse = Assertions.assertDoesNotThrow(() -> service.healthCheck());
+        Assertions.assertEquals(HttpStatus.OK, returnedResponse.getStatusCode());
+        Assertions.assertEquals("HEC is available and accepting input", returnedResponse.getBody());
     }
 }

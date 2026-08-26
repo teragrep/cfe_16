@@ -75,9 +75,8 @@ public interface HECService {
 
     /**
      * Ping.
-     * 
-     * @param request
+     *
      * @return
      */
-    public ResponseEntity<String> healthCheck(HttpServletRequest request);
+    public ResponseEntity<String> healthCheck();
 }

@@ -288,9 +288,9 @@ public class HECRestController {
 
     // @LogAnnotation(type = LogType.METRIC_DURATION)
     @GetMapping("services/collector/health")
-    public ResponseEntity<String> getHealth(HttpServletRequest request) {
+    public ResponseEntity<String> getHealth(final HttpServletRequest ignoredRequest) {
         // FIXME: Fix implementation to known standards
-        return service.healthCheck(request);
+        return service.healthCheck();
     }
 
     // @LogAnnotation(type = LogType.METRIC_DURATION)
