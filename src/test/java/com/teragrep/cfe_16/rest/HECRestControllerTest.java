@@ -59,6 +59,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -191,5 +192,28 @@ class HECRestControllerTest {
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
         Assertions.assertEquals(expectedResponseEntity, responseEntity);
+    }
+
+    @Test
+    @DisplayName("Test healthCheck endpoint with empty request")
+    void testHealthCheckEndpointWithEmptyRequest() {
+        final MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        final ResponseEntity<String> responseEntity = Assertions
+                .assertDoesNotThrow(() -> this.hecRestController.getHealth(mockHttpServletRequest));
+
+        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        Assertions.assertEquals("HEC is available and accepting input", responseEntity.getBody());
+    }
+
+    @Test
+    @DisplayName("Test healthCheck endpoint with a token in the request")
+    void testHealthCheckEndpointWithATokenInTheRequest() {
+        final MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        mockHttpServletRequest.addHeader("Authorization", "AUTH_TOKEN_11111");
+        final ResponseEntity<String> responseEntity = Assertions
+                .assertDoesNotThrow(() -> this.hecRestController.getHealth(mockHttpServletRequest));
+
+        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        Assertions.assertEquals("HEC is available and accepting input", responseEntity.getBody());
     }
 }

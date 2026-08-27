@@ -262,10 +262,7 @@ public final class HECServiceImpl implements HECService {
     }
 
     @Override
-    public ResponseEntity<String> healthCheck(HttpServletRequest request) {
-        if (this.tokenManager.tokenIsMissing(request)) {
-            return new ResponseEntity<String>("Invalid HEC token", HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<String>("HEC is available and accepting input", HttpStatus.OK);
+    public ResponseEntity<String> healthCheck() {
+        return new ResponseEntity<>("HEC is available and accepting input", HttpStatus.OK);
     }
 }
