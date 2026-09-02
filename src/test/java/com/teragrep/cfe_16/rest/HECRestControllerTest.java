@@ -248,5 +248,7 @@ class HECRestControllerTest {
         final MockHttpServletResponse response = mvcResult.getResponse();
 
         Assertions.assertEquals(200, response.getStatus());
+        final String responseContentAsString = Assertions.assertDoesNotThrow(() -> response.getContentAsString());
+        Assertions.assertEquals("{\"message\":\"Success\"}", responseContentAsString);
     }
 }
