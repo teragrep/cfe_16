@@ -45,8 +45,6 @@
  */
 package com.teragrep.cfe_16.rest;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
 import com.teragrep.cfe_16.response.AcknowledgedJsonResponse;
 import com.teragrep.cfe_16.response.JsonResponse;
 import com.teragrep.cfe_16.server.TestServer;
@@ -73,6 +71,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import tools.jackson.databind.JsonNode;
@@ -231,8 +231,19 @@ class HECRestControllerTest {
     @Test
     @DisplayName("Test event consumer with mediaType ALL")
     void testEventConsumerWithMediaTypeAll() {
+        final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
+                .post("/services/collector/event")
+                .contentType(MediaType.ALL)
+                .header("Authorization", "AUTH_TOKEN_11111")
+                .content(
+                        "\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
+                                + "\"event\": {\"message\":\"Access log test message 1\"}} "
+                                + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
+                                + "{\"message\":\"Access log test message 2\"}"
+                );
+        // Send a request with MediaType.ALL using the mockMVC object
         final ResultActions resultActions = Assertions
-                .assertDoesNotThrow(() -> mockMvc.perform(post("/services/collector/event").contentType(MediaType.ALL).header("Authorization", "AUTH_TOKEN_11111").content("\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", " + "\"event\": {\"message\":\"Access log test message 1\"}} " + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": " + "{\"message\":\"Access log test message 2\"}")));
+                .assertDoesNotThrow(() -> mockMvc.perform(mockHttpServletRequestBuilder));
         final MvcResult mvcResult = resultActions.andReturn();
         final MockHttpServletResponse response = mvcResult.getResponse();
 
