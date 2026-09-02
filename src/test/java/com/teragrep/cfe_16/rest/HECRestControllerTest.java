@@ -45,6 +45,8 @@
  */
 package com.teragrep.cfe_16.rest;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import com.teragrep.cfe_16.response.AcknowledgedJsonResponse;
 import com.teragrep.cfe_16.response.JsonResponse;
 import com.teragrep.cfe_16.server.TestServer;
@@ -59,12 +61,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import tools.jackson.databind.JsonNode;
@@ -82,6 +90,7 @@ import tools.jackson.databind.JsonNode;
         "server.print.times=true"
 })
 @SpringBootTest
+@AutoConfigureMockMvc
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 class HECRestControllerTest {
 
@@ -92,6 +101,8 @@ class HECRestControllerTest {
     private static TestServer server;
     @Autowired
     private HECRestController hecRestController;
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeAll
     static void init() {
@@ -215,5 +226,16 @@ class HECRestControllerTest {
 
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         Assertions.assertEquals("HEC is available and accepting input", responseEntity.getBody());
+    }
+
+    @Test
+    @DisplayName("Test event consumer with mediaType ALL")
+    void testEventConsumerWithMediaTypeAll() {
+        final ResultActions resultActions = Assertions
+                .assertDoesNotThrow(() -> mockMvc.perform(post("/services/collector/event").contentType(MediaType.ALL).header("Authorization", "AUTH_TOKEN_11111").content("\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", " + "\"event\": {\"message\":\"Access log test message 1\"}} " + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": " + "{\"message\":\"Access log test message 2\"}")));
+        final MvcResult mvcResult = resultActions.andReturn();
+        final MockHttpServletResponse response = mvcResult.getResponse();
+
+        Assertions.assertEquals(200, response.getStatus());
     }
 }
