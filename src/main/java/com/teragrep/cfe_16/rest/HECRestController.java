@@ -244,7 +244,9 @@ public class HECRestController {
     @RequestMapping(
             value = "services/collector/event",
             method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE
+            consumes = {
+                    MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE
+            }
     )
     public ResponseEntity<JsonNode> sendEventsWithFormatOption(
             HttpServletRequest request,
