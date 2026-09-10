@@ -64,29 +64,20 @@ public final class JsonEventImpl implements JsonEvent {
         if (!this.asPayloadJsonNode().has("event")) {
             throw new EventFieldException("Event field is missing");
         }
+
         // Event field contains subfield "message"
-        else if (
-            this.asPayloadJsonNode().get("event").isObject() && this.asPayloadJsonNode().get("event").has("message")
-        ) {
+        else {
+            final JsonNode eventJsonNode = this.asPayloadJsonNode().get("event");
+            // Event field is essentially empty
             if (
-                this.asPayloadJsonNode().get("event").get("message").isTextual()
-                        && !Objects.equals(this.asPayloadJsonNode().get("event").get("message").asText(), "")
+                eventJsonNode.isString() && Objects.equals(eventJsonNode.asString(), "") || eventJsonNode.isNull()
+                        || eventJsonNode.isObject() && eventJsonNode.asObject().isEmpty()
             ) {
-                eventMessage = new EventMessageImpl(this.asPayloadJsonNode().get("event").get("message").asText());
+                throw new EventFieldException("Event field is missing");
             }
             else {
-                throw new EventFieldException("Event field was not textual");
+                eventMessage = new EventMessageImpl(eventJsonNode.toString());
             }
-        }
-        // Event field has a String value
-        else if (
-            this.asPayloadJsonNode().get("event").isTextual()
-                    && !Objects.equals(this.asPayloadJsonNode().get("event").asText(), "")
-        ) {
-            eventMessage = new EventMessageImpl(this.jsonNode.get("event").asText());
-        }
-        else {
-            throw new EventFieldException("Event field was not textual");
         }
 
         return eventMessage;
