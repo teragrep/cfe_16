@@ -388,7 +388,7 @@ class HECBatchTest {
                 new HeaderInfo(new MockHttpServletRequest())
         );
 
-        Assertions.assertThrowsExactly(StreamReadException.class, () -> HECBatch.toHECRecordList().toString());
+        Assertions.assertThrowsExactly(StreamReadException.class, HECBatch::toHECRecordList);
     }
 
     /**
@@ -405,7 +405,7 @@ class HECBatchTest {
                 new HeaderInfo(new MockHttpServletRequest())
         );
         final Exception exception = Assertions
-                .assertThrowsExactly(EventFieldException.class, () -> HECBatch.toHECRecordList().toString());
+                .assertThrowsExactly(EventFieldException.class, HECBatch::toHECRecordList);
         Assertions
                 .assertEquals(
                         supposedResponse, exception.getMessage(), "Exception message was not what it was supposed to be"
@@ -422,7 +422,7 @@ class HECBatchTest {
                 new HeaderInfo(new MockHttpServletRequest())
         );
 
-        Assertions.assertThrows(EventFieldException.class, () -> HECBatch.toHECRecordList().toString());
+        Assertions.assertThrows(EventFieldException.class, HECBatch::toHECRecordList);
     }
 
     @Test
@@ -435,6 +435,6 @@ class HECBatchTest {
                 new HeaderInfo(new MockHttpServletRequest())
         );
 
-        Assertions.assertThrows(EventFieldException.class, () -> HECBatch.toHECRecordList().toString());
+        Assertions.assertThrows(EventFieldException.class, HECBatch::toHECRecordList);
     }
 }
