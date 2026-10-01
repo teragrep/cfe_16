@@ -49,6 +49,7 @@ import com.teragrep.cfe_16.response.AcknowledgedJsonResponse;
 import com.teragrep.cfe_16.response.JsonResponse;
 import com.teragrep.cfe_16.server.TestServer;
 import com.teragrep.cfe_16.server.TestServerFactory;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterAll;
@@ -145,6 +146,12 @@ class HECRestControllerTest {
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
         Assertions.assertEquals(expectedResponseEntity, responseEntity);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 
     @Test
@@ -168,6 +175,12 @@ class HECRestControllerTest {
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
         Assertions.assertEquals(expectedResponseEntity, responseEntity);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue( firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue( secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 
     @Test
@@ -190,6 +203,12 @@ class HECRestControllerTest {
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
         Assertions.assertEquals(expectedResponseEntity, responseEntity);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 
     @Test
@@ -217,6 +236,12 @@ class HECRestControllerTest {
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
         Assertions.assertEquals(expectedResponseEntity, responseEntity);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 
     @Test
@@ -243,6 +268,12 @@ class HECRestControllerTest {
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
         Assertions.assertEquals(expectedResponseEntity, responseEntity);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue( firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue( secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 
     @Test
@@ -267,6 +298,12 @@ class HECRestControllerTest {
 
         Assertions.assertEquals(expectedResponseEntity, responseEntity);
         Assertions.assertEquals(2, messageList.size());
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 
     @Test
@@ -316,6 +353,12 @@ class HECRestControllerTest {
         Assertions.assertEquals(200, response.getStatus());
         final String responseContentAsString = Assertions.assertDoesNotThrow(() -> response.getContentAsString());
         Assertions.assertEquals("{\"message\":\"Success\"}", responseContentAsString);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 
     @Test
@@ -343,5 +386,11 @@ class HECRestControllerTest {
         Assertions.assertEquals(200, response.getStatus());
         final String responseContentAsString = Assertions.assertDoesNotThrow(() -> response.getContentAsString());
         Assertions.assertEquals("{\"message\":\"Success\"}", responseContentAsString);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue( firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue( secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 }
