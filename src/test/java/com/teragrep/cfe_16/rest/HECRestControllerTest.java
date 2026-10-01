@@ -127,6 +127,8 @@ class HECRestControllerTest {
     @Test
     @DisplayName("test JSON sendEvents endpoint with channel present")
     void testJsonSendEventsEndpointWithChannelPresent() {
+        Assertions.assertEquals(0, messageList.size());
+
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         final String channel1 = "CHANNEL_11111";
@@ -137,6 +139,8 @@ class HECRestControllerTest {
 
         final ResponseEntity<JsonNode> responseEntity = Assertions
                 .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, eventInJson, channel1));
+
+        Assertions.assertEquals(2, messageList.size());
         final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
@@ -146,6 +150,8 @@ class HECRestControllerTest {
     @Test
     @DisplayName("test JSON sendEvents endpoint with channel present and NDJSON format")
     void testJsonSendEventsEndpointWithChannelPresentAndNdjsonFormat() {
+        Assertions.assertEquals(0, messageList.size());
+
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         final String channel1 = "CHANNEL_11111";
@@ -156,6 +162,8 @@ class HECRestControllerTest {
 
         final ResponseEntity<JsonNode> responseEntity = Assertions
             .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, eventInJson, channel1));
+
+        Assertions.assertEquals(2, messageList.size());
         final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
@@ -165,6 +173,8 @@ class HECRestControllerTest {
     @Test
     @DisplayName("test JSON sendEvents endpoint without channel present")
     void testJsonSendEventsEndpointWithoutChannelPresent() {
+        Assertions.assertEquals(0, messageList.size());
+
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         final String eventInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
@@ -174,6 +184,8 @@ class HECRestControllerTest {
 
         final ResponseEntity<JsonNode> responseEntity = Assertions
                 .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, eventInJson, null));
+
+        Assertions.assertEquals(2, messageList.size());
         final JsonResponse expectedResponse = new JsonResponse("Success");
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
@@ -183,6 +195,8 @@ class HECRestControllerTest {
     @Test
     @DisplayName("test multiValueMap sendEvents endpoint with channel present")
     void testMultiValueMapSendEventsEndpointWithChannelPresent() {
+        Assertions.assertEquals(0, messageList.size());
+
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         final String channel1 = "CHANNEL_11111";
@@ -197,6 +211,8 @@ class HECRestControllerTest {
 
         final ResponseEntity<JsonNode> responseEntity = Assertions
                 .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, multiValueMap, channel1));
+
+        Assertions.assertEquals(2, messageList.size());
         final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
@@ -206,6 +222,8 @@ class HECRestControllerTest {
     @Test
     @DisplayName("test multiValueMap sendEvents endpoint with channel present and NDJSON format")
     void testMultiValueMapSendEventsEndpointWithChannelPresentAndNdjsonFormat() {
+        Assertions.assertEquals(0, messageList.size());
+
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         final String channel1 = "CHANNEL_11111";
@@ -219,6 +237,8 @@ class HECRestControllerTest {
 
         final ResponseEntity<JsonNode> responseEntity = Assertions
             .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, multiValueMap, channel1));
+
+        Assertions.assertEquals(2, messageList.size());
         final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
@@ -228,6 +248,8 @@ class HECRestControllerTest {
     @Test
     @DisplayName("test multiValueMap sendEvents endpoint without channel present")
     void testMultiValueMapSendEventsEndpointWithoutChannelPresent() {
+        Assertions.assertEquals(0, messageList.size());
+
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         // Send JSON without the outer object brackets
@@ -244,6 +266,7 @@ class HECRestControllerTest {
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
         Assertions.assertEquals(expectedResponseEntity, responseEntity);
+        Assertions.assertEquals(2, messageList.size());
     }
 
     @Test
@@ -272,6 +295,7 @@ class HECRestControllerTest {
     @Test
     @DisplayName("Test event consumer with mediaType ALL")
     void testEventConsumerWithMediaTypeAll() {
+        Assertions.assertEquals(0, messageList.size());
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
                 .post("/services/collector/event")
                 .contentType(MediaType.ALL)
@@ -288,6 +312,7 @@ class HECRestControllerTest {
         final MvcResult mvcResult = resultActions.andReturn();
         final MockHttpServletResponse response = mvcResult.getResponse();
 
+        Assertions.assertEquals(2, messageList.size());
         Assertions.assertEquals(200, response.getStatus());
         final String responseContentAsString = Assertions.assertDoesNotThrow(() -> response.getContentAsString());
         Assertions.assertEquals("{\"message\":\"Success\"}", responseContentAsString);
@@ -296,6 +321,7 @@ class HECRestControllerTest {
     @Test
     @DisplayName("Test event consumer with mediaType ALL and NDJSON format")
     void testEventConsumerWithMediaTypeAllAndNdjsonFormat() {
+        Assertions.assertEquals(0, messageList.size());
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
             .post("/services/collector/event")
             .contentType(MediaType.ALL)
@@ -313,6 +339,7 @@ class HECRestControllerTest {
         final MvcResult mvcResult = resultActions.andReturn();
         final MockHttpServletResponse response = mvcResult.getResponse();
 
+        Assertions.assertEquals(2, messageList.size());
         Assertions.assertEquals(200, response.getStatus());
         final String responseContentAsString = Assertions.assertDoesNotThrow(() -> response.getContentAsString());
         Assertions.assertEquals("{\"message\":\"Success\"}", responseContentAsString);
