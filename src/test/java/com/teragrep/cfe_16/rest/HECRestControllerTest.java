@@ -150,7 +150,7 @@ class HECRestControllerTest {
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         final String channel1 = "CHANNEL_11111";
         final String eventInJson = """
-            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 1"}} \n
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 1"}}\n
             {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 2"}}
             """;
 
