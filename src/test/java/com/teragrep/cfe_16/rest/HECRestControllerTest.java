@@ -144,6 +144,25 @@ class HECRestControllerTest {
     }
 
     @Test
+    @DisplayName("test JSON sendEvents endpoint with channel present and NDJSON format")
+    void testJsonSendEventsEndpointWithChannelPresentAndNdjsonFormat() {
+        final MockHttpServletRequest request1 = new MockHttpServletRequest();
+        request1.addHeader("Authorization", "AUTH_TOKEN_11111");
+        final String channel1 = "CHANNEL_11111";
+        final String eventInJson = """
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 1"}} \n
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 2"}}
+            """;
+
+        final ResponseEntity<JsonNode> responseEntity = Assertions
+            .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, eventInJson, channel1));
+        final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
+        final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
+
+        Assertions.assertEquals(expectedResponseEntity, responseEntity);
+    }
+
+    @Test
     @DisplayName("test JSON sendEvents endpoint without channel present")
     void testJsonSendEventsEndpointWithoutChannelPresent() {
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
@@ -168,10 +187,10 @@ class HECRestControllerTest {
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         final String channel1 = "CHANNEL_11111";
         // Send JSON without the outer object brackets
-        final String eventInJson = "\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
+        final String eventInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
                 + "\"event\": {\"message\":\"Access log test message 1\"}} "
                 + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
-                + "{\"message\":\"Access log test message 2\"}";
+                + "{\"message\":\"Access log test message 2\"}}";
         final MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("channel", channel1);
         multiValueMap.add(eventInJson, null);
@@ -185,15 +204,37 @@ class HECRestControllerTest {
     }
 
     @Test
+    @DisplayName("test multiValueMap sendEvents endpoint with channel present and NDJSON format")
+    void testMultiValueMapSendEventsEndpointWithChannelPresentAndNdjsonFormat() {
+        final MockHttpServletRequest request1 = new MockHttpServletRequest();
+        request1.addHeader("Authorization", "AUTH_TOKEN_11111");
+        final String channel1 = "CHANNEL_11111";
+        final String eventInJson = """
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 1"}} \n
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 2"}}
+            """;
+        final MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.add("channel", channel1);
+        multiValueMap.add(eventInJson, null);
+
+        final ResponseEntity<JsonNode> responseEntity = Assertions
+            .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, multiValueMap, channel1));
+        final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
+        final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
+
+        Assertions.assertEquals(expectedResponseEntity, responseEntity);
+    }
+
+    @Test
     @DisplayName("test multiValueMap sendEvents endpoint without channel present")
     void testMultiValueMapSendEventsEndpointWithoutChannelPresent() {
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         // Send JSON without the outer object brackets
-        final String eventInJson = "\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
+        final String eventInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
                 + "\"event\": {\"message\":\"Access log test message 1\"}} "
                 + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
-                + "{\"message\":\"Access log test message 2\"}";
+                + "{\"message\":\"Access log test message 2\"}}";
         final MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add(eventInJson, null);
 
@@ -236,14 +277,39 @@ class HECRestControllerTest {
                 .contentType(MediaType.ALL)
                 .header("Authorization", "AUTH_TOKEN_11111")
                 .content(
-                        "\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
+                        "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
                                 + "\"event\": {\"message\":\"Access log test message 1\"}} "
                                 + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
-                                + "{\"message\":\"Access log test message 2\"}"
+                                + "{\"message\":\"Access log test message 2\"}}"
                 );
         // Send a request with MediaType.ALL using the mockMVC object
         final ResultActions resultActions = Assertions
                 .assertDoesNotThrow(() -> mockMvc.perform(mockHttpServletRequestBuilder));
+        final MvcResult mvcResult = resultActions.andReturn();
+        final MockHttpServletResponse response = mvcResult.getResponse();
+
+        Assertions.assertEquals(200, response.getStatus());
+        final String responseContentAsString = Assertions.assertDoesNotThrow(() -> response.getContentAsString());
+        Assertions.assertEquals("{\"message\":\"Success\"}", responseContentAsString);
+    }
+
+    @Test
+    @DisplayName("Test event consumer with mediaType ALL and NDJSON format")
+    void testEventConsumerWithMediaTypeAllAndNdjsonFormat() {
+        final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
+            .post("/services/collector/event")
+            .contentType(MediaType.ALL)
+            .header("Authorization", "AUTH_TOKEN_11111")
+            .content(
+                """
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 1"}}
+            
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 2"}}
+            """
+            );
+        // Send a request with MediaType.ALL using the mockMVC object
+        final ResultActions resultActions = Assertions
+            .assertDoesNotThrow(() -> mockMvc.perform(mockHttpServletRequestBuilder));
         final MvcResult mvcResult = resultActions.andReturn();
         final MockHttpServletResponse response = mvcResult.getResponse();
 

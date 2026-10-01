@@ -65,7 +65,6 @@ public final class JsonEventImpl implements JsonEvent {
             throw new EventFieldException("Event field is missing");
         }
 
-        // Event field contains subfield "message"
         else {
             final JsonNode eventJsonNode = this.asPayloadJsonNode().get("event");
             // Event field is essentially empty
@@ -84,11 +83,11 @@ public final class JsonEventImpl implements JsonEvent {
     }
 
     @Override
-    public JsonNode asPayloadJsonNode() {
+    public JsonNode asPayloadJsonNode() throws EventFieldException {
         if (this.jsonNode != null && this.jsonNode.isObject()) {
             return this.jsonNode;
         }
-        throw new IllegalArgumentException("jsonEvent node not valid");
+        throw new EventFieldException("jsonEvent node not valid");
     }
 
     @Override

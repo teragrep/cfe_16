@@ -52,7 +52,7 @@ public interface JsonEvent {
 
     EventMessage asEventMessage() throws EventFieldException;
 
-    JsonNode asPayloadJsonNode();
+    JsonNode asPayloadJsonNode() throws EventFieldException;
 
     JsonNode asTimeJsonNode() throws EventFieldException;
 
