@@ -182,6 +182,7 @@ class HECBatchTest {
         expectedResponses.add(expectedResponse1);
         expectedResponses.add(expectedResponse2);
         expectedResponses.add(expectedResponse3);
+        Assertions.assertEquals(3, expectedResponses.size());
 
         final HECBatch HECBatch = new HECBatch(
                 authToken1,
@@ -194,6 +195,7 @@ class HECBatchTest {
         // Test the individual responses
         Assertions.assertEquals(3, returnedHECRecords.size());
         int verifiedIterations = 0;
+        Assertions.assertEquals(0, verifiedIterations);
         for (int i = 0; i < returnedHECRecords.size(); i++) {
             final HECRecord expectedResponseFromIterator = expectedResponses.get(i);
             final HECRecord returnedHECRecord = returnedHECRecords.get(i);
@@ -330,6 +332,7 @@ class HECBatchTest {
         expectedResponses.add(expectedResponse1);
         expectedResponses.add(expectedResponse2);
         expectedResponses.add(expectedResponse3);
+        Assertions.assertEquals(3, expectedResponses.size());
 
 
         final HECBatch HECBatch = new HECBatch(
@@ -344,6 +347,8 @@ class HECBatchTest {
         // Test the individual responses
         Assertions.assertEquals(3, returnedHECRecords.size());
         int verifiedIterations = 0;
+        Assertions.assertEquals(0, verifiedIterations);
+
         for (int i = 0; i < returnedHECRecords.size(); i++) {
             final HECRecord expectedResponseFromIterator = expectedResponses.get(i);
             final HECRecord returnedHECRecord = returnedHECRecords.get(i);
@@ -367,7 +372,8 @@ class HECBatchTest {
                 .assertEquals(expectedResponseFromIterator.time().instant(0L), returnedHECRecord.time().instant(1L), "Time was not the one expected");
             verifiedIterations++;
         }
-        Assertions.assertEquals(3, verifiedIterations);    }
+        Assertions.assertEquals(3, verifiedIterations);
+    }
 
     /**
      * Tests for JsonSyntaxException
