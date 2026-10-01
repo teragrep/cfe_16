@@ -49,6 +49,7 @@ import com.teragrep.cfe_16.response.AcknowledgedJsonResponse;
 import com.teragrep.cfe_16.response.JsonResponse;
 import com.teragrep.cfe_16.server.TestServer;
 import com.teragrep.cfe_16.server.TestServerFactory;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterAll;
@@ -127,6 +128,8 @@ class HECRestControllerTest {
     @Test
     @DisplayName("test JSON sendEvents endpoint with channel present")
     void testJsonSendEventsEndpointWithChannelPresent() {
+        Assertions.assertEquals(0, messageList.size());
+
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         final String channel1 = "CHANNEL_11111";
@@ -137,15 +140,54 @@ class HECRestControllerTest {
 
         final ResponseEntity<JsonNode> responseEntity = Assertions
                 .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, eventInJson, channel1));
+
+        Assertions.assertEquals(2, messageList.size());
         final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
         Assertions.assertEquals(expectedResponseEntity, responseEntity);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
+    }
+
+    @Test
+    @DisplayName("test JSON sendEvents endpoint with channel present and NDJSON format")
+    void testJsonSendEventsEndpointWithChannelPresentAndNdjsonFormat() {
+        Assertions.assertEquals(0, messageList.size());
+
+        final MockHttpServletRequest request1 = new MockHttpServletRequest();
+        request1.addHeader("Authorization", "AUTH_TOKEN_11111");
+        final String channel1 = "CHANNEL_11111";
+        final String eventInJson = """
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 1"}}\n
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 2"}}
+            """;
+
+        final ResponseEntity<JsonNode> responseEntity = Assertions
+            .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, eventInJson, channel1));
+
+        Assertions.assertEquals(2, messageList.size());
+        final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
+        final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
+
+        Assertions.assertEquals(expectedResponseEntity, responseEntity);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue( firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue( secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 
     @Test
     @DisplayName("test JSON sendEvents endpoint without channel present")
     void testJsonSendEventsEndpointWithoutChannelPresent() {
+        Assertions.assertEquals(0, messageList.size());
+
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         final String eventInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
@@ -155,45 +197,97 @@ class HECRestControllerTest {
 
         final ResponseEntity<JsonNode> responseEntity = Assertions
                 .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, eventInJson, null));
+
+        Assertions.assertEquals(2, messageList.size());
         final JsonResponse expectedResponse = new JsonResponse("Success");
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
         Assertions.assertEquals(expectedResponseEntity, responseEntity);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 
     @Test
     @DisplayName("test multiValueMap sendEvents endpoint with channel present")
     void testMultiValueMapSendEventsEndpointWithChannelPresent() {
+        Assertions.assertEquals(0, messageList.size());
+
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         final String channel1 = "CHANNEL_11111";
         // Send JSON without the outer object brackets
-        final String eventInJson = "\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
+        final String eventInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
                 + "\"event\": {\"message\":\"Access log test message 1\"}} "
                 + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
-                + "{\"message\":\"Access log test message 2\"}";
+                + "{\"message\":\"Access log test message 2\"}}";
         final MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("channel", channel1);
         multiValueMap.add(eventInJson, null);
 
         final ResponseEntity<JsonNode> responseEntity = Assertions
                 .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, multiValueMap, channel1));
+
+        Assertions.assertEquals(2, messageList.size());
         final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
         Assertions.assertEquals(expectedResponseEntity, responseEntity);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
+    }
+
+    @Test
+    @DisplayName("test multiValueMap sendEvents endpoint with channel present and NDJSON format")
+    void testMultiValueMapSendEventsEndpointWithChannelPresentAndNdjsonFormat() {
+        Assertions.assertEquals(0, messageList.size());
+
+        final MockHttpServletRequest request1 = new MockHttpServletRequest();
+        request1.addHeader("Authorization", "AUTH_TOKEN_11111");
+        final String channel1 = "CHANNEL_11111";
+        final String eventInJson = """
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 1"}} \n
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 2"}}
+            """;
+        final MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.add("channel", channel1);
+        multiValueMap.add(eventInJson, null);
+
+        final ResponseEntity<JsonNode> responseEntity = Assertions
+            .assertDoesNotThrow(() -> this.hecRestController.sendEvents(request1, multiValueMap, channel1));
+
+        Assertions.assertEquals(2, messageList.size());
+        final AcknowledgedJsonResponse expectedResponse = new AcknowledgedJsonResponse("Success", 0);
+        final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
+
+        Assertions.assertEquals(expectedResponseEntity, responseEntity);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue( firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue( secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 
     @Test
     @DisplayName("test multiValueMap sendEvents endpoint without channel present")
     void testMultiValueMapSendEventsEndpointWithoutChannelPresent() {
+        Assertions.assertEquals(0, messageList.size());
+
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addHeader("Authorization", "AUTH_TOKEN_11111");
         // Send JSON without the outer object brackets
-        final String eventInJson = "\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
+        final String eventInJson = "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
                 + "\"event\": {\"message\":\"Access log test message 1\"}} "
                 + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
-                + "{\"message\":\"Access log test message 2\"}";
+                + "{\"message\":\"Access log test message 2\"}}";
         final MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add(eventInJson, null);
 
@@ -203,6 +297,13 @@ class HECRestControllerTest {
         final ResponseEntity<JsonNode> expectedResponseEntity = expectedResponse.asJsonNodeResponseEntity();
 
         Assertions.assertEquals(expectedResponseEntity, responseEntity);
+        Assertions.assertEquals(2, messageList.size());
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 
     @Test
@@ -231,15 +332,16 @@ class HECRestControllerTest {
     @Test
     @DisplayName("Test event consumer with mediaType ALL")
     void testEventConsumerWithMediaTypeAll() {
+        Assertions.assertEquals(0, messageList.size());
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
                 .post("/services/collector/event")
                 .contentType(MediaType.ALL)
                 .header("Authorization", "AUTH_TOKEN_11111")
                 .content(
-                        "\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
+                        "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", "
                                 + "\"event\": {\"message\":\"Access log test message 1\"}} "
                                 + "{\"sourcetype\":\"access\", \"source\":\"/var/log/access.log\", \"event\": "
-                                + "{\"message\":\"Access log test message 2\"}"
+                                + "{\"message\":\"Access log test message 2\"}}"
                 );
         // Send a request with MediaType.ALL using the mockMVC object
         final ResultActions resultActions = Assertions
@@ -247,8 +349,48 @@ class HECRestControllerTest {
         final MvcResult mvcResult = resultActions.andReturn();
         final MockHttpServletResponse response = mvcResult.getResponse();
 
+        Assertions.assertEquals(2, messageList.size());
         Assertions.assertEquals(200, response.getStatus());
         final String responseContentAsString = Assertions.assertDoesNotThrow(() -> response.getContentAsString());
         Assertions.assertEquals("{\"message\":\"Success\"}", responseContentAsString);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
+    }
+
+    @Test
+    @DisplayName("Test event consumer with mediaType ALL and NDJSON format")
+    void testEventConsumerWithMediaTypeAllAndNdjsonFormat() {
+        Assertions.assertEquals(0, messageList.size());
+        final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
+            .post("/services/collector/event")
+            .contentType(MediaType.ALL)
+            .header("Authorization", "AUTH_TOKEN_11111")
+            .content(
+                """
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 1"}}
+            
+            {"sourcetype":"access", "source":"/var/log/access.log", "event": {"message":"Access log test message 2"}}
+            """
+            );
+        // Send a request with MediaType.ALL using the mockMVC object
+        final ResultActions resultActions = Assertions
+            .assertDoesNotThrow(() -> mockMvc.perform(mockHttpServletRequestBuilder));
+        final MvcResult mvcResult = resultActions.andReturn();
+        final MockHttpServletResponse response = mvcResult.getResponse();
+
+        Assertions.assertEquals(2, messageList.size());
+        Assertions.assertEquals(200, response.getStatus());
+        final String responseContentAsString = Assertions.assertDoesNotThrow(() -> response.getContentAsString());
+        Assertions.assertEquals("{\"message\":\"Success\"}", responseContentAsString);
+
+        final String firstMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue( firstMessage.contains("{\"message\":\"Access log test message 1\"}"));
+        final String secondMessage = new String(messageList.pop(), StandardCharsets.UTF_8);
+        Assertions.assertTrue( secondMessage.contains("{\"message\":\"Access log test message 2\"}"));
+        Assertions.assertEquals(0, messageList.size());
     }
 }

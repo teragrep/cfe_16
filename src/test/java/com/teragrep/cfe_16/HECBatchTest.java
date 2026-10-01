@@ -45,6 +45,8 @@
  */
 package com.teragrep.cfe_16;
 
+import java.util.ArrayList;
+import org.junit.jupiter.api.DisplayName;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.ObjectMapper;
 import com.teragrep.cfe_16.bo.HECRecord;
@@ -93,12 +95,284 @@ class HECBatchTest {
         Assertions.assertEquals(1, response.size());
         Assertions.assertEquals(supposedResponse.event(), response.get(0).event(), "Event was not the one expected");
         Assertions
-                .assertEquals(supposedResponse.channel(), response.get(0).channel(), "Event was not the one expected");
+                .assertEquals(supposedResponse.channel(), response.get(0).channel(), "Channel was not the one expected");
         Assertions
                 .assertEquals(supposedResponse.authenticationToken(), response.get(0).authenticationToken(), "Authentication token was not the one expected");
         // Use different defaultValues for instant() methods, to ensure they're not the same if they use the defaultValue
         Assertions
                 .assertEquals(supposedResponse.time().instant(0L), response.get(0).time().instant(1L), "Time was not the one expected");
+    }
+
+    @Test
+    public void testToHECRecordListWithArrayOfOneObject() {
+        final String allEventsInJson = "[{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\", \"time\": 123456}]";
+        final HECRecord supposedResponse = new HECRecordImpl(
+                channel1,
+                new EventMessageImpl("\"Hello, world!\""),
+                authToken1,
+                0,
+                new HECTimeImplWithFallback(
+                        new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", 123456))),
+                        new HECTimeStub()
+                ),
+                new HeaderInfo(new MockHttpServletRequest())
+        );
+
+        final HECBatch HECBatch = new HECBatch(
+                authToken1,
+                channel1,
+                allEventsInJson,
+                new HeaderInfo(new MockHttpServletRequest())
+        );
+        final List<HECRecord> response = Assertions.assertDoesNotThrow(HECBatch::toHECRecordList);
+
+        // Test the individual methods, since HECTimeImplWithFallback will have a stub, which does not implement equals or hashcode
+        Assertions.assertEquals(1, response.size());
+        Assertions.assertEquals(supposedResponse.event(), response.get(0).event(), "Event was not the one expected");
+        Assertions
+                .assertEquals(supposedResponse.channel(), response.get(0).channel(), "Channel was not the one expected");
+        Assertions
+                .assertEquals(supposedResponse.authenticationToken(), response.get(0).authenticationToken(), "Authentication token was not the one expected");
+        // Use different defaultValues for instant() methods, to ensure they're not the same if they use the defaultValue
+        Assertions
+                .assertEquals(supposedResponse.time().instant(0L), response.get(0).time().instant(1L), "Time was not the one expected");
+    }
+
+    @Test
+    public void testToHECRecordListWithArrayOfMultipleObject() {
+        final String allEventsInJson = """
+            [{"sourcetype": "mysourcetype", "event": "Hello, world1!", "host": "localhost", "source": "mysource", "index": "myindex", "time": 123456},
+            {"sourcetype": "mysourcetype", "event": "Hello, world2!", "host": "localhost", "source": "mysource", "index": "myindex", "time": 123456},
+            {"sourcetype": "mysourcetype", "event": "Hello, world3!", "host": "localhost", "source": "mysource", "index": "myindex", "time": 123456}]
+            """;
+        final List<HECRecord> expectedResponses = new ArrayList<>();
+        final HECRecord expectedResponse1 = new HECRecordImpl(
+                channel1,
+                new EventMessageImpl("\"Hello, world1!\""),
+                authToken1,
+                0,
+                new HECTimeImplWithFallback(
+                        new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", 123456))),
+                        new HECTimeStub()
+                ),
+                new HeaderInfo(new MockHttpServletRequest())
+        );
+        final HECRecord expectedResponse2 = new HECRecordImpl(
+                channel1,
+                new EventMessageImpl("\"Hello, world2!\""),
+                authToken1,
+                0,
+                new HECTimeImplWithFallback(
+                        new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", 123456))),
+                        new HECTimeStub()
+                ),
+                new HeaderInfo(new MockHttpServletRequest())
+        );
+        final HECRecord expectedResponse3 = new HECRecordImpl(
+                channel1,
+                new EventMessageImpl("\"Hello, world3!\""),
+                authToken1,
+                0,
+                new HECTimeImplWithFallback(
+                        new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", 123456))),
+                        new HECTimeStub()
+                ),
+                new HeaderInfo(new MockHttpServletRequest())
+        );
+        expectedResponses.add(expectedResponse1);
+        expectedResponses.add(expectedResponse2);
+        expectedResponses.add(expectedResponse3);
+        Assertions.assertEquals(3, expectedResponses.size());
+
+        final HECBatch HECBatch = new HECBatch(
+                authToken1,
+                channel1,
+                allEventsInJson,
+                new HeaderInfo(new MockHttpServletRequest())
+        );
+        final List<HECRecord> returnedHECRecords = Assertions.assertDoesNotThrow(HECBatch::toHECRecordList);
+
+        // Test the individual responses
+        Assertions.assertEquals(3, returnedHECRecords.size());
+        int verifiedIterations = 0;
+        Assertions.assertEquals(0, verifiedIterations);
+        for (int i = 0; i < returnedHECRecords.size(); i++) {
+            final HECRecord expectedResponseFromIterator = expectedResponses.get(i);
+            final HECRecord returnedHECRecord = returnedHECRecords.get(i);
+            Assertions
+                    .assertEquals(
+                            expectedResponseFromIterator.event(), returnedHECRecord.event(),
+                            "Event was not the one expected"
+                    );
+            Assertions
+                    .assertEquals(
+                            expectedResponseFromIterator.channel(), returnedHECRecord.channel(),
+                            "Channel was not the one expected"
+                    );
+            Assertions
+                    .assertEquals(
+                            expectedResponseFromIterator.authenticationToken(), returnedHECRecord.authenticationToken(),
+                            "Authentication token was not the one expected"
+                    );
+            // Use different defaultValues for instant() methods, to ensure they're not the same if they use the defaultValue
+            Assertions
+                    .assertEquals(expectedResponseFromIterator.time().instant(0L), returnedHECRecord.time().instant(1L), "Time was not the one expected");
+            verifiedIterations++;
+        }
+        Assertions.assertEquals(3, verifiedIterations);
+    }
+
+    /**
+     * The toHECRecordList method should fail if the array contains NDJSON objects
+     */
+    @Test
+    public void testToHECRecordListWithArrayOfNdjsonObjects() {
+        final String allEventsInJson = """
+            [{"sourcetype": "mysourcetype", "event": "Hello, world1!", "host": "localhost", "source": "mysource", "index": "myindex", "time": 123456}\n
+            {"sourcetype": "mysourcetype", "event": "Hello, world2!", "host": "localhost", "source": "mysource", "index": "myindex", "time": 123456}\n
+            {"sourcetype": "mysourcetype", "event": "Hello, world3!", "host": "localhost", "source": "mysource", "index": "myindex", "time": 123456}]
+            """;
+
+        final HECBatch HECBatch = new HECBatch(
+            authToken1,
+            channel1,
+            allEventsInJson,
+            new HeaderInfo(new MockHttpServletRequest())
+        );
+        Assertions.assertThrowsExactly(StreamReadException.class, HECBatch::toHECRecordList);
+    }
+
+    @Test
+    @DisplayName("test toHECRecordList with malformed JSON array")
+    void testToHecRecordListWithMalformedJsonArray() {
+        final String allEventsInJson = "[{},{{{{}}]";
+        final HECBatch HECBatch = new HECBatch(
+                authToken1,
+                channel1,
+                allEventsInJson,
+                new HeaderInfo(new MockHttpServletRequest())
+        );
+
+        Assertions.assertThrowsExactly(StreamReadException.class, HECBatch::toHECRecordList);
+    }
+
+    @Test
+    @DisplayName("test toHECRecordList with String value")
+    void testToHecRecordListWithStringValue() {
+        final String allEventsInJson = "\"Hello World!\"";
+        final HECBatch HECBatch = new HECBatch(
+                authToken1,
+                channel1,
+                allEventsInJson,
+                new HeaderInfo(new MockHttpServletRequest())
+        );
+        final EventFieldException eventFieldException = Assertions
+                .assertThrowsExactly(EventFieldException.class, HECBatch::toHECRecordList);
+
+        Assertions.assertEquals("Event was not in a supported format", eventFieldException.getMessage());
+    }
+
+    @Test
+    @DisplayName("test toHECRecordList with an array of arrays")
+    void testToHecRecordListWithAnArrayOfArrays() {
+        final String allEventsInJson = "[[{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\", \"time\": 123456}], [{\"sourcetype\": \"mysourcetype\", \"event\": \"Hello, world!\", \"host\": \"localhost\", \"source\": \"mysource\", \"index\": \"myindex\", \"time\": 123456}]]";
+        final HECBatch HECBatch = new HECBatch(
+                authToken1,
+                channel1,
+                allEventsInJson,
+                new HeaderInfo(new MockHttpServletRequest())
+        );
+        final EventFieldException eventFieldException = Assertions
+                .assertThrowsExactly(EventFieldException.class, HECBatch::toHECRecordList);
+
+        Assertions.assertEquals("Event was not in a supported format", eventFieldException.getMessage());
+    }
+
+    @Test
+    @DisplayName("test toHECRecordList with NDJSON format")
+    void testToHecRecordListWithNdJSONFormat() {
+        final String allEventsInJson = """
+            {"sourcetype": "mysourcetype", "event": "Hello, world1!", "host": "localhost", "source": "mysource", "index": "myindex", "time": 123456}\n
+            {"sourcetype": "mysourcetype", "event": "Hello, world2!", "host": "localhost", "source": "mysource", "index": "myindex", "time": 123456}\n
+            {"sourcetype": "mysourcetype", "event": "Hello, world3!", "host": "localhost", "source": "mysource", "index": "myindex", "time": 123456}""";
+        final List<HECRecord> expectedResponses = new ArrayList<>();
+        final HECRecord expectedResponse1 = new HECRecordImpl(
+            channel1,
+            new EventMessageImpl("\"Hello, world1!\""),
+            authToken1,
+            0,
+            new HECTimeImplWithFallback(
+                new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", 123456))),
+                new HECTimeStub()
+            ),
+            new HeaderInfo(new MockHttpServletRequest())
+        );
+        final HECRecord expectedResponse2 = new HECRecordImpl(
+            channel1,
+            new EventMessageImpl("\"Hello, world2!\""),
+            authToken1,
+            0,
+            new HECTimeImplWithFallback(
+                new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", 123456))),
+                new HECTimeStub()
+            ),
+            new HeaderInfo(new MockHttpServletRequest())
+        );
+        final HECRecord expectedResponse3 = new HECRecordImpl(
+            channel1,
+            new EventMessageImpl("\"Hello, world3!\""),
+            authToken1,
+            0,
+            new HECTimeImplWithFallback(
+                new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", 123456))),
+                new HECTimeStub()
+            ),
+            new HeaderInfo(new MockHttpServletRequest())
+        );
+        expectedResponses.add(expectedResponse1);
+        expectedResponses.add(expectedResponse2);
+        expectedResponses.add(expectedResponse3);
+        Assertions.assertEquals(3, expectedResponses.size());
+
+
+        final HECBatch HECBatch = new HECBatch(
+            authToken1,
+            channel1,
+            allEventsInJson,
+            new HeaderInfo(new MockHttpServletRequest())
+        );
+
+        final List<HECRecord> returnedHECRecords = Assertions.assertDoesNotThrow(HECBatch::toHECRecordList);
+
+        // Test the individual responses
+        Assertions.assertEquals(3, returnedHECRecords.size());
+        int verifiedIterations = 0;
+        Assertions.assertEquals(0, verifiedIterations);
+
+        for (int i = 0; i < returnedHECRecords.size(); i++) {
+            final HECRecord expectedResponseFromIterator = expectedResponses.get(i);
+            final HECRecord returnedHECRecord = returnedHECRecords.get(i);
+            Assertions
+                .assertEquals(
+                    expectedResponseFromIterator.event(), returnedHECRecord.event(),
+                    "Event was not the one expected"
+                );
+            Assertions
+                .assertEquals(
+                    expectedResponseFromIterator.channel(), returnedHECRecord.channel(),
+                    "Channel was not the one expected"
+                );
+            Assertions
+                .assertEquals(
+                    expectedResponseFromIterator.authenticationToken(), returnedHECRecord.authenticationToken(),
+                    "Authentication token was not the one expected"
+                );
+            // Use different defaultValues for instant() methods, to ensure they're not the same if they use the defaultValue
+            Assertions
+                .assertEquals(expectedResponseFromIterator.time().instant(0L), returnedHECRecord.time().instant(1L), "Time was not the one expected");
+            verifiedIterations++;
+        }
+        Assertions.assertEquals(3, verifiedIterations);
     }
 
     /**
@@ -114,7 +388,7 @@ class HECBatchTest {
                 new HeaderInfo(new MockHttpServletRequest())
         );
 
-        Assertions.assertThrowsExactly(StreamReadException.class, () -> HECBatch.toHECRecordList().toString());
+        Assertions.assertThrowsExactly(StreamReadException.class, HECBatch::toHECRecordList);
     }
 
     /**
@@ -131,7 +405,7 @@ class HECBatchTest {
                 new HeaderInfo(new MockHttpServletRequest())
         );
         final Exception exception = Assertions
-                .assertThrowsExactly(EventFieldException.class, () -> HECBatch.toHECRecordList().toString());
+                .assertThrowsExactly(EventFieldException.class, HECBatch::toHECRecordList);
         Assertions
                 .assertEquals(
                         supposedResponse, exception.getMessage(), "Exception message was not what it was supposed to be"
@@ -148,7 +422,7 @@ class HECBatchTest {
                 new HeaderInfo(new MockHttpServletRequest())
         );
 
-        Assertions.assertThrows(EventFieldException.class, () -> HECBatch.toHECRecordList().toString());
+        Assertions.assertThrows(EventFieldException.class, HECBatch::toHECRecordList);
     }
 
     @Test
@@ -161,6 +435,6 @@ class HECBatchTest {
                 new HeaderInfo(new MockHttpServletRequest())
         );
 
-        Assertions.assertThrows(EventFieldException.class, () -> HECBatch.toHECRecordList().toString());
+        Assertions.assertThrows(EventFieldException.class, HECBatch::toHECRecordList);
     }
 }

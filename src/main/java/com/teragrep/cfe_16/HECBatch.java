@@ -45,6 +45,7 @@
  */
 package com.teragrep.cfe_16;
 
+import com.teragrep.cfe_16.exceptionhandling.EventFieldException;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.exc.StreamReadException;
@@ -111,10 +112,8 @@ public final class HECBatch {
          * variable.
          */
         try (final JsonParser jsonParser = objectMapper.createParser(this.allEventInJSON)) {
-            if (jsonParser.nextToken() != JsonToken.START_OBJECT) {
-                returnedList = new ArrayList<>();
-            }
-            else {
+            final JsonToken jsonToken = jsonParser.nextToken();
+            if (jsonToken == JsonToken.START_OBJECT) {
                 final MappingIterator<JsonNode> mappingIterator = objectMapper.readValues(jsonParser, JsonNode.class);
                 final List<HECRecord> syslogMessages = new ArrayList<>();
                 HECRecord eventData;
@@ -125,7 +124,7 @@ public final class HECBatch {
 
                     eventData = new HECRecordImpl(
                             this.channel,
-                            jsonEvent.asEventMessage(),
+                            jsonEvent.asEventMessage(), // Can throw an EventFieldException
                             this.authToken,
                             0,
                             new HECTimeImplWithFallback(new HECTimeImpl(jsonEvent), previousEvent.time()),
@@ -137,6 +136,40 @@ public final class HECBatch {
                     syslogMessages.add(eventData);
                 }
                 returnedList = syslogMessages;
+            }
+            // If there is an array
+            else if (jsonToken == JsonToken.START_ARRAY) {
+                final List<HECRecord> syslogMessages = new ArrayList<>();
+                HECRecord eventData;
+                // Expect that the array contains VALID JSON objects in it, and not for example NDJSON
+                final MappingIterator<JsonNode[]> objectMappingIterator = objectMapper
+                        .readValues(jsonParser, JsonNode[].class);
+                // objectMappingIterator.next() will throw a StreamReadException if JSON is malformed
+                for (final JsonNode jsonNode : objectMappingIterator.next()) {
+                    if (!jsonNode.isObject()) {
+                        throw new EventFieldException("Event was not in a supported format");
+                    }
+                    else {
+                        final JsonEvent jsonEvent = new JsonEventImpl(jsonNode);
+
+                        eventData = new HECRecordImpl(
+                                this.channel,
+                                jsonEvent.asEventMessage(), // Can throw an EventFieldException
+                                this.authToken,
+                                0,
+                                new HECTimeImplWithFallback(new HECTimeImpl(jsonEvent), previousEvent.time()),
+                                this.headerInfo
+                        );
+                        // Set the previous event if the "current" event was parsed without an exception
+                        previousEvent = eventData;
+
+                        syslogMessages.add(eventData);
+                    }
+                }
+                returnedList = syslogMessages;
+            }
+            else {
+                throw new EventFieldException("Event was not in a supported format");
             }
         }
         return returnedList;
