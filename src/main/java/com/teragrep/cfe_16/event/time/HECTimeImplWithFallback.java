@@ -58,14 +58,14 @@ public final class HECTimeImplWithFallback implements HECTime {
     }
 
     @Override
-    public long instant(final long defaultValue) {
+    public long toEpochMilli(final long defaultValue) {
         final long returnedInstant;
 
-        final long currentTime = this.currentTime.instant(defaultValue);
+        final long currentTime = this.currentTime.toEpochMilli(defaultValue);
 
         // Check if the currentTime relied on the defaultValue
         if (currentTime == defaultValue && !this.fallbackTime.isStub()) {
-            returnedInstant = this.fallbackTime.instant(defaultValue);
+            returnedInstant = this.fallbackTime.toEpochMilli(defaultValue);
         }
         else {
             returnedInstant = currentTime;

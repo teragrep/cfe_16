@@ -64,6 +64,7 @@
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <revision>0.0.1</revision>
+    <rlo_06.version>10.0.0</rlo_06.version>
     <rlp_01.version>5.0.0</rlp_01.version>
     <rlp_03.version>10.0.0</rlp_03.version>
     <sha1></sha1>
@@ -91,6 +92,11 @@
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
       <version>${jakarta.servlet.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.teragrep</groupId>
+      <artifactId>rlo_06</artifactId>
+      <version>${rlo_06.version}</version>
     </dependency>
     <dependency>
       <groupId>com.teragrep</groupId>

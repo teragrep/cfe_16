@@ -145,7 +145,7 @@ public final class HECRecordImpl implements HECRecord {
              */
             LOGGER.debug("Creating new syslog message with timestamp");
             syslogMessage = new SyslogMessage()
-                    .withTimestamp(this.time().instant(currentEpochMillis))
+                    .withTimestamp(this.time().toEpochMilli(currentEpochMillis))
                     .withSeverity(this.severity)
                     .withAppName("capsulated")
                     .withHostname(this.hostName)
@@ -186,7 +186,7 @@ public final class HECRecordImpl implements HECRecord {
              */
             LOGGER.debug("Creating new syslog message with timestamp");
             syslogMessage = new SyslogMessage()
-                    .withTimestamp(this.time().instant(defaultValue))
+                    .withTimestamp(this.time().toEpochMilli(defaultValue))
                     .withSeverity(this.severity)
                     .withAppName("capsulated")
                     .withHostname(this.hostName)
@@ -255,7 +255,7 @@ public final class HECRecordImpl implements HECRecord {
 
         LOGGER.debug("Setting time_parsed and time");
         metadataSDE.addSDParam("time_parsed", String.valueOf(this.time().isParsed()));
-        metadataSDE.addSDParam("time", String.valueOf(this.time().instant(fallbackEpoch)));
+        metadataSDE.addSDParam("time", String.valueOf(this.time().toEpochMilli(fallbackEpoch)));
         if (this.time().isParsed()) {
             LOGGER.debug("TimeParsed was true");
             metadataSDE.addSDParam("generated", "false");

@@ -60,7 +60,7 @@ public final class HECTimeStub implements HECTime {
     }
 
     @Override
-    public long instant(final long defaultValue) {
+    public long toEpochMilli(final long defaultValue) {
         throw new UnsupportedOperationException("HECTimeStub does not support this");
     }
 

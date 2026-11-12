@@ -45,14 +45,16 @@
  */
 package com.teragrep.cfe_16.event.time;
 
+import com.teragrep.cfe_16.event.time.candidates.HECTimestampCandidate;
+import com.teragrep.cfe_16.event.time.candidates.HECTimestampCandidateImpl;
 import tools.jackson.databind.JsonNode;
 import com.teragrep.cfe_16.event.JsonEvent;
 import com.teragrep.cfe_16.exceptionhandling.EventFieldException;
-import java.math.BigDecimal;
+
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tools.jackson.databind.node.StringNode;
+import tools.jackson.databind.ObjectMapper;
 
 public final class HECTimeImpl implements HECTime {
 
@@ -64,126 +66,70 @@ public final class HECTimeImpl implements HECTime {
     }
 
     @Override
-    public long instant(final long defaultValue) {
+    public long toEpochMilli(final long defaultValue) {
+        final String timeString = timeString(timeNode(defaultValue));
+
+        final HECTimestampCandidate candidates = new HECTimestampCandidateImpl();
+        final Instantiable instantiable = candidates.toInstantiable(timeString);
+
         final long returnedTime;
-        JsonNode timeNode;
-
-        try {
-            timeNode = jsonEvent.asTimeJsonNode();
-        }
-        catch (final EventFieldException e) {
-            LOGGER.info("Could not parse time from JSON, so using defaultValue provided <[{}]>", defaultValue);
-            timeNode = new StringNode("");
-        }
-
-        // No time provided in the event
-        // Use the unchecked timeNode.toString() method, since we're validating the returnValue from there
-        if (timeNode == null || timeNode.toString().isEmpty()) {
-            // Use default value
+        if (instantiable.isStub()) {
             returnedTime = defaultValue;
         }
-        // Check if time is a double and convert to long
-        else if (timeNode.isDouble()) {
-            returnedTime = this.removeDecimal(timeNode.asDouble());
-
-        }
-        // Time is a number, no calculations required
-        else if (timeNode.canConvertToLong()) {
-            returnedTime = timeNode.asLong();
-        }
-        // Time is a String
-        else if (timeNode.isString()) {
-            // Try to convert the String to a long (if not convertable, default to 0L)
-            final long tryAsLong = timeNode.asLong(0L);
-            if (tryAsLong != 0L) {
-                returnedTime = tryAsLong;
-            }
-            // No time found in current or previous event
-            else {
-                // Use default value
-                returnedTime = defaultValue;
-            }
-        }
-        // Unknown format
         else {
-            // Use default value
-            returnedTime = defaultValue;
+            returnedTime = instantiable.toInstant().toEpochMilli();
         }
 
         return returnedTime;
     }
 
-    /**
-     * Takes a double value as a parameter, removes the decimal point from that value and returns the number as a long
-     * value.
-     */
-    private long removeDecimal(final double doubleValue) {
-        final BigDecimal doubleValueWithDecimal = BigDecimal.valueOf(doubleValue);
-        final String stringValue = doubleValueWithDecimal.toString();
-        final String stringValueWithoutDecimal = stringValue.replace(".", "");
+    private JsonNode timeNode(final long defaultValue) {
+        JsonNode timeNode;
+        try {
+            timeNode = jsonEvent.asTimeJsonNode();
+        }
+        catch (final EventFieldException e) {
+            LOGGER.info("Could not parse time from JSON, so using defaultValue provided <[{}]>", defaultValue);
+            timeNode = new ObjectMapper().createObjectNode();
+        }
+        return timeNode;
+    }
 
-        return Long.parseLong(stringValueWithoutDecimal);
+    private String timeString(final JsonNode timeNode) {
+        if (timeNode.isDouble()) {
+            return timeNode.asDecimal().toString();
+        }
+        else if (timeNode.isInt()) {
+            return timeNode.toString();
+        }
+        else if (timeNode.isObject() || timeNode.isArray()) {
+            return "";
+        }
+        else if (timeNode.isNull() || timeNode.asString().equals("null")) {
+            return "";
+        }
+        else {
+            return timeNode.asString();
+        }
     }
 
     @Override
     public boolean isParsed() {
-        final boolean returnedParsed;
-        JsonNode timeNode;
-
-        try {
-            if (jsonEvent.hasTime()) {
-                timeNode = jsonEvent.asTimeJsonNode();
-            }
-            else {
-                timeNode = new StringNode("");
-            }
-        }
-        catch (final EventFieldException e) {
-            timeNode = new StringNode("");
-        }
-        // No time provided in the event
-        // Use the unchecked timeNode.toString() method, since we're validating the returnValue from there
-        if (timeNode == null || timeNode.toString().isEmpty()) {
-            returnedParsed = false;
-        }
-        // Check if time is a double and convert to long
-        else if (timeNode.isDouble()) {
-            returnedParsed = true;
-
-        }
-        // Time is a String
-        else if (timeNode.isString()) {
-            // Try to convert the String to a long (if not convertable, default to 0L)
-            final long tryAsLong = timeNode.asLong(0L);
-            if (tryAsLong != 0L) {
-                returnedParsed = true;
-            }
-            else {
-                returnedParsed = false;
-            }
-        }
-        // Time is a number, no calculations required
-        else if (timeNode.canConvertToLong()) {
-            returnedParsed = true;
-        }
-        // Unknown format
-        else {
-            returnedParsed = false;
-        }
-
-        return returnedParsed;
+        return toEpochMilli(0L) != 0L;
     }
 
     @Override
     public String source() {
         final String returnedSource;
-        final boolean isParsed = this.isParsed();
 
-        if (isParsed) {
+        if (isParsed()) {
+            returnedSource = "reported";
+        }
+        else if (!timeString(timeNode(0L)).isEmpty()) {
             returnedSource = "reported";
         }
         else {
-            return "generated";
+            returnedSource = "generated";
         }
 
         return returnedSource;

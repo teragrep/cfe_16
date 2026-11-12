@@ -97,8 +97,7 @@ class HECRecordImplTest {
                 new EventMessageImpl("event"),
                 "authToken",
                 1,
-                new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "12345678901234"))),
-                new HeaderInfo(new MockHttpServletRequest())
+                new HECTimeImpl(new JsonEventImpl(new ObjectMapper().createObjectNode().put("time", "1234567890123411"))), new HeaderInfo(new MockHttpServletRequest())
         );
 
         Assertions.assertEquals("reported", hecRecord.time().source());

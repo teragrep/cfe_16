@@ -71,7 +71,8 @@ class HECTimeImplWithFallbackTest {
                 new HECTimeStub()
         );
         final long currentEpoch = Instant.now().toEpochMilli();
-        final long returnedInstant = Assertions.assertDoesNotThrow(() -> hecTimeImplWithFallback.instant(currentEpoch));
+        final long returnedInstant = Assertions
+                .assertDoesNotThrow(() -> hecTimeImplWithFallback.toEpochMilli(currentEpoch));
 
         Assertions.assertEquals(currentEpoch, returnedInstant);
     }
@@ -93,7 +94,8 @@ class HECTimeImplWithFallbackTest {
 
         final long currentEpoch = Instant.now().toEpochMilli();
         final long expectedTime = 1433188255253L;
-        final long returnedInstant = Assertions.assertDoesNotThrow(() -> hecTimeImplWithFallback.instant(currentEpoch));
+        final long returnedInstant = Assertions
+                .assertDoesNotThrow(() -> hecTimeImplWithFallback.toEpochMilli(currentEpoch));
 
         Assertions.assertEquals(expectedTime, returnedInstant);
     }
@@ -121,7 +123,8 @@ class HECTimeImplWithFallbackTest {
 
         final long currentEpoch = Instant.now().toEpochMilli();
         final long expectedTime = 1433188255253L;
-        final long returnedInstant = Assertions.assertDoesNotThrow(() -> hecTimeImplWithFallback.instant(currentEpoch));
+        final long returnedInstant = Assertions
+                .assertDoesNotThrow(() -> hecTimeImplWithFallback.toEpochMilli(currentEpoch));
 
         Assertions.assertEquals(expectedTime, returnedInstant);
     }

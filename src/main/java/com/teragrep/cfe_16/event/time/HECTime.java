@@ -49,7 +49,7 @@ import com.teragrep.cfe_16.Stubable;
 
 public interface HECTime extends Stubable {
 
-    long instant(final long defaultValue);
+    long toEpochMilli(final long defaultValue);
 
     boolean isParsed();
 

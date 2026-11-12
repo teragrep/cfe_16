@@ -58,7 +58,7 @@ class HECTimeStubTest {
         final HECTimeStub stub = new HECTimeStub();
 
         final UnsupportedOperationException unsupportedOperationException = Assertions
-                .assertThrowsExactly(UnsupportedOperationException.class, () -> stub.instant(0L));
+                .assertThrowsExactly(UnsupportedOperationException.class, () -> stub.toEpochMilli(0L));
 
         Assertions
                 .assertEquals(
