@@ -1,0 +1,5 @@
+<map id="com.teragrep.cfe_16.event.time.candidates.MicrosPrecisionCandidate" name="com.teragrep.cfe_16.event.time.candidates.MicrosPrecisionCandidate">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,93,316,133"/>
+<area shape="rect" id="Node000002" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1HECTimestampCandidate.html" title="Checks if the given timestamp string matches the format expected by the HECTimestampCandidate object." alt="" coords="5,5,316,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="163,59,163,93,158,93,158,59"/>
+</map>

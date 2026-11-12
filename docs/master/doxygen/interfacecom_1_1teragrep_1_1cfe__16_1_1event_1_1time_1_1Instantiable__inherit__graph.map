@@ -1,0 +1,9 @@
+<map id="com.teragrep.cfe_16.event.time.Instantiable" name="com.teragrep.cfe_16.event.time.Instantiable">
+<area shape="rect" id="Node000001" title="Provides an Instant if applicable." alt="" coords="271,37,505,77"/>
+<area shape="rect" id="Node000003" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1InstantiableImpl.html" title=" " alt="" coords="553,5,788,45"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="519,40,553,36,553,41,519,45"/>
+<area shape="rect" id="Node000004" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1InstantiableStub.html" title=" " alt="" coords="553,69,788,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="519,69,553,73,553,79,519,75"/>
+<area shape="rect" id="Node000002" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1Stubable.html" title=" " alt="" coords="5,45,223,70"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="237,55,270,55,270,60,237,60"/>
+</map>

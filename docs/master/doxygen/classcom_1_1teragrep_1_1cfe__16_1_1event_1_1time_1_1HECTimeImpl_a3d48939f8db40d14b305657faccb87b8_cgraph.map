@@ -1,7 +1,17 @@
 <map id="com.teragrep.cfe_16.event.time.HECTimeImpl.isParsed" name="com.teragrep.cfe_16.event.time.HECTimeImpl.isParsed">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,37,240,77"/>
-<area shape="rect" id="Node000002" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1JsonEvent.html#a288d2f741c18567688e748e97d63e702" title=" " alt="" coords="288,5,489,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="240,41,274,36,275,42,241,46"/>
-<area shape="rect" id="Node000003" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1JsonEvent.html#a439225059ec04496519dc5820e11428d" title=" " alt="" coords="288,69,489,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="241,69,275,73,274,78,240,74"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,78,240,118"/>
+<area shape="rect" id="Node000002" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImpl.html#a7ed274532c9e06a95af261e4ae8b7a42" title=" " alt="" coords="288,78,523,118"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="240,95,274,95,274,101,240,101"/>
+<area shape="rect" id="Node000003" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1Stubable.html#a8e854db1814eeb807cd9049776c33923" title=" " alt="" coords="571,5,832,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="472,75,570,47,632,31,634,37,571,53,473,81"/>
+<area shape="rect" id="Node000004" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImpl.html#aa155bbee5b6041f5d4d7e447c8f00833" title=" " alt="" coords="880,78,1115,118"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="523,92,571,91,832,91,866,92,866,97,832,97,571,97,523,97"/>
+<area shape="rect" id="Node000006" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImpl.html#a593fbce5659c0671b0a208858f41d6af" title=" " alt="" coords="584,106,819,146"/>
+<area shape="poly" id="edge6_Node000002_Node000006" title=" " alt="" coords="523,106,570,111,570,116,523,112"/>
+<area shape="rect" id="Node000007" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1Instantiable.html#ac54afd86f6d0bb702f9f69860e0082da" title=" " alt="" coords="584,170,819,210"/>
+<area shape="poly" id="edge8_Node000002_Node000007" title=" " alt="" coords="458,116,571,155,601,164,599,169,570,161,456,121"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="948,78,945,68,953,59,971,53,997,51,1028,54,1045,61,1042,66,1027,59,997,57,972,59,956,63,951,69,953,77"/>
+<area shape="rect" id="Node000005" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1JsonEvent.html#a288d2f741c18567688e748e97d63e702" title=" " alt="" coords="1163,78,1364,118"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="1115,95,1149,95,1149,101,1115,101"/>
+<area shape="poly" id="edge7_Node000006_Node000004" title=" " alt="" coords="819,112,866,108,866,113,819,118"/>
 </map>

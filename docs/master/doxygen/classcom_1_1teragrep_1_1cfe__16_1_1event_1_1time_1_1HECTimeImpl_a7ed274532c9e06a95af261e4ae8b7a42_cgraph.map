@@ -1,0 +1,15 @@
+<map id="com.teragrep.cfe_16.event.time.HECTimeImpl.toEpochMilli" name="com.teragrep.cfe_16.event.time.HECTimeImpl.toEpochMilli">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,78,240,118"/>
+<area shape="rect" id="Node000002" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1Stubable.html#a8e854db1814eeb807cd9049776c33923" title=" " alt="" coords="288,5,549,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="189,75,287,47,350,31,351,37,289,53,191,81"/>
+<area shape="rect" id="Node000003" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImpl.html#aa155bbee5b6041f5d4d7e447c8f00833" title=" " alt="" coords="597,78,832,118"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="240,92,288,91,549,91,584,92,584,97,549,97,288,97,240,97"/>
+<area shape="rect" id="Node000005" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImpl.html#a593fbce5659c0671b0a208858f41d6af" title=" " alt="" coords="301,106,536,146"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="241,106,288,111,287,116,240,112"/>
+<area shape="rect" id="Node000006" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1Instantiable.html#ac54afd86f6d0bb702f9f69860e0082da" title=" " alt="" coords="301,170,536,210"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="175,116,289,155,318,164,317,169,287,161,174,121"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="666,78,663,68,671,59,688,53,715,51,745,54,762,61,760,66,744,59,715,57,689,59,674,63,668,69,671,77"/>
+<area shape="rect" id="Node000004" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1JsonEvent.html#a288d2f741c18567688e748e97d63e702" title=" " alt="" coords="880,78,1081,118"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="832,95,866,95,866,101,832,101"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="536,112,583,108,584,113,537,118"/>
+</map>

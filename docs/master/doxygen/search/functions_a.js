@@ -6,5 +6,7 @@ var searchData=
   ['maxackvaluetest_3',['maxAckValueTest',['../classcom_1_1teragrep_1_1cfe__16_1_1it_1_1AcknowledgementsIT.html#a91fed96b6fad0dfd378ba9b0fa7fe5ed',1,'com::teragrep::cfe_16::it::AcknowledgementsIT']]],
   ['maxchannels_4',['maxChannels',['../classcom_1_1teragrep_1_1cfe__16_1_1config_1_1Configuration.html#aa9fa4d2a68ac454cbb21b0a28d818c12',1,'com::teragrep::cfe_16::config::Configuration']]],
   ['maxsessionage_5',['maxSessionAge',['../classcom_1_1teragrep_1_1cfe__16_1_1config_1_1Configuration.html#ad00ca21c73ce34fedc383ea69bc14963',1,'com::teragrep::cfe_16::config::Configuration']]],
-  ['multivaluemaprequest_6',['MultiValueMapRequest',['../classcom_1_1teragrep_1_1cfe__16_1_1MultiValueMapRequest.html#a149554579499d54466eea17eeb29cf78',1,'com::teragrep::cfe_16::MultiValueMapRequest']]]
+  ['microsprecisioncandidate_6',['MicrosPrecisionCandidate',['../classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1MicrosPrecisionCandidate.html#acbd588bf8da31fd900a68b8fdbe112f9',1,'com::teragrep::cfe_16::event::time::candidates::MicrosPrecisionCandidate']]],
+  ['millisprecisioncandidate_7',['MillisPrecisionCandidate',['../classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1MillisPrecisionCandidate.html#ae4d6faccd301d4a884f90c0cd587966b',1,'com::teragrep::cfe_16::event::time::candidates::MillisPrecisionCandidate']]],
+  ['multivaluemaprequest_8',['MultiValueMapRequest',['../classcom_1_1teragrep_1_1cfe__16_1_1MultiValueMapRequest.html#a149554579499d54466eea17eeb29cf78',1,'com::teragrep::cfe_16::MultiValueMapRequest']]]
 ];

@@ -95,8 +95,8 @@ Collaboration diagram for com.teragrep.cfe_16.event.time.HECTimeImplWithFallback
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a5bfed75228aeb223c35f0bc14d2d7d35" id="r_a5bfed75228aeb223c35f0bc14d2d7d35"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#a5bfed75228aeb223c35f0bc14d2d7d35">HECTimeImplWithFallback</a> (final <a class="el" href="interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime.html">HECTime</a> <a class="el" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#ab2fd8e3d461ea66d5283fc950e736482">currentTime</a>, final <a class="el" href="interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime.html">HECTime</a> <a class="el" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#aece1494f4209fd4336e76f2477921e7c">fallbackTime</a>)</td></tr>
 <tr class="separator:a5bfed75228aeb223c35f0bc14d2d7d35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76ec7a4bc12c56f721599c59c4af4eb0" id="r_a76ec7a4bc12c56f721599c59c4af4eb0"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#a76ec7a4bc12c56f721599c59c4af4eb0">instant</a> (final long defaultValue)</td></tr>
-<tr class="separator:a76ec7a4bc12c56f721599c59c4af4eb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63b199de6c423c28cf1186f40960fbba" id="r_a63b199de6c423c28cf1186f40960fbba"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#a63b199de6c423c28cf1186f40960fbba">toEpochMilli</a> (final long defaultValue)</td></tr>
+<tr class="separator:a63b199de6c423c28cf1186f40960fbba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa844500a1266b852374f60ce4ea389db" id="r_aa844500a1266b852374f60ce4ea389db"><td class="memItemLeft" align="right" valign="top">boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#aa844500a1266b852374f60ce4ea389db">isParsed</a> ()</td></tr>
 <tr class="separator:aa844500a1266b852374f60ce4ea389db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03762cdc90d1fb05f74825b0c65cd358" id="r_a03762cdc90d1fb05f74825b0c65cd358"><td class="memItemLeft" align="right" valign="top">String&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#a03762cdc90d1fb05f74825b0c65cd358">source</a> ()</td></tr>
@@ -217,50 +217,6 @@ Here is the caller graph for this function:</div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="a76ec7a4bc12c56f721599c59c4af4eb0" name="a76ec7a4bc12c56f721599c59c4af4eb0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76ec7a4bc12c56f721599c59c4af4eb0">&#9670;&#160;</a></span>instant()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long com.teragrep.cfe_16.event.time.HECTimeImplWithFallback.instant </td>
-          <td>(</td>
-          <td class="paramtype">final long&#160;</td>
-          <td class="paramname"><em>defaultValue</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Implements <a class="el" href="interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime.html#a26d9d1af821f1ee6b7f90a6b33b3ac01">com.teragrep.cfe_16.event.time.HECTime</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="HECTimeImplWithFallback_8java_source.html#l00061">61</a> of file <a class="el" href="HECTimeImplWithFallback_8java_source.html">HECTimeImplWithFallback.java</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   61</span>                                                 {</div>
-<div class="line"><span class="lineno">   62</span>        <span class="keyword">final</span> <span class="keywordtype">long</span> returnedInstant;</div>
-<div class="line"><span class="lineno">   63</span> </div>
-<div class="line"><span class="lineno">   64</span>        <span class="keyword">final</span> <span class="keywordtype">long</span> <a class="code hl_variable" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#ab2fd8e3d461ea66d5283fc950e736482">currentTime</a> = this.currentTime.<a class="code hl_function" href="interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime.html#a26d9d1af821f1ee6b7f90a6b33b3ac01">instant</a>(defaultValue);</div>
-<div class="line"><span class="lineno">   65</span> </div>
-<div class="line"><span class="lineno">   66</span>        <span class="comment">// Check if the currentTime relied on the defaultValue</span></div>
-<div class="line"><span class="lineno">   67</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#ab2fd8e3d461ea66d5283fc950e736482">currentTime</a> == defaultValue &amp;&amp; !this.<a class="code hl_variable" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#aece1494f4209fd4336e76f2477921e7c">fallbackTime</a>.<a class="code hl_function" href="interfacecom_1_1teragrep_1_1cfe__16_1_1Stubable.html#a8e854db1814eeb807cd9049776c33923">isStub</a>()) {</div>
-<div class="line"><span class="lineno">   68</span>            returnedInstant = this.<a class="code hl_variable" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#aece1494f4209fd4336e76f2477921e7c">fallbackTime</a>.<a class="code hl_function" href="interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime.html#a26d9d1af821f1ee6b7f90a6b33b3ac01">instant</a>(defaultValue);</div>
-<div class="line"><span class="lineno">   69</span>        }</div>
-<div class="line"><span class="lineno">   70</span>        <span class="keywordflow">else</span> {</div>
-<div class="line"><span class="lineno">   71</span>            returnedInstant = <a class="code hl_variable" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#ab2fd8e3d461ea66d5283fc950e736482">currentTime</a>;</div>
-<div class="line"><span class="lineno">   72</span>        }</div>
-<div class="line"><span class="lineno">   73</span> </div>
-<div class="line"><span class="lineno">   74</span>        <span class="keywordflow">return</span> returnedInstant;</div>
-<div class="line"><span class="lineno">   75</span>    }</div>
-<div class="ttc" id="ainterfacecom_1_1teragrep_1_1cfe__16_1_1Stubable_html_a8e854db1814eeb807cd9049776c33923"><div class="ttname"><a href="interfacecom_1_1teragrep_1_1cfe__16_1_1Stubable.html#a8e854db1814eeb807cd9049776c33923">com.teragrep.cfe_16.Stubable.isStub</a></div><div class="ttdeci">abstract boolean isStub()</div></div>
-<div class="ttc" id="ainterfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime_html_a26d9d1af821f1ee6b7f90a6b33b3ac01"><div class="ttname"><a href="interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime.html#a26d9d1af821f1ee6b7f90a6b33b3ac01">com.teragrep.cfe_16.event.time.HECTime.instant</a></div><div class="ttdeci">long instant(final long defaultValue)</div></div>
-</div><!-- fragment --><div class="dynheader">
-Here is the call graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback_a76ec7a4bc12c56f721599c59c4af4eb0_cgraph.svg" width="563" height="102"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
-</div>
-
-</div>
-</div>
 <a id="aa844500a1266b852374f60ce4ea389db" name="aa844500a1266b852374f60ce4ea389db"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa844500a1266b852374f60ce4ea389db">&#9670;&#160;</a></span>isParsed()</h2>
 
@@ -294,6 +250,7 @@ Here is the call graph for this function:</div>
 <div class="line"><span class="lineno">   90</span> </div>
 <div class="line"><span class="lineno">   91</span>        <span class="keywordflow">return</span> returnedParsed;</div>
 <div class="line"><span class="lineno">   92</span>    }</div>
+<div class="ttc" id="ainterfacecom_1_1teragrep_1_1cfe__16_1_1Stubable_html_a8e854db1814eeb807cd9049776c33923"><div class="ttname"><a href="interfacecom_1_1teragrep_1_1cfe__16_1_1Stubable.html#a8e854db1814eeb807cd9049776c33923">com.teragrep.cfe_16.Stubable.isStub</a></div><div class="ttdeci">abstract boolean isStub()</div></div>
 <div class="ttc" id="ainterfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime_html_a985d8867343a32c6732932ce02f37e94"><div class="ttname"><a href="interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime.html#a985d8867343a32c6732932ce02f37e94">com.teragrep.cfe_16.event.time.HECTime.isParsed</a></div><div class="ttdeci">boolean isParsed()</div></div>
 </div><!-- fragment --><div class="dynheader">
 Here is the call graph for this function:</div>
@@ -364,6 +321,49 @@ Here is the call graph for this function:</div>
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><iframe scrolling="no" frameborder="0" src="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback_a03762cdc90d1fb05f74825b0c65cd358_cgraph.svg" width="562" height="102"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="a63b199de6c423c28cf1186f40960fbba" name="a63b199de6c423c28cf1186f40960fbba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63b199de6c423c28cf1186f40960fbba">&#9670;&#160;</a></span>toEpochMilli()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">long com.teragrep.cfe_16.event.time.HECTimeImplWithFallback.toEpochMilli </td>
+          <td>(</td>
+          <td class="paramtype">final long&#160;</td>
+          <td class="paramname"><em>defaultValue</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime.html#a4a170bef09621d5c6a4cde4d7cecbf58">com.teragrep.cfe_16.event.time.HECTime</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="HECTimeImplWithFallback_8java_source.html#l00061">61</a> of file <a class="el" href="HECTimeImplWithFallback_8java_source.html">HECTimeImplWithFallback.java</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   61</span>                                                      {</div>
+<div class="line"><span class="lineno">   62</span>        <span class="keyword">final</span> <span class="keywordtype">long</span> returnedInstant;</div>
+<div class="line"><span class="lineno">   63</span> </div>
+<div class="line"><span class="lineno">   64</span>        <span class="keyword">final</span> <span class="keywordtype">long</span> <a class="code hl_variable" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#ab2fd8e3d461ea66d5283fc950e736482">currentTime</a> = this.currentTime.<a class="code hl_function" href="interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime.html#a4a170bef09621d5c6a4cde4d7cecbf58">toEpochMilli</a>(defaultValue);</div>
+<div class="line"><span class="lineno">   65</span> </div>
+<div class="line"><span class="lineno">   66</span>        <span class="comment">// Check if the currentTime relied on the defaultValue</span></div>
+<div class="line"><span class="lineno">   67</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#ab2fd8e3d461ea66d5283fc950e736482">currentTime</a> == defaultValue &amp;&amp; !this.<a class="code hl_variable" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#aece1494f4209fd4336e76f2477921e7c">fallbackTime</a>.<a class="code hl_function" href="interfacecom_1_1teragrep_1_1cfe__16_1_1Stubable.html#a8e854db1814eeb807cd9049776c33923">isStub</a>()) {</div>
+<div class="line"><span class="lineno">   68</span>            returnedInstant = this.<a class="code hl_variable" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#aece1494f4209fd4336e76f2477921e7c">fallbackTime</a>.<a class="code hl_function" href="interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime.html#a4a170bef09621d5c6a4cde4d7cecbf58">toEpochMilli</a>(defaultValue);</div>
+<div class="line"><span class="lineno">   69</span>        }</div>
+<div class="line"><span class="lineno">   70</span>        <span class="keywordflow">else</span> {</div>
+<div class="line"><span class="lineno">   71</span>            returnedInstant = <a class="code hl_variable" href="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback.html#ab2fd8e3d461ea66d5283fc950e736482">currentTime</a>;</div>
+<div class="line"><span class="lineno">   72</span>        }</div>
+<div class="line"><span class="lineno">   73</span> </div>
+<div class="line"><span class="lineno">   74</span>        <span class="keywordflow">return</span> returnedInstant;</div>
+<div class="line"><span class="lineno">   75</span>    }</div>
+<div class="ttc" id="ainterfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime_html_a4a170bef09621d5c6a4cde4d7cecbf58"><div class="ttname"><a href="interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime.html#a4a170bef09621d5c6a4cde4d7cecbf58">com.teragrep.cfe_16.event.time.HECTime.toEpochMilli</a></div><div class="ttdeci">long toEpochMilli(final long defaultValue)</div></div>
+</div><!-- fragment --><div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTimeImplWithFallback_a63b199de6c423c28cf1186f40960fbba_cgraph.svg" width="599" height="102"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>

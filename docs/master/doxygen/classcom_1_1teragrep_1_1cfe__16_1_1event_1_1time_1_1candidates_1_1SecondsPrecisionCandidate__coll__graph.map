@@ -1,0 +1,9 @@
+<map id="com.teragrep.cfe_16.event.time.candidates.SecondsPrecisionCandidate" name="com.teragrep.cfe_16.event.time.candidates.SecondsPrecisionCandidate">
+<area shape="rect" id="Node000001" title=" " alt="" coords="741,37,1052,77"/>
+<area shape="rect" id="Node000002" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1HECTimestampCandidate.html" title="Checks if the given timestamp string matches the format expected by the HECTimestampCandidate object." alt="" coords="272,5,583,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="597,34,741,44,741,49,596,40"/>
+<area shape="rect" id="Node000003" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1Instantiable.html" title="Provides an Instant if applicable." alt="" coords="310,69,545,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="558,78,741,65,741,71,559,83"/>
+<area shape="rect" id="Node000004" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1Stubable.html" title=" " alt="" coords="5,77,223,102"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="236,87,310,87,310,92,236,92"/>
+</map>

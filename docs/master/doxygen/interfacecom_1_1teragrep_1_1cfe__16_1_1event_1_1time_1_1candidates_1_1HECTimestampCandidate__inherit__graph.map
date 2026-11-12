@@ -1,0 +1,17 @@
+<map id="com.teragrep.cfe_16.event.time.candidates.HECTimestampCandidate" name="com.teragrep.cfe_16.event.time.candidates.HECTimestampCandidate">
+<area shape="rect" id="Node000001" title="Checks if the given timestamp string matches the format expected by the HECTimestampCandidate object." alt="" coords="5,197,316,237"/>
+<area shape="rect" id="Node000002" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1DecimalCandidate.html" title=" " alt="" coords="364,5,675,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="189,185,263,119,311,84,363,55,394,43,396,48,365,60,314,88,267,123,192,189"/>
+<area shape="rect" id="Node000003" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1HECTimestampCandidateImpl.html" title=" " alt="" coords="364,69,675,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="208,189,280,153,363,119,405,107,406,112,365,124,282,157,210,193"/>
+<area shape="rect" id="Node000004" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1MicrosPrecisionCandidate.html" title=" " alt="" coords="364,133,675,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="287,192,406,171,407,176,288,197"/>
+<area shape="rect" id="Node000005" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1MillisPrecisionCandidate.html" title=" " alt="" coords="364,197,675,237"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="329,215,364,215,364,220,329,220"/>
+<area shape="rect" id="Node000006" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1NanosPrecisionCandidate.html" title=" " alt="" coords="364,261,675,301"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="288,237,407,259,406,264,287,242"/>
+<area shape="rect" id="Node000007" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1PeriodSuffixCandidate.html" title=" " alt="" coords="364,325,675,365"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="210,241,282,277,365,311,406,323,405,328,363,316,280,282,208,246"/>
+<area shape="rect" id="Node000008" href="$classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1SecondsPrecisionCandidate.html" title=" " alt="" coords="364,389,675,429"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="192,245,267,312,314,346,365,375,396,387,394,392,363,380,311,351,263,316,189,249"/>
+</map>

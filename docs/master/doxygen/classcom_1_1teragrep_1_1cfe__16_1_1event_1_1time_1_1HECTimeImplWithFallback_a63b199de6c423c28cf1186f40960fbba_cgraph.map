@@ -1,0 +1,7 @@
+<map id="com.teragrep.cfe_16.event.time.HECTimeImplWithFallback.toEpochMilli" name="com.teragrep.cfe_16.event.time.HECTimeImplWithFallback.toEpochMilli">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,27,284,67"/>
+<area shape="rect" id="Node000002" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1Stubable.html#a8e854db1814eeb807cd9049776c33923" title=" " alt="" coords="332,5,593,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="284,32,318,29,318,34,285,37"/>
+<area shape="rect" id="Node000003" href="$interfacecom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1HECTime.html#a4a170bef09621d5c6a4cde4d7cecbf58" title=" " alt="" coords="345,55,580,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="285,57,332,61,331,66,284,62"/>
+</map>

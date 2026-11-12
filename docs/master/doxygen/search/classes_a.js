@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['testclient_0',['TestClient',['../classcom_1_1teragrep_1_1cfe__16_1_1TestClient.html',1,'com::teragrep::cfe_16']]],
-  ['testserver_1',['TestServer',['../classcom_1_1teragrep_1_1cfe__16_1_1server_1_1TestServer.html',1,'com::teragrep::cfe_16::server']]],
-  ['testserverfactory_2',['TestServerFactory',['../classcom_1_1teragrep_1_1cfe__16_1_1server_1_1TestServerFactory.html',1,'com::teragrep::cfe_16::server']]],
-  ['tokenmanager_3',['TokenManager',['../classcom_1_1teragrep_1_1cfe__16_1_1TokenManager.html',1,'com::teragrep::cfe_16']]],
-  ['tokenmanagertests_4',['TokenManagerTests',['../classcom_1_1teragrep_1_1cfe__16_1_1TokenManagerTests.html',1,'com::teragrep::cfe_16']]]
+  ['periodsuffixcandidate_0',['PeriodSuffixCandidate',['../classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1PeriodSuffixCandidate.html',1,'com::teragrep::cfe_16::event::time::candidates']]],
+  ['periodsuffixcandidatetest_1',['PeriodSuffixCandidateTest',['../classcom_1_1teragrep_1_1cfe__16_1_1event_1_1time_1_1candidates_1_1PeriodSuffixCandidateTest.html',1,'com::teragrep::cfe_16::event::time::candidates']]]
 ];
